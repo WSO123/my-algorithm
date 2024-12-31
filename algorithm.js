@@ -1119,3 +1119,30 @@ function combineTwoList(l1, l2) {
     return dum.next; // 返回合并后的链表，跳过虚拟头节点
 }
 
+// 27、对一组年龄进行排序
+function sortAges(ages) {
+    if(!ages || ages.length <= 0) {
+        return;
+    }
+
+    const oldestAge = 99;
+    let timesOfAge = new Array(oldestAge + 1).fill(0);
+    // 记录每个年龄出现的次数
+    for(let i = 0; i < ages.length; i++) {
+        let age = ages[i];
+        if(age < 0 || age > oldestAge) {
+            throw new Error('age out of range');
+        }
+        timesOfAge[age]++;
+    }
+
+    // 依次取出年龄，按次数放回原数组
+    for(let i = 0, index = 0; i <= oldestAge; i++) {
+        for(let j = 0; j < timesOfAge[i]; j++) {
+            ages[index] = i;
+            index++
+        }
+    }
+    return ages;
+}
+
