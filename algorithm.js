@@ -184,8 +184,8 @@ function constructTree(preOrder, midOrder) {
 //6、 用两个栈实现队列
 class myQuene {
     constructor() {
-        this.stack1 = []
-        this.stack2 = []
+        this.stack1 = [] // 存入队数据
+        this.stack2 = [] //存出队顺序的数据
     }
 
     addTail(ele) {
@@ -1340,3 +1340,256 @@ class MinStack {
         return this.minStack[this.minStack.length - 1]
     }
 }
+
+// 33、栈的压入、弹出序列
+// 输入两个整数序列，第一个序列表示栈的压入顺序，判断第二个序列是否为该栈的弹出顺序。
+// 例如，压入序列为 [1, 2, 3, 4, 5]，弹出序列为 [4, 5, 3, 2, 1] 是合理的，
+// 因为可以按以下操作得到：将 1、2、3、4 依次压入栈，然后弹出 4，压入 5，再依次弹出 5、3、2、1；而弹出序列为 [4, 3, 5, 1, 2] 则不合理
+// 思路：设计一个辅助栈， 规律： 
+//      如果下一个弹出的数字刚好是栈顶数字，则弹出；
+//      如果下一个弹出的数字不在栈顶，则把压栈序列还没入栈道数字入栈，直到把下一个需要弹出的数字压入栈顶为止；
+//      如果所有数字都入栈了，但是还没有找到下一个应该弹出的数字，代表该序列不可能是一个弹出序列
+// 方法1
+function isPopOrder(pushList, popList) {
+    if (pushList === null || popList === null || pushList.length!== popList.length) return false;
+    let stack = [];
+    let pushIndex = 0; // 指向入栈序列的索引
+    for (let popIndex = 0; popIndex < popList.length; popIndex++) {
+        // 如果栈顶元素不等于下一个应该弹出的数字，则应该继续入栈
+        while (stack.length === 0 || stack[stack.length - 1]!== popList[popIndex]) {
+            // 如果所有数字都入栈了，代表该序列不可能是一个弹出序列
+            if (pushIndex === pushList.length) {
+                return false;
+            }
+            pushIndex++
+            stack.push(pushList[pushIndex]);
+        }
+
+        // 栈顶元素不等于下一个应该弹出的数字，弹出
+        stack.pop();
+    }
+    return true;
+}
+// 方法2 这个比较好理解
+function isPopOrder(pushList, popList) {
+    if(!popList || !pushList || pushList.length !== popList.length) {
+        return false
+    }
+
+    let stack = []
+    let p = 0 // 指向弹出序列的索引
+    // 模拟入栈出栈
+    for(let num of pushList) {
+        stack.push(num)
+        // 如果栈顶元素等于下一个应该弹出的数字，则弹出，更新弹出序列的索引
+        while(stack.length > 0 && stack[stack.length - 1] === popList[p]) {
+            stack.pop()
+            p++
+        }
+    }
+
+    // 如果结果是正确的，那么弹出序列的索引应该已经增长为弹出序列的长度
+    return p === popList.length
+}
+
+// 34、从上到下打印二叉树
+//     1
+//    / \
+//   2   3
+//  / \ / \
+// 4  5 6  7
+//a、 不分行从上到下打印二叉树
+// 本质就是层序遍历，也就是广度优先搜索
+function printFromTopToBottom(root) {
+    if(root === null) {
+        return 
+    }
+    let queue = [] // 层序遍历通常是用队列实现的
+    queue.push(root)
+    while(queue.length > 0) {
+        let node = queue.shift()
+        console.log(node.value)
+        if(node.left) {
+            queue.push(node.left)
+        }
+
+        if(node.right) {
+            queue.push(node.right)
+        }
+    }
+}
+// b、分行从上到下打印二叉树
+// 本质就是层序遍历，也就是广度优先搜索
+function printTreeInLines(root) {
+    if(root === null) {
+        return 
+    }
+    let queue = [] // 层序遍历通常是用队列实现的
+    queue.push(root)
+    let toPrint = 1 //当前层未打印节点数
+    let nextLevel = 0 // 下一层的节点数
+    while(queue.length > 0) {
+        let node = queue.shift()
+        console.log(node.value)
+        if(node.left) {
+            queue.push(node.left)
+            nextLevel++
+        }
+
+        if(node.right) {
+            queue.push(node.right)
+            nextLevel++
+        }
+
+        toPrint--
+        // 当前层节点已经打印结束，此时nextLevel的值是下一层所有节点的个数
+        // 更新toPrint和nextLevel
+        if(toPrint === 0) { 
+            console.log(' ')
+            toPrint = nextLevel
+            nextLevel = 0
+        }
+    }
+}
+
+// c、之字形打印二叉树
+// 请实现一个函数按照之字形顺序打印二叉树，
+// 即第一行按照从左到右的顺序打印，第二层按照从右到左的顺序打印，第三行再按照从左到右的顺序打印，其他行以此类推。
+// 思路：
+//      需要两个栈。打印奇数层时，先将根节点入栈 1，然后从栈 1 弹出节点打印，将其左右子节点按先左后右顺序入栈 2；
+//      打印偶数层时，从栈 2 弹出节点打印，将其左右子节点按先右后左顺序入栈 1。如此交替，直到两个栈都为空
+function printTreeInZigzag(root) {
+    if(root === null) {
+        return 
+    }
+    let stack1 = [] // 存储奇数层
+    let stack2 = [] // 存储偶数层
+    stack1.push(root)
+    let cur = true // 判断奇数层还是偶数层， true奇数 false偶数
+    let toPrint = 1 //当前层未打印节点数
+    let nextLevel = 0 // 下一层的节点数
+    while(stack1.length > 0 || stack2.length > 0) {
+        let node
+        if(cur) { //奇数层
+            node = stack1.shift()
+            console.log(node.value)
+            if(node.right) {
+                stack2.push(node.right)
+                nextLevel++
+            }
+
+            if(node.left) {
+                stack2.push(node.left)
+                nextLevel++
+            }
+        } else {
+            node = stack2.shift()
+            console.log(node.value)
+            if(node.left) {
+                stack1.push(node.left)
+                nextLevel++
+            }
+            if(node.right) {
+                stack1.push(node.right)
+                nextLevel++
+            }
+        }
+
+        toPrint--
+        if(toPrint === 0) { 
+            console.log(' '); // 打印空行
+            toPrint = nextLevel; // 更新当前层未打印节点数
+            nextLevel = 0; // 重置下一层节点数
+            cur = !cur; // 切换层级
+        }
+    }
+}
+
+// 35、二叉搜索树的后续遍历序列
+// 输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历结果。假设输入的数组的任意两个数字都互不相同。
+//        8
+//       /  \
+//      6    10
+//     / \   / \
+//    5   7 9  11
+// 例如，输入数组 {5,7,6,9,11,10,8}，则返回true，因为这个整数序列是例子中 二叉搜索树的后序遍历结果。
+//      如果输入的数组是 {7,4,6,5}，则由于没有哪棵二叉搜索树的后序遍历结果是这个序列，因此返回false
+// 思路： 后续遍历的特征是左子树、右子树、根节点，二叉搜索树中左子树节点的值小于根节点的值，右子树节点的值大于根节点的值
+//     a、 确定根节点：数组的最后一个元素是根节点的值。
+//     b、 划分左右子树：在数组中找到第一个大于根节点的值的位置，该位置左边的元素构成左子树的节点值，右边的元素构成右子树的节点值。
+//     c、 递归验证子树：分别对左子树和右子树的数组进行递归验证，判断它们是否满足二叉搜索树的后序遍历特征
+function verifySequenceOfBST(list) {
+    let len = list.length
+    if(!list || len === 0) {
+        return false
+    }
+
+    let rootValue = list[len - 1]
+    
+    // 在二叉搜索树中左子树节点的值小于右子树节点的值
+    let i = 0
+    for(; i < len - 1; i++) {
+        if(list[i] > rootValue) {
+            break
+        }
+    }
+
+    // 在二叉搜索树中右子树节点的值大于根节点的值
+    let j = i
+    for(; j < len - 1; j++) {
+        if(list[j] < rootValue) {
+            return false
+        }
+    }
+
+    // 判断左子树是不是二叉搜索树
+    let left = true
+    if(i > 0) {
+        left = verifySequenceOfBST(list.slice(0, i))
+    }
+
+    // 判断右子树是不是二叉搜索树
+    let right = true
+    if(i < len - 1) {
+        right = verifySequenceOfBST(list.slice(i, len - 1))
+    }
+    
+    return left && right
+}
+// 反思： 如果面试题要求处理一颗二叉树的遍历序列，可以找到二叉树的根节点，再基于根节点把遍历序列拆分成左右子树对应的序列，再递归地处理这两个子序列
+// 重建二叉树就属于这种思路
+
+
+// 36、二叉树中和为某一值的路径
+// 输入一棵二叉树和一个整数，打印出二叉树中节点值的和为输入整数的所有路径。从树的根节点开始往下一直到叶节点所经过的节点形成一条路径
+// 看起来像是回溯算法
+// 在三种遍历方式中，只有前序遍历是从根节点开始的，所以我们在问题中要讨论的是前序遍历
+function printPath(root, val) {
+    const pathCore = (node, val, path, sum) => {
+        if(node === null) {
+            return
+        }
+        // 根
+        sum += node.val
+        path.push(node.val)
+
+        // 如果累积和相等则找到了
+        if(val === sum && node.left === null && node.right === null) {
+            console.log(path)
+        }
+
+        // 左
+        pathCore(node.left, val, path, sum)
+        // 右
+        pathCore(node.right, val, path, sum)
+        path.pop() // 回溯
+    }
+    if(root === null) {
+        return
+    }
+
+    let path = []
+    pathCore(root, val, path, 0)
+}
+
+// 37、
