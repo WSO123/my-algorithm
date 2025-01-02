@@ -1312,3 +1312,31 @@ function printMatrixClockwise(matrix) {
     return res
 }
  
+// 32、包含min函数的栈
+// 定义栈的数据结构，在该栈中实现一个能够得到栈的最小元素的 min 函数，要求 min、push 及 pop 操作的时间复杂度都是 o(1)
+class MinStack {
+    constructor() {
+        this.stack = [] // 储存元素
+        this.minStack = [] // 储存栈的最小元素
+    }
+
+    push(value) {
+        this.stack.push(value)
+        if(this.minStack.length === 0 || value <= this.minStack[this.minStack.length - 1]) {
+            this.minStack.push(value)
+        }
+    }
+
+    pop() {
+        if(this.stack.pop() === this.minStack[this.minStack.length - 1]) {
+            this.minStack.pop()
+        }
+    }
+
+    min() {
+        if(this.minStack.length === 0) {
+            return null
+        }
+        return this.minStack[this.minStack.length - 1]
+    }
+}
