@@ -1592,4 +1592,83 @@ function printPath(root, val) {
     pathCore(root, val, path, 0)
 }
 
-// 37、
+// 37、复杂链表的复制
+// 请实现函数ComplexListNode*Clone(ComplexListNode* pHead)，复制一个复杂链表。
+// 在复杂链表中，每个节点除了有一个m_pNext指针指向下一个节点，还有一个m_pSibling指针指向链表中的任意节点或者null
+// 思路1:常规思路是先复制每个节点然后连起来，然后再为每个节点的m_pSibling赋值，每为一个节赋值都要遍历一遍，这样的时间复杂度是o(n2)，显然不行
+// 思路2: 第一步还是复制每个节点并连起来，在复制的同时用哈希表记录每个节点的m_pSibling，然后在根据哈希表的对应关系赋值，时间复杂度是o(n),但也引入了额外的空间o(n)
+// 思路3: 怎么才能不使用额外内存解决问题呢，把时间复杂度保持在o(n)
+//      分解问题，把复杂问题分解成小问题分别解决，也就是所谓的分治法
+//      第一步：复制链表的每个节点N为N`，然后把N`连在N后面，如：A->A`->B->B`->C->C`->D->D`->E->E`
+//      第二步：根据原节点设置复制出来的节点的m_pSibling，例如：如果原节点A指向C，那么A`指向C`
+//      第三步：把整个链表拆分成两个链表，奇数位置的节点连起来就是原链表，偶数位置的节点连起来就是新的链表
+class ComplexListNode {
+    constructor(val) {
+        this.val = val;
+        this.m_pNext = null;
+        this.m_pSibling = null;
+    }
+}
+
+function Clone(head) {
+    const cloneNodes = (head) => {
+        let cur = head
+        while(cur)  {
+            let newNode = new ComplexListNode(cur.val)
+            newNode.m_pNext = cur.m_pNext
+            cur.m_pNext = newNode
+            cur = newNode.m_pNext
+        }
+    }
+    
+    const connectSiblingNodes = (head) => {
+        let cur = head
+        while(cur) {
+            if(cur.m_pSibling) {
+                cur.m_pNext.m_pSibling = cur.m_pSibling.m_pNext
+            }
+            cur = cur.m_pNext.m_pNext
+        }
+    }
+
+    const reconnectNodes = (head) => {
+        let orgHead = head
+        let newHead = head.m_pNext
+        let orgCur = orgHead
+        let newCur = newHead
+
+        while(orgCur) {
+            orgCur.m_pNext = orgCur.m_pNext.m_pNext
+            newCur.m_pNext = newCur.m_pNext ? newCur.m_pNext.m_pNext : null
+            orgCur = orgCur.m_pNext
+            newCur = newCur.m_pNext
+        }
+        return newHead
+    }
+
+    if(head === null) {
+        return null
+    }
+
+    // 第一步：复制节点
+    cloneNodes(head)
+    // 第二步：连接m_pSibling
+    connectSiblingNodes(head)
+
+    // 第三步： 拆分链表
+    return reconnectNodes(head)
+}
+
+// 38、二叉搜索树与双向链表
+// 将二叉搜索树转换成一个排序的双向链表，要求不能创建任何新的节点，只能调整树中节点指针的指向。
+//        10
+//       /  \
+//      6    14
+//     / \   / \
+//    4   8 12  16
+// 转换结果 4 -> 6 -> 8 -> 10 -> 12 -> 14 -> 16,其中->代表双向的
+// 例如，将上面的二叉搜索树转换成排序的双向链表，使链表中的节点依次为 1, 2, 3, 4, 5, 6, 7, 8, 9, 10。
+// 思路：乍看起来要中序遍历二叉搜索树，因为中序遍历，结果是单调递增的
+function Convert(root) {
+    
+}
