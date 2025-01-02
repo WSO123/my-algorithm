@@ -1669,6 +1669,101 @@ function Clone(head) {
 // 转换结果 4 -> 6 -> 8 -> 10 -> 12 -> 14 -> 16,其中->代表双向的
 // 例如，将上面的二叉搜索树转换成排序的双向链表，使链表中的节点依次为 1, 2, 3, 4, 5, 6, 7, 8, 9, 10。
 // 思路：乍看起来要中序遍历二叉搜索树，因为中序遍历，结果是单调递增的
+//      利用二叉搜索树的特性，中序遍历可以得到一个有序的节点序列。
+//      在中序遍历过程中，调整节点的指针，将左子节点作为前驱指针，右子节点作为后继指针。
 function Convert(root) {
-    
+    const covertCore = (node) => {
+        if(node === null) {
+            return
+        }
+
+        // 遵循中序遍历，左根右
+
+        // 首先递归转换左子树
+        covertCore(node.left)
+
+        // 将当前节点的左指针指向之前转换得到的最后一个节点
+        node.left = lastListNode
+
+        // 若之前有节点，将其右指针指向当前节点
+        if(lastListNode) {
+            lastListNode.right = node
+        }
+
+        // lastListNode始终指向链表末尾，所以要移动到node处
+        lastListNode = node
+
+        // 递归转换右子树
+        covertCore(node.right)
+    }
+
+    let lastListNode = null // 始终会指向链表末尾
+    covertCore(root)
+    let head = lastListNode
+    // 在转换操作完成后lastListNode会指向链表末尾，所以应该左右到链表头部，得到头节点
+    while(head && head.left) {
+        head = head.left
+    }
+    return head
 }
+
+// 39、序列化二叉树
+// 实现两个函数，分别用来序列化和反序列化二叉树。
+// 序列化是将二叉树按照某种遍历顺序转化为一个字符串，以便于存储和传输；
+// 反序列化是将序列化后的字符串恢复为原来的二叉树
+//        10
+//       /  \
+//      6    14
+//     / \   / \
+//    4   8 12  16
+// 思路1：
+//      要确定一个二叉树，需要前序遍历和中序遍历，或者中序遍历和后序遍历
+//      按照这个思路下来：
+//          二叉树的序列化方法，那可以序列化中序遍历和前序遍历
+//          二叉树的反序列化方法，就是以前序遍历和中序遍历重建二叉树   
+//      这个方法限制有两个 1、二叉树不能有重复的节点 2、只有当两个序列中所有数据都读出后才能反序列化，效率比较慢
+// 思路2：
+//      实际上二叉树的序列化如果是从根节点开始的，那么相应的反序列化实际上在读出根节点的数值时就可以开始了
+//      序列化：因此可以使用前序遍历序列化二叉树，在遍历二叉树的时候，如果碰到null，可以使用一个特殊字符表示如#
+//      反序列化： 
+//          将序列化得到的字符串按照分隔符（如 ,）拆分成节点值列表。
+//          利用递归函数，根据节点值列表的顺序，依次构建二叉树。
+//          当遇到特殊字符 # 时，表示该位置是一个空节点
+// 序列化，前序遍历
+function serialize(root) {
+    let res = ''
+    const preOrderCore = (root) => {
+        if(root === null) {
+            res += '#,'
+            return
+        }
+        res += root.val + ','
+        preOrderCore(root.left)
+        preOrderCore(root.right)
+    }
+
+    preOrderCore(root)
+    return res
+}
+// 反序列化
+function deSerialize(str) {
+    const nodes = str.split(',')
+    const index = 0 // 用于遍历nodes数组
+    const buildTree = () => {
+        if(nodes[index] === '#') {
+            index++
+            return null
+        }
+
+        let node = new BinaryTreeNode(nodes[index].val)
+        index++
+
+        // 前序遍历的左子树和右子树节点挨着，所以遍历完左子树，剩下的节点都是右子树的节点，所以这样顺序写没问题
+        node.left = buildTree()
+        node.right = buildTree()
+        return node
+    }
+
+    return buildTree()
+}
+
