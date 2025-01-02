@@ -1146,3 +1146,169 @@ function sortAges(ages) {
     return ages;
 }
 
+// 28、树的子结构
+// 输入两棵二叉树A和B，判断B是不是A的子结构
+// 思路： 
+//  首先在树A中找到和树B的根节点值相同的节点
+//  然后判断以该节点为根的子树是否和树B的结构相同。
+function isSubtree(root1, root2) {
+    const hasSubtreeCore = (root1, root2) => {
+        if(!root2) { // root2已遍历完成，代表到现在为止都匹配
+            return true
+        }
+        if(!root1) { // root1已经遍历完成，但是root2还有节点，代表root1不可能包含了root2
+            return false
+        }
+
+        if(root1.value !== root2.value) {
+            return false
+        }
+
+        // 如果当前节点值相同，就去判断左子树和右子树分别是不是子结构
+        return hasSubtreeCore(root1.left, root2.left) && hasSubtreeCore(root1.right, root2.right)
+    }
+    if(!root1 || !root2) {
+        return false
+    }
+
+    // 如果root1和root2的value相同，则判断是不是子结构
+    // 否则分别去递归查看root1的左右子树，直到找到节点值和root2的根节点值相同的，然后再调用hasSubtreeCore判断子结构
+    return hasSubtreeCore(root1, root2) || isSubtree(root1.left, root2) || isSubtree(root1.right, root2)
+}
+
+
+// 29、二叉树的镜像
+// 思路：构建二叉树的镜像就是遍历过程中交换非叶节点的左右值
+function MirrorTree(root) {
+    if(!root) {
+        return null
+    }
+
+    // 交换左右子节点
+    let temp = root.left
+    root.left = root.right
+    root.right = temp
+
+    // 递归处理左右子树
+    MirrorTree(root.left)
+    MirrorTree(root.right)
+    return root
+}
+
+
+// 30、对称二叉树
+// 请实现一个函数，用来判断一棵二叉树是否对称。如果一棵二叉树和它的镜像一样，那么它是对称的。例如，下面这棵二叉树是对称的：
+//     1
+//    / \
+//   2   2
+//  / \ / \
+// 3  4 4  3
+// 思路：对于对称二叉树，比如前序遍历，是先左后右，如果设计一个遍历方式，先右后左，对两种方式同时遍历，如果过程中对应的节点值都相同，代表就是对称二叉树
+// 可以使用递归的方式来判断二叉树是否对称。
+//      设计一个辅助函数，比较二叉树的左右子树是否对称。
+//      对于两个节点 node1 和 node2，
+//          如果它们都为 null，则认为对称；
+//          如果其中一个为 null 而另一个不为 null，则不对称；
+//          如果它们的值不相等，则不对称；
+//          如果它们的值相等，则递归比较 node1 的左子树和 node2 的右子树、node1 的右子树和 node2 的左子树是否对称。
+function isSymmetric(root) {
+    const isSymmetricCore = (node1, node2) => {
+        if(node1 === null && node2 === null) {
+            return true
+        }
+
+        if(node1 !== null || node2 !== null) {
+            return false
+        }
+
+        if(node1.value !== node2.value) {
+            return false
+        }
+
+        return isSymmetricCore(node1.left, node2.right) && isSymmetricCore(node1.right , node2.left)
+    }
+    if(!root) return true
+
+    return isSymmetricCore(root.left, root.right)
+}
+
+// 迭代版本：通过队列来存储节点，比较节点的左右子节点是否对称。具体做法是将左右子节点成对地加入队列，然后依次取出进行比较。
+function isSymmetricIterative(root) {
+    if (root === null) {
+        return true;
+    }
+    let queue = [];
+    queue.push(root.left);
+    queue.push(root.right);
+    while (queue.length > 0) {
+        let node1 = queue.shift();
+        let node2 = queue.shift();
+        if (node1 === null && node2 === null) {
+            continue;
+        }
+        if (node1 === null || node2 === null) {
+            return false;
+        }
+        if (node1.val!== node2.val) {
+            return false;
+        }
+        queue.push(node1.left);
+        queue.push(node2.right);
+        queue.push(node1.right);
+        queue.push(node2.left);
+    }
+    return true;
+}
+
+
+// 31、顺时针打印矩阵
+// 输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每个数字
+//  [
+//     [1, 2, 3],
+//     [4, 5, 6],
+//     [7, 8, 9]
+//   ]
+function printMatrixClockwise(matrix) {
+    if(matrix === null || matrix.length === 0 || matrix[0].length === 0) {
+        return []
+    }
+    let res = []
+    let left = 0
+    let right = matrix[0].length - 1
+    let top = 0
+    let bottom = matrix.length - 1
+    while(top <= bottom && left <= right) {
+        // 从左到右打印
+        for(let i = left; i <= right; i++) {
+            res.push(matrix[top][i])
+        }
+        top++
+
+        // 从上到下打印
+        if(top <= bottom) {
+            for(let i = top; i <= bottom; i++) {
+                res.push(matrix[i][right])
+            }
+            right--
+        }
+       
+
+        // 从右往左打印
+        if(top <= bottom && left <= right) {
+            for(let i = right; i >= left; i--) {
+                res.push(matrix[bottom][i])
+            }
+            bottom--
+        }
+
+        // 从下往上打印
+        if(top <= bottom && left <= right) {
+            for(let i = bottom; i >= top; i--) {
+                res.push(matrix[i][left])
+            }
+            left++
+        }
+    }
+    return res
+}
+ 
