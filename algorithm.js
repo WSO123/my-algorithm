@@ -1767,3 +1767,66 @@ function deSerialize(str) {
     return buildTree()
 }
 
+// 40、字符串的排列
+// 输入一个字符串，打印出该字符串中字符的所有排列,如abc，打印abc、acb、bac、bca、cab、cba
+// 思路：典型的回溯法
+//        两个子问题：第一步、选取一个字符
+//                  第二步、处理其他字符
+//                  第二步右可以拆分成两个子问题递归处理
+function Permutation(str) {
+    if(!str) {
+        return
+    }
+
+    const permuatCore = (currentStr, res) => {
+        if(currentStr.length === 0) {
+            console.log(res)
+            return
+        }
+        for(let i = 0; i < currentStr.length; i++) {
+            // 第一个子问题：选取一个字符
+            // 更新res
+            const newRes = res + currentStr[i]; // 创建新的res
+
+            // 第二个子问题：递归处理其他字符
+            // 数组中去除i处的元素
+            const newCurrentStr = currentStr.slice(0, i).concat(currentStr.slice(i + 1))
+            // 用没有i元素的数组继续递归，直到数组值为0就可以打印出结果了
+            permuatCore(newCurrentStr, newRes)
+        }
+    }
+
+    permuatCore(str.split(''), '') // 将字符串转换为数组
+}
+
+// 42、求字符串的中的字符构成的所有组合，如abc，结果是['', 'a', 'ab', 'abc', 'ac', 'b', 'bc', 'c']
+function generateCombinations(str) {
+    const result = [];
+    const combinationHelper = (start, currentCombination) => {
+        // 将当前组合添加到结果中
+        result.push(currentCombination);
+        
+        // 选择当前字符并继续生成组合
+        for (let i = start; i < str.length; i++) {
+            // 第一个子问题：选取一个字符
+            const cur = currentCombination + str[i]
+
+            // 第二个子问题：处理其他字符
+            // 选择当前字符并继续递归
+            combinationHelper(i + 1, cur);
+        }
+    };
+
+    combinationHelper(0, ''); // 从第一个字符开始
+    return result;
+}
+
+// 43、数组中超过一半的数字
+// 数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字
+// 思路1: 使用哈希表来统计每个值出现的次数，然后找出
+// 思路2: 排序，然后找出
+// 思路3: 
+function MoreThanHalfNum(numbers) {
+
+}
+
