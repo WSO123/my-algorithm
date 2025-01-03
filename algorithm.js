@@ -2133,4 +2133,134 @@ function findK(numbers) {
 // 48、数据流中的中位数
 // 如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。
 // 如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值
+// 分析：
+//     数据结构选择分析：
+//          数组：
+//              优点：简单直接，对于插入和查找操作有一定的基础支持。
+//              缺点：
+//                  插入效率：如果数组没有排序，插入新数据时需要移动元素来保持数组有序，时间复杂度为 O (n)。
+//                  查找中位数：在未排序的数组中查找中位数需要先排序，时间复杂度为 O (n)。
+//          排序链表：
+//              优点：
+//                  插入操作：可以通过调整指针来快速找到插入位置，插入新数据的时间复杂度为 O (n)。
+//                  查找中位数：通过两个指针可以在 O (1) 时间内找到链表的中间节点，从而计算中位数。
+//              缺点：
+//                  空间占用：需要额外的指针来维护链表结构，空间复杂度相对较高。
+//          二叉搜索树：
+//              优点：
+//                  插入效率：可以通过递归的方式快速插入新数据，平均时间复杂度为 O (logn)。
+//              缺点：
+//                  平衡问题：如果二叉搜索树不平衡，例如退化成链表，插入和查找中位数的时间复杂度都会退化为 O (n)。
+//                  查找中位数：需要在树中进行遍历和比较，时间复杂度难以保证在 O (1)。
+//          AVL 树：
+//              优点：
+//                  平衡性能：通过调整树的结构来保持平衡，保证插入、删除和查找操作的时间复杂度都在 O (logn)。
+//                  查找中位数：可以利用树的结构特点，在 O (1) 时间内得到中位数。
+//              缺点：
+//                  实现复杂：实现 AVL 树需要较高的编程技巧，在短时间内实现较为困难。
+//          最大堆和最小堆：
+//              优点：
+//                  时间效率：插入新数据的时间复杂度为 O (logn)，可以快速得到堆顶元素，从而在 O (1) 时间内计算中位数。
+//                  空间利用：只需要两个堆来维护数据，空间复杂度相对较低。
+//              缺点：
+//                  数据分布：需要保证数据在两个堆中的分布相对平衡，以确保中位数的计算准确。
+// 最后选择最大堆和最小堆进行操作
+// 思路：
+//  所有数据进行从大到小排序
+//  最大堆存储排序好的左边部分的数据，p1指针指向堆顶，堆顶是左边最大的值
+//  最小堆存储排序好的右边部分的数据，p2指针指向堆顶，堆顶是右边最小的值
+//  p1的值始终小于等于p2处的值
+//  这样往堆中插入数据的时间复杂度是O (logn)，而可以用p1和p2直接找出中位数，时间复杂度是O (1)
+class DynamicArray {
+    constructor() {
+        this.min = []; // 最小堆，堆顶元素最小，用于存储流数据的右半边数据
+        this.max = []; // 最大堆，堆顶元素最大，用于存储流数据的左半边数据
+    }
 
+    insert(num) { // 这个方法解法不太懂啊，稍后研究研究
+        // 总数为偶数时，将新数据插入最小堆
+        if ((this.min.length + this.max.length) % 2 === 0) {
+            if (this.min.length > 0 && num < this.min[0]) {
+                // 如果新数字小于最小堆的根节点，将最小堆的根节点移到最大堆
+                this.max.push(this.min[0]);
+                this.min[0] = num; // 更新最小堆的根节点
+                heapifyDown(this.min, 0); // 调整最小堆
+            } else {
+                // 否则直接插入最小堆
+                this.min.push(num);
+            }
+            heapifyUp(this.min, this.min.length - 1); // 调整最小堆
+
+            // 将最小堆的最小元素移动到最大堆
+            if (this.min.length > this.max.length + 1) {
+                const minTop = this.min.shift(); // 移除最小堆的根节点
+                this.max.unshift(minTop); // 将其插入最大堆
+                heapifyDown(this.max, 0); // 调整最大堆
+            }
+        } else { // 如果数据总数为奇数，将新数据插入最大堆
+            if (this.max.length > 0 && num > this.max[0]) {
+                // 如果新数字大于最大堆的根节点，将最大堆的根节点移到最小堆
+                this.min.push(this.max[0]);
+                this.max[0] = num; // 更新最大堆的根节点
+                heapifyDown(this.max, 0); // 调整最大堆
+            } else {
+                // 否则直接插入最大堆
+                this.max.push(num);
+            }
+            heapifyUp(this.max, this.max.length - 1); // 调整最大堆
+
+            // 将最大堆的最大元素移动到最小堆
+            if (this.max.length > this.min.length) {
+                const maxTop = this.max.shift(); // 移除最大堆的根节点
+                this.min.unshift(maxTop); // 将其插入最小堆
+                heapifyDown(this.min, 0); // 调整最小堆
+            }
+        }
+    }
+
+    getMedian() {
+        if (this.min.length === this.max.length) {
+            // 总数为偶数时，计算中位数
+            return (this.min[0] + this.max[0]) / 2;
+        } else {
+            // 总数为奇数时，返回最小堆的根节点
+            return this.min[0];
+        }
+    }
+}
+
+// 堆调整函数：向下调整堆
+function heapifyDown(arr, index) {
+    const left = 2 * index + 1; // 左子节点索引
+    const right = 2 * index + 2; // 右子节点索引
+    let largest = index; // 初始化最大值为当前节点
+
+    // 找到当前节点、左子节点和右子节点中的最大值
+    if (left < arr.length && arr[left] < arr[largest]) {
+        largest = left;
+    }
+
+    if (right < arr.length && arr[right] < arr[largest]) {
+        largest = right;
+    }
+
+    // 如果最大值不是当前节点，则交换它们的值，并继续调整子树
+    if (largest !== index) {
+        [arr[index], arr[largest]] = [arr[largest], arr[index]];
+        heapifyDown(arr, largest); // 递归调整
+    }
+}
+
+// 堆调整函数：向上调整堆
+function heapifyUp(arr, index) {
+    while (index > 0) {
+        const parent = Math.floor((index - 1) / 2); // 计算父节点索引
+        // 如果当前节点小于其父节点，则交换它们的值，并继续向上调整
+        if (arr[index] < arr[parent]) {
+            [arr[index], arr[parent]] = [arr[parent], arr[index]];
+            index = parent; // 更新当前索引为父节点索引
+        } else {
+            break; // 如果不需要交换，结束循环
+        }
+    }
+}
