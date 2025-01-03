@@ -2182,6 +2182,10 @@ class DynamicArray {
         if ((this.min.length + this.max.length) % 2 === 0) {
             if (this.min.length > 0 && num < this.min[0]) {
                 // 如果新数字小于最小堆的根节点，将最小堆的根节点移到最大堆
+                // 这里的思考解答： 
+                //      如果新数字num小于最小堆的根节点，将最小堆的根节点移到最大堆，
+                //      然后将小根堆的栈顶设为num，在进行两个堆调整的时候，大根堆里存在大于小根堆堆顶的元素，
+                //      调整时又会重新放到小根堆，这样就实现了向小根堆插入节点的任务
                 this.max.push(this.min[0]);
                 this.min[0] = num; // 更新最小堆的根节点
                 heapifyDown(this.min, 0); // 调整最小堆
