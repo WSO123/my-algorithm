@@ -1825,8 +1825,175 @@ function generateCombinations(str) {
 // 数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字
 // 思路1: 使用哈希表来统计每个值出现的次数，然后找出
 // 思路2: 排序，然后找出
-// 思路3: 
+// 思路3:  基于Partition，时间复杂度为o(n)
+//    a、 数组中有一个数长度超过一半，也就是数组排序后，数组中间数字必定是这个数字
+//    b、 受快速排序算法的启发，通过随机选择一个数字并调整数组中数字的顺序，使得比选中的数字小的数字都排在它的左边，比选中的数字大的数字都排在它的右边。
+//        如果选中数字的下标刚好是数组长度的一半，那么这个数字就是中位数；
+//        如果下标大于一半，中位数在左边部分的数组中；
+//        如果下标小于一半，中位数在右边部分的数组中
 function MoreThanHalfNum(numbers) {
+    if(!numbers || numbers.length === 0) {
+        return null
+    }
+    let len = numbers.length
 
+    // 检查是否大于一半
+    const checkMoreThanHalf = (numbers, num, len) => {
+        let times = 0
+        for(let i = 0; i < len; i++) {
+            if(numbers[i] === num) {
+                times++
+            }
+        }
+
+        return times * 2 > len
+    }
+
+    // 这个方法是快速排序最重要的部分，时间复杂度为o(n)
+    // 通过选择一个枢轴元素，将数组分为两部分，使得左边的元素都小于等于枢轴，右边的元素都大于等于枢轴
+    const Partition = (numbers, start, end) => {
+        let pivot = numbers[end]; // 选择最后一个元素作为基准（pivot）
+        let i = start - 1; // i 用于跟踪小于或等于 pivot 的元素的最后一个索引
+
+        for (let j = start; j < end; j++) { // 遍历从 start 到 end - 1 的元素
+            if (numbers[j] <= pivot) { // 如果当前元素小于或等于 pivot
+                i++; // 增加 i 的值
+                [numbers[i], numbers[j]] = [numbers[j], numbers[i]]; // 交换元素
+            }
+        }
+        // 将 pivot 放到正确的位置
+        [numbers[i + 1], numbers[end]] = [numbers[end], numbers[i + 1]];
+        return i + 1; // 返回 pivot 的最终位置
+    } 
+
+    let mid = len >> 1
+    let start = 0
+    let end = len - 1
+    let index = Partition(numbers,  start, end)
+    while(index !== mid) {
+        // 如果下标大于一半，中位数在左边部分的数组中
+        if(index > mid) {
+            end = index - 1
+            index = Partition(numbers, start, end)
+        } else { // 如果下标小于一半，中位数在右边部分的数组中
+            start = index + 1
+            index = Partition(numbers, start, end)
+        }
+    }
+
+    // 如果下标等于一半，那么这个数字就是中位数
+    let num = numbers[index]
+
+    // 检查是否是超过一半次数
+    if(checkMoreThanHalf(numbers, num, len)) {
+        return num
+    }
+
+    return null
 }
+
+// 思路4: 数组中一个数次数超过数组长度的一半，也就是说它出现的次数比其他数字出现的次数和还多
+//    统计数字和次数：
+//          在遍历数组的时候保存两个值，一个是数组中的一个数字，另一个是次数。
+//          当遍历到下一个数字时，如果与保存的数字相同，次数加 1；如果不同，次数减 1。
+//    确定目标数字：
+//          如果次数为零，就保存下一个数字，并把次数设为 1。
+//          由于要找的数字出现的次数比其他所有数字出现的次数之和还要多，所以最后一次把次数设为 1 时对应的数字就是要找的数字。
+//          例如:
+//              如果数组是 [1, 2, 1, 1, 3, 1, 1]，在遍历过程中，times 会随着数字的不同而增减。
+//              当遇到不同数字时，times 减 1；遇到相同数字时，times 加 1。
+//              当遇到某个数字使得 times 变为 0 时，就说明之前的数字出现次数已经与其他数字出现次数平衡，此时更新 result 为当前数字，
+//              继续下一个数字的处理。最后，result 存储的就是出现次数超过一半的数字,因为它无法跟其他数字达到次数平衡，times不可能减到0
+// 上面这种思想也叫摩尔投票算法，如果在几个人投票表决的时候，可以快速算出谁当选
+function MoreThanHalfNum(numbers) {
+    if(!numbers || numbers.length === 0) {
+        return null
+    }
+    let len = numbers.length
+
+    // 检查是否大于一半
+    const checkMoreThanHalf = (numbers, num, len) => {
+        let times = 0
+        for(let i = 0; i < len; i++) {
+            if(numbers[i] === num) {
+                times++
+            }
+        }
+
+        return times * 2 > len
+    }
+    let res = numbers[0]
+    let times = 1
+    for(let i = 1; i < len; i++) {
+        if(numbers[i] === res) {
+            times++
+        } else if(numbers[i] !== res) {
+            times--
+        } else if(times === 0){
+            res = numbers[i]
+            times = 1
+        }
+    }
+
+    // 检查是否是超过一半次数
+    if(checkMoreThanHalf(numbers, res, len)) {
+        return res
+    }
+
+    return null
+}
+
+
+// 44、实现快速排序
+// 这个方法是快速排序最重要的部分，时间复杂度为o(n)
+// 通过选择一个枢轴元素，将数组分为两部分，使得左边的元素都小于等于枢轴，右边的元素都大于等于枢轴
+const partition = (numbers, start, end) => {
+    let pivot = numbers[end]; // 选择最后一个元素作为基准（pivot）
+    let i = start - 1; // i 用于跟踪小于或等于 pivot 的元素的最后一个索引
+
+    for (let j = start; j < end; j++) { // 遍历从 start 到 end - 1 的元素
+        if (numbers[j] <= pivot) { // 如果当前元素小于或等于 pivot
+            i++; // 增加 i 的值
+            [numbers[i], numbers[j]] = [numbers[j], numbers[i]]; // 交换元素
+        }
+    }
+    // 将 pivot 放到正确的位置
+    [numbers[i + 1], numbers[end]] = [numbers[end], numbers[i + 1]];
+    return i + 1; // 返回 pivot 的最终位置
+} 
+
+// 方法1: 递归版本
+function quickSort(numbers, start, end) {
+    if (start < end) { // 递归的终止条件
+        // 调用 partition 函数，获取基准元素的最终位置
+        const pivotIndex = partition(numbers, start, end);
+        // 递归排序基准元素左侧的部分
+        quickSort(numbers, start, pivotIndex - 1);
+        // 递归排序基准元素右侧的部分
+        quickSort(numbers, pivotIndex + 1, end);
+    }
+}
+
+// 方法2:迭代版本
+function quickSort(numbers, start = 0, end = numbers.length - 1) {
+    const stack = []; // 创建一个栈来存储待排序的区间
+    // 将初始区间压入栈中
+    stack.push({ start, end });
+
+    while (stack.length > 0) {
+        // 从栈中弹出一个区间
+        const { start, end } = stack.pop();
+
+        if (start < end) {
+            // 调用分区函数，获取基准元素的最终位置
+            const pivotIndex = partition(numbers, start, end);
+
+            // 将基准元素左侧的部分压入栈中
+            stack.push({ start, end: pivotIndex - 1 });
+            // 将基准元素右侧的部分压入栈中
+            stack.push({ start: pivotIndex + 1, end });
+        }
+    }
+}
+
 
