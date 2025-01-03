@@ -1870,6 +1870,7 @@ function MoreThanHalfNum(numbers) {
     let start = 0
     let end = len - 1
     let index = Partition(numbers,  start, end)
+    // 其实就是找第mid大的数字，找到之后左边的数比mid处小，右边大
     while(index !== mid) {
         // 如果下标大于一半，中位数在左边部分的数组中
         if(index > mid) {
@@ -1904,43 +1905,47 @@ function MoreThanHalfNum(numbers) {
 //              当遇到不同数字时，times 减 1；遇到相同数字时，times 加 1。
 //              当遇到某个数字使得 times 变为 0 时，就说明之前的数字出现次数已经与其他数字出现次数平衡，此时更新 result 为当前数字，
 //              继续下一个数字的处理。最后，result 存储的就是出现次数超过一半的数字,因为它无法跟其他数字达到次数平衡，times不可能减到0
-// 上面这种思想也叫摩尔投票算法，如果在几个人投票表决的时候，可以快速算出谁当选
+// 上面这种思想也叫摩尔投票算法
 function MoreThanHalfNum(numbers) {
-    if(!numbers || numbers.length === 0) {
-        return null
+    if (!numbers || numbers.length === 0) {
+        return null;
     }
-    let len = numbers.length
+    let len = numbers.length;
 
     // 检查是否大于一半
     const checkMoreThanHalf = (numbers, num, len) => {
-        let times = 0
-        for(let i = 0; i < len; i++) {
-            if(numbers[i] === num) {
-                times++
+        let times = 0;
+        for (let i = 0; i < len; i++) {
+            if (numbers[i] === num) {
+                times++;
             }
         }
+        return times * 2 > len;
+    };
 
-        return times * 2 > len
-    }
-    let res = numbers[0]
-    let times = 1
-    for(let i = 1; i < len; i++) {
-        if(numbers[i] === res) {
-            times++
-        } else if(numbers[i] !== res) {
-            times--
-        } else if(times === 0){
-            res = numbers[i]
-            times = 1
+    let res = numbers[0]; // 初始化结果为第一个元素
+    let times = 1; // 初始化计数为 1
+
+    for (let i = 1; i < len; i++) {
+        if (numbers[i] === res) {
+            times++; // 如果当前元素等于结果，增加计数
+        } else {
+            times--; // 否则减少计数
+        }
+
+        // 如果计数为 0，更新结果
+        if (times === 0) {
+            res = numbers[i]; // 更新结果为当前元素
+            times = 1; // 重置计数为 1
         }
     }
 
     // 检查是否是超过一半次数
-    if(checkMoreThanHalf(numbers, res, len)) {
-        return res
+    if (checkMoreThanHalf(numbers, res, len)) {
+        return res;
     }
 
-    return null
+    return null;
 }
 
 
@@ -1996,4 +2001,136 @@ function quickSort(numbers, start = 0, end = numbers.length - 1) {
     }
 }
 
+// 45、找出数组中出现次数最多的一个数， 不关心是否有多个数字出现相同的最大次数
+function find(numbers) {
+    let length = numbers.length
+    let result = numbers[0];
+    let times = 1;
+    for (let i = 1; i < len; i++) {
+        if (numbers[i] === res) {
+            times++; // 如果当前元素等于结果，增加计数
+        } else {
+            times--; // 否则减少计数
+        }
+
+        // 如果计数为 0，更新结果
+        if (times === 0) {
+            res = numbers[i]; // 更新结果为当前元素
+            times = 1; // 重置计数为 1
+        }
+    }
+    return result;
+}
+
+// 46、最小的k个数
+// 输入 n 个整数，找出其中最小的 k 个数。
+// 例如，输入 4, 5, 1, 6, 2, 7, 3, 8 这 8 个数字，则最小的 4 个数字是 1, 2, 3, 4
+// 思路1: 排序, 最垃圾的方法，没分的
+function getLeastNumbersBySort(numbers, k) {
+    if (k <= 0 || k > numbers.length) {
+        return [];
+    }
+    numbers.sort((a,b) => a - b)
+    return numbers.slice(0, k);
+}
+// 思路2: 快排,跟上面的没太大区别
+function getLeastNumbersBySort(numbers, k) {
+    if (k <= 0 || k > numbers.length) {
+        return [];
+    }
+
+    quickSort(numbers, 0, numbers.length - 1)
+    return numbers.slice(0, k);
+}
+// 思路3: 基于基于Partition，时间复杂度为o(n)，在允许修改输入的数组的情况下, 推荐
+//      如果基于数组的第k个数字调整，使得比第k个数字小的数组都位于数组左边，比第k个数字大的数字都位于数组右边，
+//      这样位于数组左边的k个数字就是最小的k个数字
+function getLeastNumbersBySort(numbers, k) {
+    const partition = (numbers, start, end) => {
+        let pivot = numbers[end]; // 选择最后一个元素作为基准（pivot）
+        let i = start - 1; // i 用于跟踪小于或等于 pivot 的元素的最后一个索引
+    
+        for (let j = start; j < end; j++) { // 遍历从 start 到 end - 1 的元素
+            if (numbers[j] <= pivot) { // 如果当前元素小于或等于 pivot
+                i++; // 增加 i 的值
+                [numbers[i], numbers[j]] = [numbers[j], numbers[i]]; // 交换元素
+            }
+        }
+        // 将 pivot 放到正确的位置
+        [numbers[i + 1], numbers[end]] = [numbers[end], numbers[i + 1]];
+        return i + 1; // 返回 pivot 的最终位置
+    } 
+
+    if (k <= 0 || k > numbers.length) {
+        return [];
+    }
+
+    let len = numbers.length
+
+    let start = 0
+    let end = len - 1
+    let index = partition(numbers,  start, end)
+    // 找出第k大个数字，此时，k位置的左边都比k小，右边都比k大
+    while(index !== k - 1) {
+        // 如果下标大于k - 1，在左边部分的数组中
+        if(index > k - 1) {
+            end = index - 1
+            index = partition(numbers, start, end)
+        } else { // 如果下标小于k - 1，在右边部分的数组中
+            start = index + 1
+            index = partition(numbers, start, end)
+        }
+    }
+
+    return numbers.slice(0, k);
+}
+// 思路4: 堆排序，构建最大堆，堆顶是最大的，然后依次清空就得到结果了
+
+
+// 47、找出数组第k大的数字
+// 思路：已经有固定套路o(n)时间复杂度的方法，基于快排到partition
+//      如果基于数组的第k个数字调整，使得比第k个数字小的数组都位于数组左边，比第k个数字大的数字都位于数组右边，
+//      这样位于k处的数字就是第k大的
+function findK(numbers) {
+    const partition = (numbers, start, end) => {
+        let pivot = numbers[end]; // 选择最后一个元素作为基准（pivot）
+        let i = start - 1; // i 用于跟踪小于或等于 pivot 的元素的最后一个索引
+    
+        for (let j = start; j < end; j++) { // 遍历从 start 到 end - 1 的元素
+            if (numbers[j] <= pivot) { // 如果当前元素小于或等于 pivot
+                i++; // 增加 i 的值
+                [numbers[i], numbers[j]] = [numbers[j], numbers[i]]; // 交换元素
+            }
+        }
+        // 将 pivot 放到正确的位置
+        [numbers[i + 1], numbers[end]] = [numbers[end], numbers[i + 1]];
+        return i + 1; // 返回 pivot 的最终位置
+    } 
+
+    if (k <= 0 || k > numbers.length) {
+        return null;
+    }
+
+    let len = numbers.length
+
+    let start = 0
+    let end = len - 1
+    let index = partition(numbers,  start, end)
+    // 找出第k大个数字，此时，k位置的左边都比k小，右边都比k大
+    while(index !== k - 1) {
+        if(index > k - 1) {
+            end = index - 1
+            index = partition(numbers, start, end)
+        } else { 
+            start = index + 1
+            index = partition(numbers, start, end)
+        }
+    }
+
+    return numbers[k - 1]
+}
+
+// 48、数据流中的中位数
+// 如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。
+// 如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值
 
