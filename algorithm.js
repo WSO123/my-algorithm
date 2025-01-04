@@ -285,7 +285,7 @@ function findRepeatNum(numbers) {
         let count = 0
 
         for(const num of numbers) {
-            if(number >= start && number <= end) {
+            if(num >= start && num <= end) {
                 count++
             }
         }
@@ -2267,4 +2267,31 @@ function heapifyUp(arr, index) {
             break; // 如果不需要交换，结束循环
         }
     }
+}
+
+// 49、连续子数组的最大和
+// 输入一个整型数组，数组里有正数也有负数。数组中的一个或连续多个整数组成一个子数组。要求求出所有子数组的和的最大值，并且时间复杂度为o(n)。
+// [1, -2, 3, 10, -4, 7, 2, -5]
+// 思路：
+//      创建一个变量记录sum，一个变量记录最大和res 从第一位开始累加
+//      累加过程中若当前累加和<=0,则抛弃前面的累加和，从当前数字开始累加，累加和为当前数字值
+//      累加过程中也一直比较更新最大累加和
+function findGreatestSumOfSubArray(numbers) {
+    if (numbers === null || numbers.length === 0) {
+        return null;
+    }
+    let sum = 0
+    let res = -Infinity
+    for(let i = 0; i < numbers.length; i++) {
+        if(sum <= 0) {
+            sum = numbers[i]
+        } else {
+            sum += numbers[i]
+        }
+
+        if(sum > res) {
+            res = sum
+        }
+    }
+    return res
 }
