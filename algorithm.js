@@ -2373,8 +2373,91 @@ function numberOf1Between1AndN(n) {
 // 思路： 
 //      首先从最直观的方法开始思考，即从开始逐一枚举每个数字，计算每个数字的位数并累加。
 //      当累加的数位大于时，说明第位数字在当前数字中。然后从该数字中找出对应的那一位。
-//      为了提高效率，可以尝试寻找规律跳过若干数字。例如，先确定第位在几位数中，再计算出具体是哪个数字的哪一位。
-function digitAtIndex(n) {
+//      为了提高效率，可以尝试寻找规律跳过若干数字。例如，先确定第n位在几位数中，再计算出具体是哪个数字的哪一位。
+function findN(n) {
+    if(!n) {
+        return null
+    }
 
+    // 计算digits位数有多少个
+    const countOfIntegers = (digits) => {
+        if(digits === 1) {
+            return 10
+        }
+
+        return 9 * Math.pow(10, digits - 1)
+    }
+
+    // 计算给定位数 digits 的数字范围的起始数字
+    const  beginNumber = (digits) => {
+        // 当位数为 1 时，起始数字为 0
+        if (digits === 1) {
+            return 0;
+        }
+        // 当位数大于 1 时，计算起始数字，例如 2 位数从 10 开始
+        return Math.pow(10, digits - 1);
+    }
+
+    const findCore = (n, digits) => {
+        // 计算数字所在的数字范围的起始数字
+        let number = beginNumber(digits) + Math.floor(n / digits);
+        // 计算从右往左数的索引
+        let indexFromRight = digits - n % digits;
+        // 从右往左移动数字，直到找到所需的数字
+        for (let i = 1; i < indexFromRight; i++) {
+            number = Math.floor(number / 10);
+        }
+        // 返回该数字的最后一位
+        return number % 10;
+    }
+
+    // 初始化数字的位数为 1
+    let digits = 1;
+    while(true) {
+        // 计算该位数的个数
+        let numbers = countOfIntegers(digits)
+
+        // 如果索引在当前位数的数字范围内，就去这个范围内找
+        if(n < numbers * digits) {
+            return findCore(n, digits)
+        } else {
+            // 否则，跳过digits * numbers位数字，目标数字在紧跟着后面的第n - digits * numbers位
+            n = n - digits * numbers
+            // 增加位数继续查找
+            digits++
+        }
+    }
+}
+
+// 53、把数组排成最小的数
+// 输入一个正整数数组，将数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。
+// 例如[3, 32, 321]，输入数组，则打印出这3个数字能排成的最小数字321323
+// 思路： 需要对数组元素进行排序，排序规则，假设一个是m，一个是n，如果mn < nm, 则m排在n前面
+// 这里隐藏了一个问题就是，有可能结果超出范围，所以结果和比较大时候用字符串形式表示
+function printMinNumber(numbers) {
+    const compare = (m, n) => {
+        const mn = '' + m + n
+        const nm = '' + n + m
+        if(mn < nm) {
+            return -1
+        } else if(mn > nm) {
+            return 1
+        } else {
+            return 0
+        }
+    }
+    
+
+    if(!numbers || numbers.length === 0) {
+        return null
+    }
+   
+    numbers.sort(compare)
+
+    let res = ''
+    for(let i = 0; i < numbers.length; i++) {
+        res += numbers[i]
+    }
+    return res
 }
 
