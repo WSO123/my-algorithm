@@ -2471,7 +2471,6 @@ function printMinNumber(numbers) {
 //      采用从数字末尾开始，从右到左翻译并计算不同翻译数目，可以避免重复子问题的出现
 function getTranslationCount(num) {
     const countCore = (str) => {
-        // 待完成
         let len = str.length
         // 创建一个数组，存放中间态结果，
         // 如counts[len - 1]就是最后一位开始的翻译种类个数，
