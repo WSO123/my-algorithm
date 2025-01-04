@@ -2472,6 +2472,44 @@ function printMinNumber(numbers) {
 function getTranslationCount(num) {
     const countCore = (str) => {
         // 待完成
+        let len = str.length
+        // 创建一个数组，存放中间态结果，
+        // 如counts[len - 1]就是最后一位开始的翻译种类个数，
+        // counts[len - 2]就是倒数第二数字开始的翻译种类个数，
+        // 以此类推，counts[0]就是从第一位开始的整个数字的翻译种类个数
+        let counts = new Array(len).fill(0)
+        let count = 0
+        // 从右到左翻译可以避免出现重复子问题
+        for(let i = len - 1; i >= 0; i--) {
+            count = 0
+            if(i < len - 1) {
+                // 如果不是最后一位，取后一位的结果
+                count = counts[i + 1]
+
+                // 取当前位和后一位的值
+                let digit1 = parseInt(str[i])
+                let digit2 = parseInt(str[i + 1])
+                // 两位组成一个数值
+                let converted = digit1 * 10 + digit2
+                // 如果值在10到25范围内，则可以合并翻译成l - z之间的字母
+                if(converted >= 10 && converted <= 25) {
+                    // 如果i是倒数第二位，则后两位合并后只能位总种类数+1
+                    if(i === len - 2) { 
+                        count += 1
+                    } else { // 否则第i位和第i+1位合并，总种类数会多出counts[i + 2]个
+                        count += counts[i + 2]
+                    }
+                }
+            } else { 
+                // 最后一位开始的翻译种类只会有1个
+                count = 1
+            }
+
+            // 为当前状态赋值
+            counts[i] = count
+        }
+
+        return counts[0]
     }
 
     if(num < 0) {
