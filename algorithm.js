@@ -2627,6 +2627,7 @@ function getUglyNumber(index) {
     }
 
     let numbers = [1]
+    // 分别是指向当前需要乘以 2、3、5 的丑数在 numbers 数组中的位置。
     let p2 = 0
     let p3 = 0
     let p5 = 0
@@ -2634,6 +2635,9 @@ function getUglyNumber(index) {
     while(numbers.length < index) {
         let res = Math.min(numbers[p2] * 2, numbers[p3] * 3, numbers[p5] * 5)
         numbers.push(res)
+
+        // 避免重复，确保每个丑数只使用一次
+        // 移动指针指针指向下一个可以乘2｜3｜5的数
         if(numbers[p2] * 2 === res) {
             p2++
         }
@@ -2678,4 +2682,67 @@ function getSpecialNumber(index, factors) {
     return numbers[index - 1];
 }
 
+// 58、第一个只出现一次的字符
+// 在字符串中找出第一个只出现一次的字符。例如，输入 “abaccdef”，输出 “b”
+// 思路：哈希表存储次数，找到大于1的就返回，时间复杂度是o(n), 空间复杂度是字符的种类数o(k)
+function firstNotRepeatingChar(str) {
+    if(!str || str.length === 0) {
+        return null
+    }
+    let map = new Map()
+     // 第一次遍历：统计每个字符的出现次数
+     for (let char of str) {
+        map.set(char, (map.get(char) || 0) + 1);
+    }
+
+    // 第二次遍历：找到第一个出现次数为 1 的字符
+    for (let char of str) {
+        if (map.get(char) === 1) {
+            return char;
+        }
+    }
+
+    return null;
+}
+
+// 59、找出字符流中第一个只出现一次的字符。
+// 例如，当从字符流中只读出前两个字符 “go” 时，第一个只出现一次的字符是 “g”；
+// 当从该字符流中读出前6个字符 “google” 时，第一个只出现一次的字符是 “l”。字符只能一个接着一个从字符流中读出来
+// 思路：定义一个数据容器来保存字符在字符流中的位置。
+//      当字符第一次出现时，记录其位置；当再次出现时，将其位置更新为特殊值（如负数值）。
+//      这里用哈希表。通过扫描整个map，找出最小的大于等于0的值对应的字符，即为第一个只出现一次的字符
+class CharStatistics {
+    constructor() {
+        this.index = 0;
+        this.map = new Map();
+    }
+
+    insert(ch) {
+        // 如果字符还未出现过，记录其索引
+        if (!this.map.has(ch)) {
+            this.map.set(ch, this.index);
+        }
+        // 如果字符已经出现过且未标记为重复，标记为重复
+        else if (this.map.get(ch) >= 0) {
+            this.map.set(ch, -2);
+        }
+        this.index++;
+    }
+
+    firstAppearingOnce() {
+        for (let [char, index] of this.occurrence) {
+            if (index >= 0) {
+                return char; // 找到并返回第一个未重复的字符
+            }
+        }
+        return '';
+    }
+}
+
+// 60、数组中的逆序对
+// 在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组，要求求出这个数组中的逆序对的总数。
+// 例如，在数组[7,5,6,4]中，一共存在5个逆序对，分别是(7,5)、(7,6)、(7,4)、(5,4)和(6,4)。
+function inversePairs(numbers) {
+    
+}
 
