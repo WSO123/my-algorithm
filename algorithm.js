@@ -2951,3 +2951,98 @@ function findEqual(numbers) {
 //    /\   /\
 //   2  4 6  8
 // 例如，在上面的二叉搜索树中，按节点数值大小顺序，第三大节点的值是4
+// 思路： 中序遍历是递增的，所以中序遍历即可, 但是正常的中序遍历是从到小，而要从大小，一个是右子树->根->左子树
+function kthLargest(root, k) {
+    if(!root || k === 0) {
+        return null
+    }
+    let res
+    let count = 0
+    const inOrder = (node) => {
+        if(node === null || count >= k) {
+            return 
+        }
+
+        inOrder(node.right)
+        count++
+        if(count === k) {
+            res = node.val
+            return
+        }
+        inOrder(node.left)
+    }
+    inOrder(root)
+    return res
+}
+
+// 66、二叉树的深度
+// 输入一棵二叉树的根节点，求该树的深度。从根节点到叶节点依次经过的节点（含根、叶节点）形成树的一条路径，最长路径的长度为树的深度。
+//       1
+//      / \
+//     2   3
+//    /\    \
+//   4  5    6
+//     /
+//    7
+// 例如，在上面二叉树中，最长路径为1->2->5->7，所以深度为4
+// 思路： 如果只有一个根节点深度是1，如果有左右子树，那么深度就是左右子树深度的最大值 + 1
+function treeDepth(root) {
+    if(!root) {
+        return 0
+    }
+
+    let leftDepth = treeDepth(root.left)
+    let rightDepth = treeDepth(root.right)
+
+    return Math.max(leftDepth, rightDepth) + 1
+}
+
+
+// 67、平衡二叉树
+// 输入一颗二叉树的根节点，判断是不是平衡二叉树，如果某二叉树的任意节点的左右子树深度相差不超过1，那么它就是一棵平衡二叉树
+// 上题的例子就是一颗平衡二叉树
+// 思路1: 基于二叉树深度来求平衡二叉树
+//       次调用treeDepth都需要重新计算子树的深度，导致重复计算。对于深度为 n 的树，复杂度为o(n2)
+function isBalanceTree(root) {
+    if(!root) {
+        return true
+    }
+
+    let leftDepth = treeDepth(root.left)
+    let rightDepth = treeDepth(root.right)
+
+    if(Math.abs(leftDepth - rightDepth) > 1) {
+        return false
+    }
+
+    return isBalanceTree(root.left) && isBalanceTree(root.right)
+}
+// 思路2: 在判断平衡的同时，计算了每个节点的深度，避免重复递归
+function isBalanceTree(root, depth = 0) {
+    if(!root) {
+        depth = 0
+        return true
+    }
+    // 递归检查左子树和右子树是否平衡，同时计算深度
+    const checkBalance = (node) => {
+        if (!node) {
+            return 0;  // 空节点的深度为0
+        }
+
+        let left = checkBalance(node.left);  // 左子树深度
+        if(left === -1) return -1
+
+        let right = checkBalance(node.right);  // 右子树深度
+        if(right === -1) return -1
+
+        // 如果左右子树的深度差大于1，则说明不平衡
+        if (Math.abs(left - right) > 1) {
+            return -1;  // 返回-1表示不平衡
+        }
+
+        // 返回当前节点的深度
+        return Math.max(left, right) + 1;
+    }
+
+    return checkBalance(root) !== -1;  // 如果返回-1，表示不平衡，否则表示平衡
+}
