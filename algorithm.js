@@ -2517,4 +2517,51 @@ function getTranslationCount(num) {
     return countCore(num)
 }
 
-// 55、
+// 55、礼物的最大价值
+// 在一个m*n的棋盘的每一格都放有一个礼物，每个礼物都有一定的价值（价值大于0）。
+// 可以从棋盘的左上角开始拿格子里的礼物，并每次向左或者向下移动一格，直到到达棋盘的右下角。要求计算最多能拿到多少价值的礼物。
+// 例如，在下面的棋盘中，如果沿着带下划线的数字的线路（1、12、5、7、7、16、5），能拿到最大价值为53的礼物
+// 1  10 3  8
+// 12 2  9  6
+// 5  7  4  11
+// 3  7  16 5
+// 思路：动态规划，使用一个二维数组保存走到每个节点时价值的最大值，从(0,0)开始走，走到右下角时数组里的值最大
+function getMaxValue(values, rows, cols) {
+    if(!values || rows === 0 || cols === 0) {
+        return 0
+    }
+
+    let maxValues = new Array(rows).fill(0).map(() => new Array(cols).fill(0))
+    // 从(0,0)开始走
+    for(let i = 0; i < rows; i++) {
+        for(j = 0; j < cols; j++) {
+            // 移动可以有两个方向，up或left
+            let up = 0
+            let left = 0
+            if(i > 0) { // 当前行大于0则可以向上走
+                up = maxValues[i - 1][j]
+            }
+
+            if(j > 0) { // 当前列大于0则可以向左走
+                left = maxValues[i][j - 1]
+            }
+
+            // 当前格子所在的最大值就是可以移动到当前格子的最大值加上当前格子的值
+            if(up > left) {
+                maxValues[i][j] = up + values[i * cols + j]
+            } else {
+                maxValues[i][j] = left + values[i * cols + j]
+            }
+        }
+    }
+    return maxValues[rows - 1][cols -1]
+}
+
+// 56、最长不含重复字符的子字符串
+// 要求从给定字符串中找出一个最长的不包含重复字符的子字符串，并计算其长度。假设字符串中只包含a-z的字符。
+// 例如，在字符串 “arabcacfr” 中，最长的不含重复字符的子字符串是 “acfr”，长度为4
+// 思路：动态规划
+// 
+function longestSubstringWithoutDuplication(str) {
+
+}
