@@ -2782,6 +2782,7 @@ function findFirstCommonNode(l1, l2) {
     return res;
 }
 // 思路3: 跟链表中的第k个节点的解法类似，先统计l1和l2的长度，l1如果比l2长k，那么l1先走k步，接着两个链表同时遍历，找到第一个相同的节点就是目标节点
+//      时间复杂度是o(m+n),空间复杂度是o(1)
 function findFirstCommonNode(l1, l2) {
     if (!l1 || !l2) {
         return null;
@@ -2821,4 +2822,66 @@ function findFirstCommonNode(l1, l2) {
 
     // 没有公共节点
     return null;
+}
+
+// 62、在排序数组中查找数字
+// 统计一个数字在排序数组中出现的次数。例如，输入排序数组[1,2,3,3,3,3,4,5]和数字3，由于在这个数组中3出现了4次，所以输出4
+// 思路： 典型的二分查找,根据排序数组的特性，先找第一个出现的位置，再找第二个出现的位置，两个位置都知道了，自然知道结果了
+function getNumberOfK(numbers, k) {
+    if(!numbers || numbers.length === 0) {
+        return 0
+    }
+
+    const firstK = (numbers, k, left, right) => {
+        if(left > right) {
+            return -1
+        }
+
+        let mid = (left + right) >> 1
+        if(numbers[mid] === k) { // 找到了
+            // 找第一个k，边界条件应该是它的前一个值不等于k的值，这时候这个k才是第一个
+            if(mid > 0 && numbers[mid - 1] === k) {
+                return firstK(numbers, k, left, mid - 1)
+            } else {
+                return mid
+            }
+
+        } else if(numbers[mid] > k) { // 大于，再mid左边找
+            return firstK(numbers, k, left, mid - 1)
+        } else { // 小于在mid右边找
+            return firstK(numbers, k, mid + 1, right)
+        }
+    }
+
+    const lastK = (numbers, k, left, right) => {
+        if(left > right) {
+            return -1
+        }
+
+        let mid = (left + right) >> 1
+        if(numbers[mid] === k) { // 找到了
+            // 找最后一个k，边界条件应该是它的后一个值不等于k的值，这时候这个k才是最后一个k
+            if(mid < right && numbers[mid + 1] === k) {
+                return lastK(numbers, k, mid + 1, right)
+            } else {
+                return mid
+            }
+
+        } else if(numbers[mid] > k) { // 大于，再mid左边找
+            return lastK(numbers, k, left, mid - 1)
+        } else { // 小于在mid右边找
+            return lastK(numbers, k, mid + 1, right)
+        }
+    }
+
+    // 第一次出现的位置
+    let first = firstK(numbers, k, 0, numbers.length - 1)
+    // 最后出现的位置
+    let last = lastK(numbers, k, 0, numbers.length - 1)
+
+    if(first !== -1 && last !== -1) {
+        return last - first + 1
+    }
+
+    return 0
 }
