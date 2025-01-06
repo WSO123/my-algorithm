@@ -2585,3 +2585,97 @@ function longestSubstringWithoutDuplication(str) {
     return res;
 }
 
+// 57、丑数
+// 把只包含因子2、3和5的数称作丑数（Ugly Number），习惯上把1当作第一个丑数。要求按从小到大的顺序求出第1500个丑数。例如，6、8都是丑数，但14不是，因为它包含因子7。
+// 思路1: 逐个判断数是不是丑数
+const isUgly = (number) => {
+    while(number % 2 === 0) {
+        number = number / 2
+    }
+
+    while(number % 3 === 0) {
+        number = number / 3
+    }
+
+    while(number % 5 === 0) {
+        number = number / 5
+    }
+
+    return number === 1
+}
+
+function getUglyNumber(index) {
+    if(index <= 0) {
+        return null
+    }
+
+    let curIndex = 0
+    let number = 0
+    while(curIndex < index) {
+        number++
+        if(isUgly(number)) {
+            curIndex++
+        }
+    }
+    return number
+}
+// 思路2: 使用一个数组来存储已经排序好的丑数，第一个丑数是1，从第二个丑数开始，每个丑数的值都是之前的丑数乘以2、3、5得出的值
+//  只要构建从小到大排序好的丑数数组，直到数组长度为n时，最后一个数就是结果
+function getUglyNumber(index) {
+    if(index <= 0) {
+        return null
+    }
+
+    let numbers = [1]
+    let p2 = 0
+    let p3 = 0
+    let p5 = 0
+
+    while(numbers.length < index) {
+        let res = Math.min(numbers[p2] * 2, numbers[p3] * 3, numbers[p5] * 5)
+        numbers.push(res)
+        if(numbers[p2] * 2 === res) {
+            p2++
+        }
+
+        if(numbers[p3] * 3 === res) {
+            p3++
+        }
+
+        if(numbers[p5] * 5 === res) {
+            p5++
+        }
+    }
+
+    return numbers[index - 1]
+}
+
+// 这个方法其实可以抽成一个通用的套路，factors数组是满足条件的因数数组，这样就可以输出任意第index个满足只有factors中因数的数了
+function getSpecialNumber(index, factors) {
+    if (index <= 0 || factors.length === 0) {
+        return null;
+    }
+
+    let numbers = [1]; // 初始数组，第一个特殊数是 1
+    let pointers = Array(factors.length).fill(0); // 每个因数的指针初始化为 0
+
+    while (numbers.length < index) {
+        // 计算所有因数对应的候选值
+        let candidates = factors.map((factor, i) => numbers[pointers[i]] * factor);
+
+        // 选择当前的最小值作为下一个特殊数
+        let nextNumber = Math.min(...candidates);
+        numbers.push(nextNumber);
+
+        // 更新指针
+        for (let i = 0; i < factors.length; i++) {
+            if (candidates[i] === nextNumber) {
+                pointers[i]++;
+            }
+        }
+    }
+
+    return numbers[index - 1];
+}
+
+
