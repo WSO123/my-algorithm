@@ -2827,6 +2827,7 @@ function findFirstCommonNode(l1, l2) {
 // 62、在排序数组中查找数字
 // 统计一个数字在排序数组中出现的次数。例如，输入排序数组[1,2,3,3,3,3,4,5]和数字3，由于在这个数组中3出现了4次，所以输出4
 // 思路： 典型的二分查找,根据排序数组的特性，先找第一个出现的位置，再找第二个出现的位置，两个位置都知道了，自然知道结果了
+// 二分查找很适合在排序数组里使用
 function getNumberOfK(numbers, k) {
     if(!numbers || numbers.length === 0) {
         return 0
@@ -2885,3 +2886,68 @@ function getNumberOfK(numbers, k) {
 
     return 0
 }
+
+// 63、0 - n中缺失的数字
+// 一个长度为n - 1度递增排序数组中所有数字都是唯一的， 并且每个数字都在0 - n-1之内，在范围0 - n-1的n个数字有且只有一个数字不在该数字中，找出该数字
+// 思路： 二分查找，找出第一个下标和值不相等的数
+function findNumber(numbers) {
+    if(!numbers || numbers.length === 0) {
+        return -1
+    }
+
+    const findCore = (numbers, left, right) => {
+        if(left > right) {
+            return -1
+        }
+        let mid = (left + right) >> 1
+        if(mid !== numbers[mid]) { // 如果下标和值不相等
+            // 如果 mid 是第一个位置，或者前一个位置值与下标相等，说明找到了
+            if(mid === 0 || numbers[mid - 1] === mid - 1) {
+                return mid
+            } else { // 否则证明在左边
+                return findCore(numbers, left, mid - 1)
+            }
+        } else { // 如果下标和值相等，证明在右边
+            return findCore(numbers, mid + 1, right)
+        }
+    }
+
+    return findCore(numbers, 0, numbers.length - 1)
+}
+
+// 64、数组中数值和下标相等的元素
+// 假设一个单调递增的数组里每个元素都是整数并且是唯一的。请实现一个函数，找出数组中任意一个数值等于其下标的元素
+// 思路：还是二分查找，找出第一个值和下标相等的
+function findEqual(numbers) {
+    if(!numbers || numbers.length === 0) {
+        return -1
+    }
+
+    const findCore = (numbers, left, right) => {
+        if(left > right) {
+            return -1
+        }
+
+        let mid = (left + right) >> 1
+
+        if(mid === numbers[mid]) {
+            return mid
+        } else if(mid > numbers[mid]) { // 在左边
+            return findCore(numbers, left, mid - 1)
+        } else { // 在右边
+            return findCore(numbers, mid + 1, right)
+        }
+    }
+
+    return findCore(numbers, 0, numbers.length - 1)
+}
+
+
+// 65、二叉搜索树的第 k 大节点
+// 给定一棵二叉搜索树，请找出其中第k大的节点。
+//       5
+//      / \
+//     3   7
+//    /\   /\
+//   2  4 6  8
+// 例如，在上面的二叉搜索树中，按节点数值大小顺序，第三大节点的值是4
