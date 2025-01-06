@@ -2560,8 +2560,28 @@ function getMaxValue(values, rows, cols) {
 // 56、最长不含重复字符的子字符串
 // 要求从给定字符串中找出一个最长的不包含重复字符的子字符串，并计算其长度。假设字符串中只包含a-z的字符。
 // 例如，在字符串 “arabcacfr” 中，最长的不含重复字符的子字符串是 “acfr”，长度为4
-// 思路：动态规划
+// 思路：动态规划，用一个map来存储字符上一次的位置，用start记录字符串的其实位置，如果当前字符已经有上一次的位置了，则证明已经重复了，就更新起始
 // 
 function longestSubstringWithoutDuplication(str) {
+    // 存储字符在字符串中的位置
+    let dic = new Map()
+    let res = 0
+    let start = -1; // 用于记录当前子字符串的起始位置
+    for (let i = 0; i < str.length; i++) {
+        // 获取当前字符上一次出现的位置
+        let pos = dic.has(str[i]) ? dic.get(str[i]) : -1; // 如果字符存在于 Map 中，获取其位置；否则为 -1
 
+        // 更新子字符串的起始位置
+        if (pos !== -1) { // 每次pos值不为-1就可以直接更新start为pos?因为遍历是从0开始的，只要pos有值，它肯定比当前的start大
+            start = pos;
+        }
+
+        dic.set(str[i], i); // 更新当前字符的位置
+
+        // 计算当前子字符串的长度
+        let tmp = i - start; // 当前子字符串的长度为当前索引 i 减去起始位置
+        res = Math.max(res, tmp); // 更新结果，取当前最长长度和之前记录的最长长度的较大值
+    }
+    return res;
 }
+
