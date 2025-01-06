@@ -3046,3 +3046,107 @@ function isBalanceTree(root, depth = 0) {
 
     return checkBalance(root) !== -1;  // 如果返回-1，表示不平衡，否则表示平衡
 }
+
+// 68、数组中只有一个数出现了一次其他都出现了两次，找出哪个数字
+// 思路： 任何一个数异或自己得出的值都是0，也就是8^8 = 0,把所有数字连续异或，相同的数就会消掉，只剩下只有一次的那个数
+function findAppearOne(numbers) {
+    if(!numbers || numbers.length === 0) {
+        return null
+    }
+
+    let res = numbers[0]
+    for(let i = 1; i < numbers.length; i++) {
+        res = res ^ numbers[i]
+    }
+    return res
+}
+
+// 69、数组中数字出现的次数
+// 一个整型数组里除了两个数字之外，其他的数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是o(n)，空间复杂度是o(1)。
+// 例如，在数组[2,4,3,6,3,2,5,5]中，只出现一次的数字是4和6
+// 思路：如果一个数组里只有一个出现1次的数，所有数异或就能得出结果，现在数组里有两个出现一次的数，所以想办法把数组拆分成两个都只包含一个出现一次的数组就可以了
+//      a、先异或所有数得到的是两个只出现一次数字的异或结果，然后因为这两个数字不同，所以异或结果不为0，
+//      b、在异或结果中找到第一个为1的位，根据这一位将数组分为两组，一组该位为1，另一组该位为0。
+//      c、两个只出现一次的数字分别在这两组中，且相同的数字会被分到同一组（因为相同的数字任意一位都是相同的，所以不可能把两个相同的数字分到不同的组里去）。
+//      d、然后分别对两组数字进行异或，就能得到这两个只出现一次的数字
+function findNumsAppearOnce(numbers) {
+    if(!numbers || numbers.length === 0) {
+        return null
+    }
+
+    // 找出二进制中第一个1出现在第几位
+    const findFirstBit1 = (num) => {
+        let indexBit = 0
+        // num & 1检测最低位是不是1
+        while((num & 1) === 0) {
+            num = num >> 1 // 右移1为，说明1不在当前位
+            indexBit++ // 位数+1
+        }
+        return indexBit
+    }
+
+    // 判断二进制数第bitIndex是是不是1
+    const isBit1 = (num, bitIndex) => {
+        num = num >> bitIndex
+        return (num & 1) === 1
+    }
+
+    // 1、求出两个出现一次数字的异或结果
+    let resOR = numbers[0]
+    for(let i = 1; i < numbers.length; i++) {
+        resOR = resOR ^ numbers[i]
+    }
+
+    // 2、找出结果的二进制第一位1出现在第几位,依靠它进行分组
+    let firstBit = findFirstBit1(resOR)
+
+    // 定义两个结果
+    let num1 = 0
+    let num2 = 0
+    for(let i = 0; i < numbers.length; i++) {
+        // 在循环过程中根据firstBit对结果进行分组
+        if(isBit1(numbers[i], firstBit)) {
+            num1 = num1 ^ numbers[i]
+        } else {
+            num2 = num2 ^ numbers[i]
+        }
+    }
+    return [num1, num2]
+}
+
+// 70、在一个数组中除一个数字只出现一次之外，其他数字都出现了三次。请找出那个只出现一次的数字。
+//  例如，在数组中[1,1,1,2,2,2,3]，只出现一次的数字是3
+// 思路：考虑数字的二进制表示，对于出现三次的数字，其每一位上出现1的次数必然是的3倍数（0次、3次等）。
+//      统计数组中所有数字每一位上出现1的次数，然后将每一位上1出现的次数对3取余，结果为1的位就是只出现一次的数字在该位上的值
+function findNumsAppearOnce(numbers) {
+    if(!numbers || numbers.length === 0) {
+        return null
+    }
+
+    // 用来统计数组中所有数的每位二进制位上出现1的总次数
+    let bitSum = new Array(32).fill(0)
+
+    // 进行统计
+    // 循环每个数据
+    for(let i = 0; i < numbers.length; i++) {
+        let bitMask = 1 //初始化1，先去判断最低位是不是1
+        // 统计该数中每位的1的个数
+        for(let j = 31; j >= 0; j--) {
+            if(numbers[j] & bitMask) { // 判断当前位是不是1
+                bitSum[j]++
+            }
+            bitMask = bitMask << 1 //左移一位，为下一次判断再前一位做准备
+        }
+    }
+
+    let res = 0
+    // 对刚刚统计的数据进行遍历
+    for(let i = 0; i < 32; i++) {
+        // 如果当前位的1个数不能被3整除，证明当前位的多余的1是这个只出现一次的数贡献的
+        if(bitSum[i] % 3 !== 0) {
+            res = res + Math.pow(2, i)
+        } 
+    }
+
+    return res
+}
