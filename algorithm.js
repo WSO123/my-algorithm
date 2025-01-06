@@ -2739,10 +2739,86 @@ class CharStatistics {
     }
 }
 
-// 60、数组中的逆序对
+// 60、数组中的逆序对， 难度：困难， 先不做了
 // 在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组，要求求出这个数组中的逆序对的总数。
 // 例如，在数组[7,5,6,4]中，一共存在5个逆序对，分别是(7,5)、(7,6)、(7,4)、(5,4)和(6,4)。
-function inversePairs(numbers) {
-    
-}
+function inversePairs(numbers) {}
 
+// 61、两个链表的第一个公共节点
+// 输入两个链表，找出他们的第一个公共节点
+// 思路1： 链表1长度m，链表2长度n，链表1每遍历一个节点，就遍历一遍链表2找有没有相同的，时间复杂度是o(mn),显然不可取
+// 思路2: 分别把两个链表打进两个栈里，然后两个栈一起出栈，在公共节点出现之前，出栈的值都会相同，所以一旦出栈的值开始不同，证明前一个出栈的值是公共节点，
+//      时间复杂度o(m+n),空间复杂度o(m+n)
+function findFirstCommonNode(l1, l2) {
+    if (!l1 || !l2) {
+        return null;
+    }
+
+    let stack1 = [];
+    let stack2 = [];
+
+    // 第一个链表入栈
+    while (l1) {
+        stack1.push(l1);
+        l1 = l1.next;
+    }
+
+    // 第二个链表入栈
+    while (l2) {
+        stack2.push(l2);
+        l2 = l2.next;
+    }
+
+    let res = null;
+    while (stack1.length && stack2.length) {
+        let a = stack1.pop();
+        let b = stack2.pop();
+        if (a === b) {
+            res = a; // 返回公共节点本身
+        } else {
+            break; // 遇到不相等的节点，停止比较
+        }
+    }
+    return res;
+}
+// 思路3: 跟链表中的第k个节点的解法类似，先统计l1和l2的长度，l1如果比l2长k，那么l1先走k步，接着两个链表同时遍历，找到第一个相同的节点就是目标节点
+function findFirstCommonNode(l1, l2) {
+    if (!l1 || !l2) {
+        return null;
+    }
+
+    const getLen = (l) => {
+        let len = 0;
+        while (l) {
+            len++;
+            l = l.next;
+        }
+        return len;
+    }
+
+    let len1 = getLen(l1);
+    let len2 = getLen(l2);
+    let gap = Math.abs(len1 - len2);
+
+    // 调整较长链表的指针，使两个链表从相同的起始位置开始同步遍历
+    while (gap) {
+        if (len1 > len2) {
+            l1 = l1.next;
+        } else {
+            l2 = l2.next;
+        }
+        gap--;
+    }
+
+    // 同步遍历两个链表，寻找第一个公共节点
+    while (l1 && l2) {
+        if (l1 === l2) {
+            return l1;
+        }
+        l1 = l1.next;
+        l2 = l2.next;
+    }
+
+    // 没有公共节点
+    return null;
+}
