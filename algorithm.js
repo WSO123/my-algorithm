@@ -3207,3 +3207,222 @@ function findListWithSum(s) {
     }
     return res
 }
+
+// 73、翻转单词顺序
+// 输入一个英文句子，翻转句子中单词的顺序，但单词内字符的顺序不变。为简单起见，标点符号和普通字母一样处理。
+// 例如，输入字符串 "I am a student."，则输出 "student. a am I"
+// 思路： 首先反转整个句子，然后再反转每个单词,也可以一边反转句子一边反转单词
+function reverseWords(str) {
+    str = str.trim();
+    let word = ''; // 存储当前单词
+    let resultArr = [];
+
+    // 遍历字符串，从右到左
+    for (let i = str.length - 1; i >= 0; i--) {
+        if (str[i] !== ' ') {
+            word = str[i] + word; // 拼接当前单词
+        } else if (word) {
+            resultArr.push(word); // 遇到空格，保存当前单词
+            word = '';
+        }
+    }
+
+    // 处理最后一个单词
+    if (word) {
+        resultArr.push(word);
+    }
+
+    return resultArr.join(" ");
+}
+
+// 74、字符串的左旋转操作是把字符串前面的若干个字符转移到字符串的尾部。请定义一个函数实现字符串左旋转操作的功能。
+// 比如，输入字符串 "abcdefg" 和数字，该函数将返回左旋转位得到的结果 "cdefgab"
+// 思路： 可以先将字符串的前个字符反转，再将剩余的字符反转，最后将整个字符串反转。
+//      例如，对于 "abcdefg" 和，先反转 "ab" 得到 "ba"，再反转 "cdefg" 得到 "gfedc"，最后反转 "bagfedc" 得到 "cdefgab"
+function leftRotateString(str, n) {
+    if (!str || n === 0) {
+        return str;
+    }
+
+    const reverse = (str) => {
+        let res = ''
+        for(let i = str.length - 1; i >= 0; i--) {
+            res += str[i]
+        }
+        return res
+    }
+
+    // 防止 n 大于字符串长度
+    n = n % str.length
+
+    // 第一步、先反转前n个字符
+    let first = reverse(str.slice(0, n))
+    let second = reverse(str.slice(n))
+    let res = first + second
+
+    return reverse(res)
+}
+// 也可以直接用slice
+function leftRotateString(str, n) {
+    if (!str || n === 0) {
+        return str;
+    }
+
+    // 防止 n 大于字符串长度
+    n = n % str.length;
+
+    // 拼接字符串：将从 n 到末尾的部分，移到前面
+    return str.slice(n) + str.slice(0, n);
+}
+
+// 75、队列最大值
+// 给定一个数组 nums 和滑动窗口的大小 k，请找出所有滑动窗口里的最大值。
+// 例如，输入 nums = [1,3,-1,-3,5,3,6,7]，k = 3，则滑动窗口依次为 [1,3,-1]、[3,-1,-3]、[-1,-3,5]、[-3,5,3]、[5,3,6]、[3,6,7]，
+// 对应的最大值依次为 3、3、5、5、6、7。
+// 思路1: 暴力扫描每个滑动窗口的最大值，时间复杂度是o(nk),k为滑动窗口的大小
+// 思路2: 滑动窗口其实可以当作一个队列，向右移动的过程中相当于右边新纳入窗口的元素入队，左边离开窗口的元素出队
+//      那么只要在入队出队过程中找出最大值就好了，如果可以用两个栈实现这个队列，就可以实现在o(1)时间内得到栈中的最大值，总体时间的时间复杂度就降到了o(n)
+class MaxQueue {
+    constructor() {
+        this.quene = [] 
+        this.maxQueue = []
+    }
+
+    addTail(ele) {
+        this.quene.push(ele)
+        // 弹出maxQuene栈顶比当前入队的值的小的值
+        while(this.maxQueue.length && this.maxQueue[this.maxQueue.length - 1] < ele) {
+            this.maxQueue.pop()
+        }
+        // 再入队，确保maxQueue是从大到小排列的
+        this.maxQueue.push(ele)
+    }
+
+    deleteHead() {
+       if(this.quene.length === 0) {
+            return -1
+       }
+       const tobeDeleted = this.quene.shift()
+       // 调整maxQueue
+       if(tobeDeleted === this.maxQueue[0]) {
+            this.maxQueue.shift()
+       }
+    }
+
+    maxValue() {
+        // 第一个值永远是最大的
+        return this.maxQueue.length? this.maxQueue[0] : -1;
+    }
+}
+function maxValues(numbers, k) {
+    if (!numbers || numbers.length === 0 || k <= 0 || k > numbers.length) {
+        return []
+    }
+
+    let queue = new MaxQueue()  // 将 maxQuene 更正为 MaxQueue
+    // 先入队k个元素，实现第一个滑动窗口
+    for (let i = 0; i < k; i++) {
+        queue.addTail(numbers[i])
+    }
+
+    let res = []
+    res.push(queue.maxValue())  // 获取第一个滑动窗口的最大值
+
+    // 然后让窗口滑动
+    for (let i = k; i < numbers.length; i++) {
+        queue.addTail(numbers[i])  // 将新的元素加入队列
+        queue.deleteHead()         // 删除队列头部元素
+        res.push(queue.maxValue()) // 获取当前滑动窗口的最大值
+    }
+
+    return res
+}
+
+// 76、n个骰子的点数
+// 把 n 个骰子扔在地上，所有骰子朝上一面的点数之和为 s。输入 n，打印出 s 的所有可能的值出现的概率
+// 总体思路： n个骰子最小的和为n，最大的和为6n，排列组合数是6的n次方，统计出每个点数出现的次数，再除以6的n次方，就是每个点数和的概率
+// 思路1: 动态规划， 定义一个递归函数来计算个骰子点数之和为s的组合数。对于每个骰子，它可能出现1到6点，
+//      所以可以通过递归计算前n-1个骰子在不同点数情况下与当前骰子点数组合得到的s组合数。
+//      为了避免重复计算，使用一个二维数组（记忆化数组）来存储已经计算过的结果
+function printP(n) {
+    if (n < 1) {
+        return []
+    }
+
+    // 求总共的组合数
+    const getCount = (n, s) => {
+        // 如果总和s小于n或大于6n，说明不可能出现这种组合
+        if (s < n || s > 6 * n) return 0;
+        if (n === 1) {
+            // 只有1个骰子时，点数和为1到6的概率均为1
+            return s >= 1 && s <= 6 ? 1 : 0;
+        }
+        if (memo[n][s] !== -1) return memo[n][s];
+        
+        let sum = 0;
+        // 递归地计算前n-1个骰子的组合数
+        for (let i = 1; i <= 6; i++) {
+            sum += getCount(n - 1, s - i);
+        }
+        memo[n][s] = sum;
+        return sum;
+    }
+
+    // 定义二维数组统计计算结果
+    // memo[i][j]表示当有i个骰子时，点数之和为j的组合数
+    const memo = new Array(n + 1).fill(0).map(() => new Array(6 * n + 1).fill(-1))
+    const total = Math.pow(6, n)
+    let res = []
+
+    // 逐个求点数和从n到6n的概率值
+    for (let i = n; i <= 6 * n; i++) {
+        res.push(getCount(n, i) / total)
+    }
+
+    return res
+}
+// 思路2: 动态规划，上面是自顶向下的求解，现在实现自底向上的版本
+function printP(n) {
+    if (n < 1) {
+        return []
+    }
+
+    // 定义二维数组统计计算结果
+    // memo[i][j]表示当有i个骰子时，点数之和为j的组合数
+    const memo = new Array(n + 1).fill(0).map(() => new Array(6 * n + 1).fill(0))
+
+    // 初始化1个骰子的情况
+    for(let i = 1; i <=6; i++) {
+        memo[1][i] = 1
+    }
+
+    // 控制骰子的数量,逐步考虑从 2 个骰子到 n 个骰子的情况。
+    for(let i = 2; i <= n; i++) {
+        // 控制骰子点数的总和，遍历了 i 个骰子所有可能的点数总和范围
+        for(let j = i; j <= 6 * i; j++) {
+            // 表示当前骰子可能掷出的点数，范围是从 1 到 6
+            for(let k = 1; k <= 6 && k <= j; k++) {
+               // 当我们考虑第 i 个骰子掷出 k 点时，要得到 i 个骰子点数总和为 j，就需要在前 i - 1 个骰子掷出 j - k 点的基础上
+               // 由于第 i 个骰子可以掷出 1 到 6 中的任何一个点数（由 k 表示），
+               // 所以将 memo[i - 1][j - k] 的值累加到 memo[i][j] 中，将所有可能的 k 值对应的组合数相加，就能得到 i 个骰子点数总和为 j 的组合数。
+               memo[i][j] += memo[i - 1][j - k] // i - 1 个骰子掷出点数总和为 j - k 的组合数。
+            }
+        }
+    }
+
+    const total = Math.pow(6, n)
+    let res = []
+     // 逐个求点数和从n到6n的概率值
+     for (let i = n; i <= 6 * n; i++) {
+        res.push(memo[n][i] / total)
+    }
+
+    return res
+}
+
+// 77、扑克牌中的顺子
+// 从扑克牌中随机抽 5 张牌，判断是不是一个顺子，这里的顺子指的是连续的 5 张牌。
+// 2～10 为数字本身，J 为 11，Q 为 12，K 为 13，A 为 1，而大小王可以看成任意数字。
+function isStraight(nums) {
+    
+}
