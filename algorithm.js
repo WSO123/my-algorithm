@@ -3150,3 +3150,60 @@ function findNumsAppearOnce(numbers) {
 
     return res
 }
+
+// 71、和为 s 的数字
+// 输入一个递增排序的数组和一个数字s，在数组中查找两个数，使得它们的和正好是s。如果有多对数字的和等于，则输出任意一对即可。
+// 例如，输入数组[1,2,4,7,11,15]和数字15，由于4+11 = 15，所以输出4和11。
+// 思路：双指针，一个在首位，一个在末尾
+function findNumbersWithSum(numbers, s) {
+    if(!numbers || numbers.length === 0 || s === undefined) {
+        null
+    }
+    let p1 = 0
+    let p2 = numbers.length - 1
+    while(p1 < p2) {
+        if(numbers[p1] + numbers[p2] > s) {
+            p2--
+        } else if(numbers[p1] + numbers[p2] < s) {
+            p1++
+        } else {
+            return [numbers[p1], numbers[p2]]
+        }
+    }
+    return []
+}
+
+// 72、输入一个正数s，打印出所有和为的连续正数序列（至少含有两个数）。
+// 例如，输入15，由于1+2+3+4+5=4+5+6=7+8=15，所以打印出3个连续序列1-5、4-6和7-8。
+// 思路： 双指针，一个指向首位，一个指向第二位，然后进行遍历
+function findListWithSum(s) {
+    if(s < 3) {
+       return []
+    }
+
+    // p1 指向较小的数，p2指向较大的数
+    let p1 = 1
+    let p2 = 2
+    let mid = (1 + s) >> 1 // p1一旦指向大于mid时就不可能找到值了
+    let sum = p1 + p2
+    let res = []
+    while(p1 < mid) {
+        if(sum === s) {
+            let arr = []
+            for(let i = p1; i <= p2; i++) {
+                arr.push(i)
+            }
+            res.push(arr)
+            // 找到满足条件的序列后，增大 big 以继续寻找下一个可能的序列
+            p2++;
+            sum += p2;
+        } else if(sum > s) {
+            sum -=  p1
+            p1++
+        } else {
+            p2++
+            sum += p2
+        }
+    }
+    return res
+}
