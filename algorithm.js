@@ -3589,7 +3589,136 @@ function swap(a,b) {
 // 83、构建乘积数组
 // 给定一个数组 A[0,1,…,n-1]，请构建一个数组 B[0,1,…,n-1]，其中 B[i] 的值是数组 A 中除了 A[i] 之外的所有元素的乘积。不能使用除法。
 // 例如，对于数组 A = [1,2,3,4]，B = [24,12,8,6]
-function structArr() {
+// 思路1: 左右乘积，对于B[i], 可以分别计算left[i]和right[i],最后再计算B[i] = left[i] + right[i]
+function structArr(A) {
+    let len = A.length
+    let left = new Array(len).fill(1)
+    let right = new Array(len).fill(1)
 
+    // 从左到右计算left[i]
+    // left[0] 被赋值为 1，因为 A[0] 左边没有元素。
+    // 循环从第二个开始
+    for(let i = 1; i < len; i++) {
+        left[i] = left[i - 1] * A[i - 1]
+    }
+
+    // 从右到左计算right[i]
+    // right[n-1] 被赋值为 1，因为 A[n-1] 右边没有元素
+    // 从倒数第二个开始
+    for(let i = len - 2; i >= 0; i--) {
+        right[i] = right[i + 1] * A[i + 1]
+    }
+
+    let B = []
+    //计算B[i]
+    for(let i = 0; i < len; i++) {
+        B[i] = left[i] * right[i]
+    }
+    return B
+}
+// 思路2:可以只用一个辅助数组和一个变量，通过两次遍历完成。
+// 第一次从左到右，将 left 存储在结果数组 B 中。
+// 第二次从右到左，使用一个变量 right 存储右侧的累乘结果，并与 B[i] 相乘更新 B[i]。
+function structArr(A) {
+    let len = A.length
+    let B = new Array(len).fill(1)
+
+    // 从左到右计算left[i]
+    for(let i = 1; i < len; i++) {
+        B[i] = B[i - 1] * A[i - 1]
+    }
+
+    let right = 1
+     // 从右到左计算right[i]
+     for(let i = len - 1; i >= 0; i--) {
+        B[i] = B[i] * right
+        right = right * A[i]
+     }
+
+     return B
 }
 
+// 84、把字符串转换成整数
+// 写一个函数 strToInt，将一个字符串转换成一个整数。函数需要满足以下要求：
+//      首先，丢弃无用的开头空格字符，直到寻找到第一个非空格字符。
+//      当第一个非空字符为正或者负号时，将该符号与之后尽可能多的连续数字组合起来，作为最终结果的正负号。
+//      假如第一个非空字符是数字，则直接将其与之后尽可能多的连续数字字符组合起来。
+//      字符串中有效的整数部分之后的多余字符将被忽略。
+//      若字符串的第一个非空格字符不是一个有效整数字符、字符串为空或字符串仅包含空白字符，函数应返回 0。
+//      假设环境只能存储 32 位有符号整数，其数值范围为[-2^31, 2^31 - 1] 。如果数值超过这个范围，返回相应的边界值。
+// 思路： 步骤一：去除空格
+//              使用 while 循环跳过开头的空格字符。
+//       步骤二：判断正负号
+//              检查第一个非空格字符是否为 + 或 -，并设置相应的正负标记。
+//       步骤三：提取数字
+//              遍历后续字符，将数字字符添加到结果中，同时考虑越界情况。
+//       步骤四：越界处理
+//              检查最终结果是否超出 32 位有符号整数的范围，超出则返回相应边界值。
+function strToInt(str) {
+    let i = 0; // 当前字符
+    let sign = 1; // 正负号
+    let res = 0;
+    const max = Math.pow(2, 31) - 1;
+    const min = -Math.pow(2, 31);
+
+    // 跳过开头的空格字符
+    while (i < str.length && str[i] === ' ') {
+        i++;
+    }
+
+    // 判断正负号
+    if (i < str.length && (str[i] === '+' || str[i] === '-')) {
+        sign = str[i] === '+' ? 1 : -1;
+        i++;
+    }
+
+    // 提取数字
+    while (i < str.length && str[i] >= '0' && str[i] <= '9') {
+        let digit = +str[i]; // 将字符转换为数字
+        // 判断越界
+        // max 的值为 2147483647，它是 32 位有符号整数的最大值，其十进制表示的最后一位数字是 7
+        // 当 res 已经等于 Math.floor(max / 10) 时，即 res 已经达到了 214748364，此时需要考虑添加下一个数字 digit 是否会导致越界。
+        // 如果 digit 大于 7，例如添加 8 或 9，那么结果将超过 2147483647，即超出了 32 位有符号整数的范围
+        if (res > Math.floor(max / 10) || (res === Math.floor(max / 10) && digit > 7)) {
+            return sign === 1 ? max : min;
+        }
+        res = res * 10 + digit;
+        i++;
+    }
+
+    return res * sign;
+}
+
+// 85、二叉搜索树的最近公共祖先
+// 给定一个二叉搜索树 (BST)，找到该树中两个指定节点的最近公共祖先 (LCA)。
+// 最近公共祖先的定义为：
+//      对于有根树 T 的两个节点 p 和 q，最近公共祖先表示为一个节点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。
+// 思路1: 递归，
+//      利用二叉搜索树的性质（左子树节点值 < 根节点值 < 右子树节点值）。
+//      如果 p 和 q 的值都小于当前节点的值，那么它们的最近公共祖先在左子树。
+//      如果 p 和 q 的值都大于当前节点的值，那么它们的最近公共祖先在右子树。
+//      否则，当前节点就是它们的最近公共祖先
+function lowestCommonAncestor(root, p, q) {
+    if(p.val < root.val && q.val < root.val) {
+        return lowestCommonAncestor(root.left, p, q)
+    } else if(p.val > root.val && q.val > root.val) {
+        return lowestCommonAncestor(root.right, p, q)
+    } else {
+        return root
+    }
+}
+// 思路2: 迭代法
+//      从根节点开始迭代，根据 p 和 q 的值与当前节点值的大小关系，向下移动节点。
+//      当 p 和 q 的值分别在当前节点值的两侧，或者其中一个等于当前节点值时，当前节点就是最近公共祖先
+function lowestCommonAncestor(root, p, q) {
+    let node = root
+    while(node) {
+        if(p.val < node.val && q.val < node.val) {
+            node = node.left
+        } else if (p.val > node.val && q.val > node.val) {
+            node = node.right
+        } else {
+            return node
+        }
+    }
+}
