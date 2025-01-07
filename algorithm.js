@@ -3507,3 +3507,89 @@ function lastNumber(n, m) {
     }
     return last;
 }
+
+// 79、股票的最大利润
+// 假设把某股票的价格按照时间先后顺序存储在数组中，请问买卖该股票一次可能获得的最大利润是多少？
+// 例如，一个数组为 [7,1,5,3,6,4]，在价格为 1 时买入，价格为 6 时卖出，最大利润就是 5。
+// 思路1： 暴力法，时间复杂度o(n2),不推荐
+// 思路2: 贪婪算法
+function maxProfit(nums) {
+    let minPrice = Infinity
+    let maxProfit = 0
+    for(let num of nums) {
+        if(num < minPrice) {
+            minPrice = num
+        } else if(num - minPrice > maxProfit) {
+            maxProfit = num - minPrice
+        }
+    }
+    return maxProfit
+}
+
+// 80、求1 + 2 + 3...+ n
+// 求 1+2+3+…+n，要求不能使用乘除法、for、while、if、else、switch、case 等关键字及条件判断语句（A?B:C）
+// 思路1:用逻辑运算符 && 的短路特性来终止递归。
+//      当 n > 0 时，n && (sum += sumNums(n - 1)) 会继续递归，当 n == 0 时，n 为假，递归终止
+function sumN(n) {
+    let sum = 0
+    n && (sum += sumN(n - 1) + n)
+    return sum
+}
+// 思路2: 利用类的构造函数，在构造函数中进行累加操作。通过创建 n 个类实例，每个实例的构造函数中进行累加。
+//      可以利用类的静态变量存储累加结果
+class Sum {
+    static res = 0;
+    constructor(n) {
+        if (n > 0) {
+            Sum.res += n;
+            new Sum(n - 1);
+        }
+    }
+}
+function sumN(n) {
+    Sum.res = 0;
+    new Sum(n);
+    return Sum.res;
+}
+
+// 81、不用加减乘除做加法
+// 写一个函数，求两个整数之和，要求在函数体内不得使用 “+”、“-”、“*”、“/” 四则运算符号
+// 思路位运算： 
+//      两个整数在不考虑进位的情况下进行异或运算之后就是他们相加的结果，如1 ^ 2 = 3
+//      在考虑进位的情况下，如1 ^ 3 = 2, 那么就需要来记录进位的情况了，是否进位可以用(a & b) << 1来算出应该要进到哪一位
+function add(a,b) {
+    while(b !== 0) {
+       // 计算进位
+       let carry = (a & b) << 1;
+
+       // 计算不带进位的部分（即按位加法）
+       a = a ^ b;
+
+       // 进位需要加到下一次
+       b = carry;
+    }
+    return a
+}
+
+// 82、交换两个数的值
+function swap(a,b) {
+    a = a + b
+    b = a - b
+    a = a - b
+    return { a, b}
+}
+
+function swap(a,b) {
+    a = a ^ b
+    b = a ^ b
+    a = a ^ b
+    return { a, b }
+}
+
+// 83、构建乘积数组
+// 给定一个数组 A[0,1,…,n-1]，请构建一个数组 B[0,1,…,n-1]，其中 B[i] 的值是数组 A 中除了 A[i] 之外的所有元素的乘积。不能使用除法。
+// 例如，对于数组 A = [1,2,3,4]，B = [24,12,8,6]
+function structArr() {
+
+}
+
