@@ -3722,3 +3722,135 @@ function lowestCommonAncestor(root, p, q) {
         }
     }
 }
+
+// 86、整数除法
+// 输入 2 个int型整数，它们进行除法计算并返回商，要求不得使用乘号*、除号/及求余符号%。当发生溢出时，返回最大的整数值。假设除数不为 0。
+// 例如，输入 15 和 2，输出 15/2 的结果，即 7。
+// 思路： 用减法实现，被除数不断减去除数，最后得出答案，但这样的太慢了，可以采用策略加快节奏
+//      a、如果当被除数大于除数时，先比较判断被除数是否大于除数的 2 倍、4 倍、8 倍等。若被除数最多大于除数的2的k次方倍，
+//          就将被除数减去除数的2的k次方倍，然后对剩余的被除数重复此步骤。这样每次将除数翻倍，优化后的时间复杂度是o(logn)
+//      b、对于有负数的情况，先将正数都转换成负数，用优化后的减法计算两个负数的除法，再根据需要调整商的正负号。
+//          因为将任意正数转换为负数不会溢出，而将最小的整数-2147483648转换为正数会溢出。
+//      c、整数除法只有一种情况会导致溢出，即(-2147483648) / (-1)，因为最大的正数为2147483647，2147483648超出了正数范围。
+function divide(dividend, divsor) {
+    const max = Math.pow(2, 31) - 1
+    const min = Math.pow(-2, 31)
+    // 结果溢出
+    if(min === dividend && divsor === -1) {
+        return max
+    } 
+    let resNegative = 2 // 记录符号变化的次数，初始是2，用来表示结果是否是正数
+
+
+    // 把除数和被除数为负数的数变为正数，同时resNegative--，记录符号变化的次数，如果resNegative=1，那么代表结果是负数
+    if(dividend < 0) {
+        dividend = -dividend
+        resNegative--
+    }
+
+    if(divsor < 0) {
+        divsor = -divsor
+        resNegative--
+    }
+
+    const divdeCore = (dividend, divsor) => {
+        let res = 0
+        // 当被除数大于除数时
+        while(dividend > divsor) {
+
+            let value = divsor
+            // 初始商为 1
+            let quotient = 1;
+            // 被除数是否大于除数的 2 倍、4 倍、8 倍等
+            while(dividend >= value + value) {
+                quotient += quotient
+                value += value
+            }
+            res += quotient
+            dividend -= value
+        }
+        return res
+    }
+
+    let res = divdeCore(dividend, divsor)
+
+    return resNegative === 1? -res : res
+}
+
+// 87、⼆进制加法
+// 输入两个表示二进制的字符串，输出它们相加的结果，结果也用二进制字符串表示。
+// 例如，输入 "11" 和 "1"，输出 "100"；输入 "1010" 和 "1011"，输出 "10101"
+// 思路： 如果把字符串转成十进制数字相加再转成二进制是可以的，但如果字符串长度过长，可能会造成数字溢出，所以还是得从字符串的角度来相加，从最低位开始相加
+function addBinary(a,b) {
+    const maxLen = Math.max(a.length, b.length);
+    // 为短的字符串在前面补0
+    a = a.padStart(maxLen, '0');
+    b = b.padStart(maxLen, '0');
+
+    let takeOver = 0; // 是否进位
+    let res = ''
+    for(let i = maxLen - 1; i >= 0; i--) {
+        let sum = parseInt(a[i]) + parseInt(b[i]) + takeOver
+        if(sum >= 2) { // 需要进位
+            takeOver = 1
+            res =  (sum - 2) + res
+        } else {
+            takeOver = 0
+            res = sum + res
+        }
+    }
+
+    if(takeOver) {
+        res = 1 + res
+    }
+    return res
+}
+
+// 88、前 n 个数字二进制中 1 的个数
+// 输入一个非负整数 n，请计算 0 到 n 中每个数字的二进制表示中 1 的个数，并将结果作为一个数组返回。
+// 例如，输入 n = 2，返回 [0,1,1]，因为 0 的二进制表示是 0（1 的个数为 0），1 的二进制表示是 1（1 的个数为 1），2 的二进制表示是 10（1 的个数为 1）
+// 思路1: 位运算消1，统计一个数中1的个数(num - 1) & num
+function getNumberOf1(n) {
+    const getNumber1 = (num) => {
+        let count = 0
+        while(num) {
+            num = (num - 1) & num
+            count++
+        }
+        return count
+    }
+
+    let res = []
+    for(let i = 0; i <= n; i++) {
+        res.push(getNumber1(i))
+    }
+    return res
+}
+// 思路2：观察规律可以发现，对于数字 i，如果 i 是偶数，那么 i 的二进制表示中 1 的个数和 i / 2 的二进制表示中 1 的个数相同；
+//      如果 i 是奇数，那么 i 的二进制表示中 1 的个数比 i - 1 的二进制表示中 1 的个数多 1。
+function getNumberOf1(n) {
+    let res = [0]
+    for(let i = 1; i <= n; i++) {
+        if(i % 2 == 0) {
+            res.push(res[i >> 1])
+        } else {
+            res.push(res[i - 1] + 1)
+        }
+    }
+    return res
+}
+
+// 89、只出现一次的数字，跟第70题是同一个
+
+// 90、单词⻓度的最⼤乘积
+// 输入一个字符串数组words，请计算不包含相同字符的两个字符串words[i]和words[j]的长度乘积的最大值。
+// 如果所有字符串都包含至少一个相同字符，那么返回 0。假设字符串中只包含英文字母小写字符。
+// 例如，输入的字符串数组words为["abcw","foo","bar","fxyz","abcdef"]，数组中的字符串bar与foo没有相同的字符，它们长度的乘积为 9。
+// abcw与fxyz也没有相同的字符，它们长度的乘积为 16，这是该数组不包含相同字符的一对字符串的长度乘积的最大值。
+// 思路1: 哈希表记录
+//      创建一个二维数组（可视为哈希表），外层数组长度为字符串数组长度，内层数组长度为 26，用于记录每个字符串中每个字母的出现次数。
+//      遍历字符串数组，对每个字符串，遍历其中字符，在对应内层数组位置计数加 1。
+//      然后再次遍历字符串数组，比较每对字符串的哈希表，若某字母在两字符串中都出现（对应计数都大于 0），则它们有相同字符；若所有字母都不同，则计算长度乘积并更新最大值
+function maxProduct(words) {
+    
+}
