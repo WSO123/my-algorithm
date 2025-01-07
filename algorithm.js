@@ -3423,6 +3423,49 @@ function printP(n) {
 // 77、扑克牌中的顺子
 // 从扑克牌中随机抽 5 张牌，判断是不是一个顺子，这里的顺子指的是连续的 5 张牌。
 // 2～10 为数字本身，J 为 11，Q 为 12，K 为 13，A 为 1，而大小王可以看成任意数字。
+// 思路1: 因为会输入大小王，大小王的值为0，大小王可以作为任何数值，所以需要统计0的数量，
+//      然后统计所有数直接的总间隔，如果间隔数不超过大小王也就是0的数量，那这些间隔中缺失的数字就可以用大小王表示，组成顺子
 function isStraight(nums) {
-    
+    // 对数组进行排序，方便后续处理
+    nums.sort((a, b) => a - b);
+    let numberOfZero = 0;
+    for (let i = 0; i < nums.length - 1; i++) {
+        if (nums[i] === 0) {
+            // 统计大小王的数量
+            numberOfZero++;
+        } else if (nums[i] === nums[i + 1]) {
+            // 检查是否有重复元素，有重复元素则不是顺子
+            return false;
+        }
+    }
+    let numberOfGap = 0;
+    for (let i = 0; i < nums.length - 1; i++) {
+        if (nums[i]!== 0 && nums[i + 1]!== 0) {
+            // 计算相邻非零元素的间隔
+            numberOfGap += nums[i + 1] - nums[i] - 1;
+        }
+    }
+    // 比较间隔数量和大小王数量，如果间隔能被大小王填补则是顺子
+    return numberOfGap <= numberOfZero; 
+}
+// 思路2:用一个集合来存储非大小王的牌，同时找出最大和最小的非大小王牌。
+//      若集合的大小加上大小王的数量等于 5，且最大非大小王牌与最小非大小王牌的差小于 5，则是顺子。
+function isStraight(nums) {
+    let set = new Set()
+    let min = Infinity
+    let max = -Infinity
+    let zeroCount = 0;
+    for(let num of nums) {
+        if(num === 0) {
+            zeroCount++
+            continue
+        }
+        if(set.has(num)) {
+            return false // 有对子，不是顺子
+        }
+        set.add(num)
+        min = Math.min(min, num)
+        max = Math.max(max, num)
+    }
+    return  max - min < 5 && zeroCount + set.size === 5;
 }
