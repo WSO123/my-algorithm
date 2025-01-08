@@ -3980,6 +3980,63 @@ function threeSum(numbers) {
 // 93、和大于等于k的最短子数组
 // 输入一个正整数组成的数组和一个正整数k，请问数组中和大于或等于k的连续子数组的最短长度是多少？如果不存在所有数字之和大于或等于k的子数组，则返回 0。
 // 例如，输入数组[5, 1, 4, 3]，k的值为 7，和大于或等于 7 的最短连续子数组是[4, 3]，因此输出它的长度 2。
+// 思路： 双指针
+//      a、使用两个指针left和right来表示子数组的范围，初始时都指向数组的第一个元素。
+//      b、用变量sum来记录当前子数组的和。
+//      c、不断移动right指针，扩大子数组的范围，同时更新sum的值，直到sum大于或等于k。
+//      d、当sum大于或等于k时，开始移动left指针，缩小子数组的范围，同时更新sum的值，在缩小范围的过程中，记录子数组的最短长度。
+//      重复上述步骤，直到right指针到达数组的末尾。
 function minSubArrayLen(numbers, k) {
+    let sum = 0
+    let left = 0
+    let minLen = Infinity
+    for (let right = 0; right < numbers.length; right++) {
+        sum += numbers[right] // 右指针扩展窗口值大小
+
+        // 收缩窗口直到 sum < k
+        while(sum >= k) {
+            minLen = Math.min(minLen, right - left + 1)
+            sum -= numbers[left]
+            left++
+        }
+    }
+    return minLen === Infinity ? 0 : minLen
+}
+
+// 94、乘积小于k的子数组
+// 输入一个由正整数组成的数组和一个正整数k，请问数组中有多少个数字乘积小于k的连续子数组？
+// 例如，输入数组[10, 5, 2, 6]，k的值为 100，有 8 个子数组的所有数字的乘积小于 100，它们分别是[10]、[5]、[2]、[6]、[10, 5]、[5, 2]、[2, 6]和[5, 2, 6]
+// 思路：跟上面的方法类似，滑动窗口
+//      a、初始化两个指针left和right，都指向数组的第一个元素。
+//      b、使用变量product来记录当前子数组的乘积。
+//      c、不断移动right指针，扩大子数组的范围，同时更新product的值，计算当前子数组的乘积。
+//      d、当product大于或等于k时，开始移动left指针，缩小子数组的范围，同时更新product的值，在缩小范围的过程中，计算满足条件的子数组数量。
+//      重复上述步骤，直到right指针到达数组的末尾。
+function numSubarrayProductLessThanK(numbers, k) {
+    if (k <= 1) return 0; // 如果 k <= 1，直接返回 0，因为没有子数组能满足条件
+
+    let left = 0
+    let count = 0
+    let product = 1
+    for(let right = 0; right < numbers.length; right++) {
+        product *= numbers[right]
+
+        // 收缩窗口
+        while(product >= k) {
+            product /= numbers[left]
+            left++
+        }
+        
+        // 当前窗口 [left, right] 内的所有子数组
+        count += right - left + 1;
+    }
+
+    return count
+}
+
+// 95、和为k的子数组
+// 输入一个整数数组和一个整数 k，请问数组中有多少个数字之和等于 k 的连续子数组？
+// 例如，输入数组 [1, 1, 1]，k 的值为 2，有 2 个连续子数组之和等于 2
+function findSubarraysWithSum(numbers, k) {
     
 }
