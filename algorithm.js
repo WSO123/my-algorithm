@@ -4037,6 +4037,35 @@ function numSubarrayProductLessThanK(numbers, k) {
 // 95、和为k的子数组
 // 输入一个整数数组和一个整数 k，请问数组中有多少个数字之和等于 k 的连续子数组？
 // 例如，输入数组 [1, 1, 1]，k 的值为 2，有 2 个连续子数组之和等于 2
+// 思路： 数组里有如果包含负数，且强调连续性，使用双指针就无法保证和的变化是单调的，所以这个题没法使用双指针
+//    可以先计算从数组下标为 0 开始到以每个数字为结尾的子数组之和，然后通过哈希表来统计满足和为 k 的子数组个数。
+//    具体来说，在从头到尾逐个扫描数组中的数字时求出前 i 个数字之和 sum，并将其保存下来。
+//    同时，对于每个 sum，需要知道在 i 之前存在多少个 j 并且前 j 个数字之和等于 sum - k，因为这样的话从第 j + 1 个数字开始到第 i 个数字结束的子数组之和就是 k。
+//    所以，对每个 i，不但要保存前 i 个数字之和，还要保存每个和出现的次数
+
 function findSubarraysWithSum(numbers, k) {
-    
+    // 存储和及其出现的次数
+    let sumMap = new Map()
+    sumMap.set(0, 1) // // 初始化，表示和为0的子数组出现了一次（空数组）
+    let sum = 0
+    let count = 0
+    for(let i = 0; i < numbers.length; i++) {
+        sum += numbers[i]
+
+         // 检查 值为sum - k的前缀和是否已经出现过
+         // 出现过的话就代表有前缀和sum[j] + k = sum[i], j + i到i之间的子数组元素之和是k
+        let diff = sum - k
+        if(sumMap.has(diff)) {
+            count += sumMap.get(diff)
+        } 
+
+        // 更新 sumMap，记录当前 前缀和sum 的出现次数
+        if(sumMap.has(sum)) {
+            sumMap.set(sum, sumMap.get(sum) + 1)
+        } else {
+            sumMap.set(sum, 1)
+        }
+    }
+
+    return count
 }
