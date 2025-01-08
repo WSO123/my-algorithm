@@ -3848,9 +3848,138 @@ function getNumberOf1(n) {
 // 例如，输入的字符串数组words为["abcw","foo","bar","fxyz","abcdef"]，数组中的字符串bar与foo没有相同的字符，它们长度的乘积为 9。
 // abcw与fxyz也没有相同的字符，它们长度的乘积为 16，这是该数组不包含相同字符的一对字符串的长度乘积的最大值。
 // 思路1: 哈希表记录
-//      创建一个二维数组（可视为哈希表），外层数组长度为字符串数组长度，内层数组长度为 26，用于记录每个字符串中每个字母的出现次数。
-//      遍历字符串数组，对每个字符串，遍历其中字符，在对应内层数组位置计数加 1。
-//      然后再次遍历字符串数组，比较每对字符串的哈希表，若某字母在两字符串中都出现（对应计数都大于 0），则它们有相同字符；若所有字母都不同，则计算长度乘积并更新最大值
+//      a、对于每个字符串，创建一个长度为 26 的布尔型数组（模拟哈希表）来记录字符串中每个英文字母是否出现。
+//      b、遍历字符串数组，对于每个字符串，将其中出现的字母在对应的布尔型数组中标记为true。
+//      c、然后通过两层循环遍历字符串数组，对于每一对字符串，检查它们对应的布尔型数组中是否有相同位置都为true的情况，如果没有，则计算它们长度的乘积，并更新最大值。
 function maxProduct(words) {
-    // test
+    // 用来记录每个字符串中，26个字母是否出现
+    let flag = new Array(words.length).fill(0).map(() => new Array(26).fill(false))
+
+    // 遍历字符串数组，对于每个字符串，将其中出现的字母在对应的布尔型数组中标记为true。
+    for(let i = 0; i < words.length; i++) {
+        for(let char of words[i]) {
+            flag[i][char.charCodeAt() - 'a'.charCodeAt()] = true
+        }
+    }
+    let res = 0
+    // 两层循环遍历字符串数组
+    for(let i = 0; i < words.length; i++) {
+        for(let j = i + 1; j < words.length; j++) {
+            let k = 0 // a-z中的第一个字符a开始
+            while(k < 26) {
+                if(flag[i][k] && flag[j][k]) {
+                    break
+                }
+                k++
+            }
+            // k等于26，代表没有重复的
+            if(k === 26) {
+                res = Math.max(res, words[i].length * words[j].length)
+            }
+        }
+    }
+    return res
+}
+// 思路2: 在思路1的基础上使用位运算来降低时间复杂度和内存占用
+//      使用二进制数来表示字符串中每个字母是否出现，如'abc'可以用00000000000000000000000111表示，'de'可以用00000000000000000001100000表示
+//      再检查两个字符串是否有重复的字符时可以使用前面的二进制记录相与，如00000000000000000000000111 & 00000000000000000001100000 = 0，代表没有重复字符
+function maxProduct(words) {
+    let flag = new Array(words.length).fill(0)
+    for(let i = 0; i < words.length; i++) {
+        for(let char of words[i]) {
+            // 把对应字母的位标记为 1
+            // 1 << (char.charCodeAt() - 'a'.charCodeAt()),例如 1 << 2 -> 00000000000000000000000100
+            // flag[i] | 1 << 2,例如 00000000000000000000000001 | 00000000000000000000000100 = 00000000000000000000000101
+            flag[i] =  flag[i] | (1 << (char.charCodeAt() - 'a'.charCodeAt()))
+        }
+    }
+
+    let res = 0
+    for(let i = 0; i < words.length; i++) {
+        for(let j = i; j < words.length; j++) {
+            if((flag[i] & flag[j]) === 0) { // 没有重复数据
+                res = Math.max(res, words[i].length * words[j].length)
+            }
+        }
+    }
+    return res
+}
+
+// 91、排序数组中的两个数字之和
+// 输入一个递增排序的数组和一个值k，请问如何在数组中找出两个和为k的数字并返回它们的下标？假设数组中存在且只存在一对符合条件的数字，同时一个数字不能使用两次。
+// 例如，输入数组[1, 2, 4, 6, 10]，k的值为 8，数组中的数字 2 与 6 的和为 8，它们的下标分别为 1 与 3。
+// 思路1: 暴力法，两个for循环
+// 思路2: 哈希表存储所有数字，然后再遍历一遍数字i，同时查询哈希表里有没有存在 k - i， 时间复杂度o(n), 空间复杂度o(n)
+// 思路3: 二分查找，遍历一遍数字i，同时使用二分查找查找k - i，时间复杂度是o(nlogn)
+// 思路4: 双指针，p1指向首位， p2指向末尾,时间复杂度o(n),空间复杂度o(1)
+function twoSum(numbers, target) {
+    let p1 = 0
+    let p2 = numbers.length - 1
+    while(p1 < p2) {
+        if(numbers[p1] + numbers[p2] > target) {
+            p2--
+        } else if(numbers[p1] + numbers[p2] < target) {
+            p1++
+        } else {
+            return [numbers[p1], numbers[p2]]
+        }
+    }
+    return []
+}
+
+// 92、数组中和为0的3个数字
+// 输入一个数组，如何找出数组中所有和为 0 的 3 个数字的三元组？需要注意的是，返回值中不得包含重复的三元组。
+// 例如，在数组[-1, 0, 1, 2, -1, -4]中有两个三元组的和为 0，它们分别是[-1, 0, 1]和[-1, -1, 2]
+// 思路1: 暴力法，3个循环，时间复杂度是o(n2)
+// 思路2: 双指针，先排序，然后使用一个循环，确定第一个数字，然后再使用两个指针分别指向下一个和最后一个
+//      注意的是可能有重复的结果，所以注意跳过重复的数字
+function threeSum(numbers) {
+    if(numbers.length < 3) {
+        return []
+    }
+    numbers.sort((a, b) => a - b);
+
+    let res = []
+    // 注意遍历到numbers.length - 2，因为最后两个数字无法形成3元组
+    for(let i = 0; i < numbers.length - 2; i++) {
+        // 跳过重复的数字,即跳过重复的结果
+        if (i > 0 && numbers[i] === numbers[i - 1]) {
+            continue;
+        }
+
+        // 提前剪枝：当前数字为正数时，不可能有满足条件的三元组
+        if (numbers[i] > 0) break;
+
+        let p1 = i + 1
+        let p2 = numbers.length - 1
+        while(p1 < p2) {
+            let sum = numbers[p1] + numbers[p2] + numbers[i]
+            if(sum > 0) {
+                p2--
+            } else if(sum < 0) {
+                p1++
+            } else {
+                res.push([numbers[i], numbers[p1], numbers[p2]])
+                // 跳过重复的p1，p2
+                while(p1 < p2 && numbers[p1] === numbers[p1 + 1]) {
+                    p1++
+                }
+
+                while(p1 < p2 && numbers[p2] === numbers[p2 - 1]) {
+                    p2--
+                }
+                // 左右指针继续收缩
+                p1++
+                p2--
+            }
+        }
+    }
+    return res
+}
+
+// 93、和大于等于k的最短子数组
+// 输入一个正整数组成的数组和一个正整数k，请问数组中和大于或等于k的连续子数组的最短长度是多少？如果不存在所有数字之和大于或等于k的子数组，则返回 0。
+// 例如，输入数组[5, 1, 4, 3]，k的值为 7，和大于或等于 7 的最短连续子数组是[4, 3]，因此输出它的长度 2。
+function minSubArrayLen(numbers, k) {
+    
 }
