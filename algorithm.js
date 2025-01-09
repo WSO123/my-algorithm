@@ -4099,4 +4099,54 @@ function findMaxLen(numbers) {
 }
 
 // 97、0和1个数相同的子数组
-// 
+// 输入一个只包含0和1的数组，求0和1的个数相同的最长连续子数组的长度。
+// 例如：在数组 [0, 1, 0] 中，有两个子数组 [0, 1] 和 [1, 0] 包含相同个数的0和1，它们的长度都是2，因此输出 2。
+// 思路： 将0变成-1，那么这个题就变成和为0的最长子数组这道题了， 时间复杂度o(n),空间复杂度o(n)
+// 总结： 前缀和与哈希表 的结合是解决连续子数组问题的核心
+function findMaxLen(numbers) {
+    let sumMap = new Map()
+    let sum = 0
+    let maxLen = 0
+    for(let i = 0; i < numbers.length; i++) {
+        sum += (numbers[i] === 0 ? -1 : 1)
+        if(sumMap.has(sum)) {
+            let prevIndex = sumMap.get(sum)
+            maxLen = Math.max(maxLen, i - prevIndex)
+        } else {
+            sumMap.set(sum, i)
+        }
+    }
+
+    return maxLen
+}
+
+// 98、左右两边子数组的和相等
+// 输入一个整数数组，找到一个数字使得它左边的子数组和等于右边的子数组和。返回该数字的索引。
+// 如果有多个这样的数字，返回最左边的数字的索引；如果不存在这样的数字，返回 -1
+// 思路：
+//      计算数组中所有数字的总和 totalSum。
+//    	遍历数组，逐步计算当前元素左边的子数组和 leftSum。
+//      对于当前元素，右边的子数组和可以通过公式计算rightSum = totalSum - leftSum - numbers[i]
+function pivotIndex(numbers) {
+    let totalSum = numbers.reduce((acc, num) => acc + num, 0)
+    let leftSum = 0
+    for(let i = 0; i < numbers.length; i++) {
+        const rightSum = totalSum - leftSum - numbers[i]
+        if(leftSum === rightSum) {
+            return i
+        } else {
+            leftSum += numbers[i]
+        }
+    }
+    return -1
+}
+
+// 99、调整数组使奇数位于偶数前面
+// 输入一个整数数组，请调整数组中数字的顺序，使得所有奇数位于数组的前半部分，所有偶数位于数组的后半部分。要求在调整之后，奇数和奇数、偶数和偶数之间的相对位置不变。
+// 例如：
+// •	输入 [1, 2, 3, 4]，输出 [1, 3, 2, 4]。
+// •	输入 [2, 4, 6]，输出 [2, 4, 6]（没有奇数）。
+// •	输入 [1, 3, 5]，输出 [1, 3, 5]（没有偶数）。
+function reorderArray(numbers) {
+    
+}
