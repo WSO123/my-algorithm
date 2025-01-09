@@ -4225,7 +4225,18 @@ function subMatrixSum(matrix, row1, col1, row2, col2) {
 // 例如，字符串 s1 为 "ac"，字符串 s2 为 "dgcaf"，由于字符串 s2 中包含字符串 s1 的变位词 "ca"，因此输出为 true。
 //      如果字符串 s1 为 "ab"，字符串 s2 为 "dgcaf"，则输出为 false
 // 思路：
+//      1、频率表：
+// 	        使用两个频率表 count1 和 count2 分别记录 s1 和 s2 中字符的出现频率。
+// 	        count1 用来存储 s1 的字符频率，count2 用来存储当前 s2 滑动窗口内的字符频率。
+//      2、滑动窗口：
+//      	通过滑动窗口的方式，遍历 s2，每次窗口的大小固定为 s1 的长度。
+//      	每次遍历时，更新 count2 的频率表，窗口滑动时如果大小超过 s1，移除窗口左侧的字符。
+//      3、	比较频率表：
+//      	每次更新窗口时，检查 count1 和 count2 是否相等，如果相等，说明当前窗口是 s1 的变位词，返回 true。
+//      	如果循环结束后没有找到变位词，返回 false。
+//      简单来说，s1小于s2，要在s2中找出一个连续的由s1的每个字符构成的字符串，需要制造长度为s1长度的滑动窗口在s2中滑动，在滑动过程中比较字符出现的个数就好
 function checkInclusion(s1, s2) {
+    const getIndex = (char) => char.charCodeAt(0) - 'a'.charCodeAt(0)
     let len1 = s1.length
     let len2 = s2.length
 
@@ -4233,5 +4244,79 @@ function checkInclusion(s1, s2) {
         return false
     }
 
-   
+    // 使用两个频率表分别记录s1、s2字符的频率
+    let count1 = new Array(26).fill(0)
+    let count2 = new Array(26).fill(0)
+
+
+    // 记录s1的字符频率
+    for(let i = 0; i < len1; i++) {
+        count1[getIndex(s1[i])]++
+    }
+
+    for(let i = 0; i < len2; i++) {
+        count2[getIndex(s2[i])]++
+
+        // 确保窗口大小,舍弃左边的字符次数
+        if(i >= len1) {
+            count2[getIndex(s2[i - len1])]--
+        }
+
+        // 检查结果
+        if(count2.every((val, index) => val === count1[index])) {
+            return true
+        }
+    }
+    return false
 }
+
+// 对上面的做了优化如下
+function checkInclusion(s1, s2) {
+    const getIndex = (char) => char.charCodeAt(0) - 'a'.charCodeAt(0);
+
+    let len1 = s1.length;
+    let len2 = s2.length;
+
+    if (len1 > len2) {
+        return false;
+    }
+
+    // 使用两个频率表记录 s1 和滑动窗口内的字符频率
+    let count1 = new Array(26).fill(0);
+    let count2 = new Array(26).fill(0);
+
+    // 初始化 s1 的频率表和 s2 前 len1 个字符的频率表
+    for (let i = 0; i < len1; i++) {
+        count1[getIndex(s1[i])]++;
+        count2[getIndex(s2[i])]++;
+    }
+
+    // 比较两个频率表是否相等的函数
+    const matches = (count1, count2) => {
+        for (let i = 0; i < 26; i++) {
+            if (count1[i] !== count2[i]) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    // 检查初始窗口
+    if (matches(count1, count2)) {
+        return true;
+    }
+
+    // 滑动窗口遍历 s2 剩余部分
+    for (let i = len1; i < len2; i++) {
+        count2[getIndex(s2[i])]++; // 增加窗口右边界字符的频率
+        count2[getIndex(s2[i - len1])]--; // 移除窗口左边界字符的频率
+
+        if (matches(count1, count2)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// 102、
