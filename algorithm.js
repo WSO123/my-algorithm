@@ -4373,3 +4373,27 @@ function findAnagrams(s1, s2) {
     
      return res
 }
+
+// 103、不含重复字符的最长子字符串
+// 思路1： 与56题是同一题
+function longestSubstringWithoutDuplication(str) {
+    let dic = new Map()
+    let res = 0
+    let start = -1
+    for(let i = 0; i < str.length; i++) {
+        let pos = dic.has(str[i]) ? dic.get(str[i]) : -1
+
+        if(pos !== -1) {
+            start = pos
+        }
+
+        dic.set(str[i], i)
+        
+        let tmp = i - start
+        res = Math.max(res, tmp)
+    }
+    return res
+}
+// 思路2、
+
+// 104、
