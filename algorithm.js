@@ -4319,4 +4319,57 @@ function checkInclusion(s1, s2) {
     return false;
 }
 
-// 102、
+// 102、字符串中的所有变位词
+// 输入字符串 s1 和 s2，找出字符串 s2 中所有 s1 的变位词的起始索引。
+// 例如，输入 s1 为 "ab"，s2 为 "cbaebabacd"，则 s2 中包含 s1 的变位词 "ba" 和 "ab"，其起始索引分别为 0 和 6，所以应输出 [0, 6]
+// 思路： 跟上面的【字符串中的变位词】思路一样，
+function findAnagrams(s1, s2) {
+    const getIndex = (char) => char.charCodeAt(0) - 'a'.charCodeAt(0);
+
+    // 比较每个字符的频率是否相同
+    const matches = (count1, count2) => {
+        for(let i = 0; i < 26; i++) {
+            if(count1[i] !== count2[i]) {
+                return false
+            }
+        }
+        return true
+    }
+
+    let len1 = s1.length;
+    let len2 = s2.length;
+
+    if (len1 > len2) {
+        return [];
+    }
+
+    let res = []
+
+     // 使用两个频率表记录 s1 和滑动窗口内的字符频率
+     let count1 = new Array(26).fill(0);
+     let count2 = new Array(26).fill(0);
+
+     // 初始化 s1 的频率表和 s2 前 len1 个字符的频率表
+     for(let i = 0; i < len1; i++) {
+        count1[getIndex(s1[i])]++
+        count2[getIndex(s2[i])]++
+     }
+
+     // 检查初始窗口
+     if(matches(count1, count2)) {
+        res.push(0)
+     }
+
+     // 滑动窗口
+     for(let i= len1; i < len2; i++) {
+        count2[getIndex(s2[i])]++ // 增加窗口右边界字符的频率
+        count2[getIndex(s2[i - len1])]-- // 移除窗口左边界字符的频率
+
+        if(matches(count1, count2)) {
+            res.push(i - len1 + 1) // 当前窗口起始索引
+         }
+     }
+
+    
+     return res
+}
