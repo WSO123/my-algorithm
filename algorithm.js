@@ -4147,6 +4147,91 @@ function pivotIndex(numbers) {
 // •	输入 [1, 2, 3, 4]，输出 [1, 3, 2, 4]。
 // •	输入 [2, 4, 6]，输出 [2, 4, 6]（没有奇数）。
 // •	输入 [1, 3, 5]，输出 [1, 3, 5]（没有偶数）。
+// 思路： 双指针
 function reorderArray(numbers) {
-    
+    if (!numbers || numbers.length === 0) return [];
+
+    let len = numbers.length;
+    let left = 0;
+    let right = len - 1;
+
+    while (left < right) {
+        let isLeftOdd = (numbers[left] & 1) === 1;
+        let isRightEven = (numbers[right] & 1) === 0;
+
+        if (isLeftOdd) {
+            left++;
+        } else if (isRightEven) {
+            right--;
+        } else {
+            [numbers[left], numbers[right]] = [numbers[right], numbers[left]];
+            left++;
+            right--;
+        }
+    }
+
+    return numbers;
+}
+
+// 100、二维子矩阵的数字之和
+//  输入一个二维矩阵，如何计算给定左上角坐标和右下角坐标的子矩阵的数字之和？对于同一个二维矩阵，计算子矩阵的数字之和的函数可能由于输入不同的坐标而被反复调用多次
+// 例如：输入下面的二维矩阵，输入左上角坐标(2,1)和右下角坐标(4,3)，输出8
+// [ 
+//    [3, 0, 1, 4, 2],
+//    [5, 6, 3, 2 ,1],
+//    [1, 2, 0, 1, 5],
+//    [4, 1, 0, 1, 7],
+//    [1, 0, 3, 0, 5]
+//]
+// 思路： 和数组前缀和类似，求二维数组的前缀和
+function subMatrixSum(matrix, row1, col1, row2, col2) {
+    if(!matrix || matrix.length === 0 || matrix[0].length === 0) {
+        return null
+    }
+
+    let rows = matrix.length
+    let columns  = matrix[0].length
+    // 存储二维矩阵的前缀和
+    let prefix = new Array(rows).fill(0).map(() => new Array(columns).fill(0))
+
+    // 计算二维矩阵前缀和
+    for(let i = 0; i < rows; i++) {
+        for(let j = 0; j < columns; j++) {
+            prefix[i][j] = matrix[i][j] 
+                + (i > 0 ? prefix[i - 1][j]  : 0) 
+                + (j > 0 ? prefix[i][j - 1] : 0) 
+                - (i > 0 && j > 0 ? prefix[i - 1][j - 1] : 0)
+                
+        }
+    }
+
+    // 计算子矩阵的和
+    let res = prefix[row2][col2]
+    if(row1 > 0) {
+        res -= prefix[row1 - 1][col2]
+    }
+    if(col1 > 0) {
+        res -= prefix[row2][col1 - 1]
+    }
+
+    if(row1 > 0 && col1 > 0) {
+        res += prefix[row1 - 1][col1 - 1]
+    }
+    return res
+}
+
+// 101、字符串中的变位词
+// 输入字符串 s1 和 s2，判断字符串 s2 中是否包含字符串 s1 的某个变位词。假设两个字符串中只包含英文字母小写。
+// 例如，字符串 s1 为 "ac"，字符串 s2 为 "dgcaf"，由于字符串 s2 中包含字符串 s1 的变位词 "ca"，因此输出为 true。
+//      如果字符串 s1 为 "ab"，字符串 s2 为 "dgcaf"，则输出为 false
+// 思路：
+function checkInclusion(s1, s2) {
+    let len1 = s1.length
+    let len2 = s2.length
+
+    if(len1 > len2) {
+        return false
+    }
+
+   
 }
