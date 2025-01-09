@@ -4394,6 +4394,21 @@ function longestSubstringWithoutDuplication(str) {
     }
     return res
 }
-// 思路2、
+// 思路2、第二种使用map的方法，滑动窗口
+function lengthOfLongestSubstring(s) {
+    let left = 0;
+    let maxLength = 0;
+    let charMap = new Map();
 
-// 104、
+    for (let right = 0; right < s.length; right++) {
+        if (charMap.has(s[right])) {
+            // 若当前字符已在 Map 中，更新左指针位置
+            left = Math.max(charMap.get(s[right]) + 1, left);
+        }
+        charMap.set(s[right], right);
+        maxLength = Math.max(maxLength, right - left + 1);
+    }
+    return maxLength;
+}
+
+// 104、包含所有字符的最短字符串
