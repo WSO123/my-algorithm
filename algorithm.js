@@ -4053,7 +4053,7 @@ function findSubarraysWithSum(numbers, k) {
         sum += numbers[i]
 
          // 检查 值为sum - k的前缀和是否已经出现过
-         // 出现过的话就代表有前缀和sum[j] + k = sum[i], j + i到i之间的子数组元素之和是k
+         // 出现过的话就代表有前缀和sum[j] + k = sum[i], j + 1到i之间的子数组元素之和是k
         let diff = sum - k
         if(sumMap.has(diff)) {
             count += sumMap.get(diff)
@@ -4069,3 +4069,34 @@ function findSubarraysWithSum(numbers, k) {
 
     return count
 }
+
+// 96、和为 0 的最长子数组
+// 输入一个整数数组，求其和为 0 的最长子数组的长度。
+// 例如，在数组 [1, -1, 3, -2, 2] 中，和为 0 的最长子数组是 [1, -1]，长度为 2。
+// 思路： 
+//      a、利用前缀和的性质，如果在数组的两个不同位置 i 和 j（i < j），前缀和相等，则它们之间的子数组的和为 0。
+//          假设 sum[i] 是从数组开头到索引 i 的前缀和，如果有 sum[j] == sum[i]（j > i），那么从 i+1 到 j 的子数组和为 0
+//      b、使用哈希表记录每个前缀和第一次出现的索引位置。每次计算新的前缀和时，检查是否在哈希表中已存在：
+//          如果存在，计算两个索引之间的距离，更新最长长度。如果不存在，将当前前缀和及其索引存入哈希表。
+//      c、前缀和为 0 时，说明从数组起始到当前索引的子数组的和为 0，此时需要更新最长长度。
+function findMaxLen(numbers) {
+    let sumMap = new Map()
+    let sum = 0
+    let maxLen = 0
+
+    sumMap.set(0, -1)
+    for(let i = 0; i < numbers.length; i++) {
+        sum += numbers[i]
+        // 如果有 sum[j] == sum[i]（j > i），那么从 i+1 到 j 的子数组和为 0
+        if(sumMap.has(sum)) {
+            const prevIndex = sumMap.get(num)
+            maxLen = Math.max(maxLen, i - prevIndex)
+        } else {
+            sumMap.set(sum, i)
+        }
+    }
+    return maxLen
+}
+
+// 97、0和1个数相同的子数组
+// 
