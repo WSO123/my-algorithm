@@ -4412,3 +4412,375 @@ function lengthOfLongestSubstring(s) {
 }
 
 // 104、包含所有字符的最短字符串
+// 输入两个字符串 s 和 t，请找出字符串 s 中包含字符串 t 的所有字符的最短子字符串。
+// 例如，输入的字符串 s 为 "ADDBANCAD"，字符串 t 为 "ABC"，则字符串 s 中包含字符 'A'、'B' 和 'C' 的最短子字符串是 "BANC"。
+//  如果不存在符合条件的子字符串，则返回空字符串 ""。如果存在多个符合条件的子字符串，则返回任意一个
+// 思路： 滑动窗口
+//      1.	定义需要匹配的字符和次数：
+// 	    •	使用 needMap 哈希表存储字符串 t 中的每个字符及其所需的次数。
+// 	    •	使用 winMap 哈希表存储当前窗口中包含的字符及其次数。
+// 	    2.	滑动窗口扩展：
+// 	    •	右指针逐步向右移动扩展窗口，将当前字符加入窗口。
+// 	    •	如果字符在 need 中，更新 window 中的计数，并检查当前字符是否满足 need 的需求。
+// 	    3.	滑动窗口收缩：
+// 	    •	当窗口中满足 t 所有字符需求时，尝试收缩窗口（移动左指针）。
+// 	    •	检查当前窗口是否是符合条件的最小窗口，更新结果。
+// 	    4.	结束条件：
+// 	    •	当右指针遍历完整个字符串 s 后，输出结果。
+// 	    •	如果没有找到满足条件的子字符串，返回空字符串。
+function minWindow(s, t) {
+    if(s.length < t.length) {
+        return ''
+    }
+
+    // 统计t中所有字符和出现的次数
+    let needMap = new Map()
+    for(let char of t) {
+        needMap.set(char, (needMap.get(char) || 0) + 1)
+    }
+
+    // 定义窗口
+    let left = 0
+    let right = 0
+    let minLen = Infinity
+    let winMap = new Map() // 用来统计窗口中字符出现的次数
+    let charCount = 0 // 有效字符数量
+    let start = 0
+    while(right < s.length) {
+        let char = s[right]
+        right++
+
+        if(needMap.has(char)) {
+            winMap.set(char, (winMap.get(char) || 0) + 1)
+            if(winMap.get(char) === needMap.get(char)) {
+                charCount++
+            }
+        }
+
+        // 窗口内有包含了t中所有的有效字符，就可以尝试对窗口进行缩小了
+        while(charCount === needMap.size) {
+            // 先记录最小宽度
+            if(right - left < minLen) {
+                minLen = right - left
+                start = left
+            }
+
+            let leftChar = s[left]
+            left++
+
+            // 去除窗口中leftchar
+            if(needMap.has(leftChar)) {
+                if(needMap.get(leftChar) === winMap.get(leftChar)) {
+                    charCount--
+                }
+                winMap.set(leftChar, winMap.get(leftChar) - 1)
+                
+            }
+        }
+
+    }
+
+    return minLen === Infinity ? '' : s.substring(start, start + minLen)
+}
+
+// 105、有效回文
+// 给定一个字符串，判断它是不是回文。假设只需要考虑字母和数字字符，并忽略大小写。
+// 例如，"Was it a cat I saw?" 是一个回文字符串，而 "race a car" 不是回文字符串
+// 思路：双指针
+function isPalindrome(s) {
+    const test = (char) => {
+        return /[a-zA-Z0-9]/.test(char)
+    }
+    let left = 0
+    let right = s.length - 1
+    while(left < right) {
+        let ch1 = s[left]
+        let ch2 = s[right]
+        if(!test(ch1)) {
+            left++
+        } else if(!test(ch2)) {
+            right--
+        } else {
+            ch1 = ch1.toLowerCase()
+            ch2 = ch2.toLowerCase()
+            if(ch1 !== ch2) {
+                return false
+            }
+            left++
+            right--
+        }
+    }
+    return true
+}
+
+// 106、最多删除一个字符得到回文
+// 给定一个字符串，判断如果最多从字符串中删除一个字符能不能得到一个回文字符串。
+// 例如，如果输入字符串 "abca"，由于删除字符 'b' 或 'c' 就能得到一个回文字符串，因此输出为 true 。
+// 思路： 双指针，不过注意的是要再遇到不同的时候，去删除左边或删除右边的值，再进行回文判断
+function validPalindrome(s) {
+    // 判断字符串 s 在 [left, right] 范围内是否是回文
+    const isPalindrome = (s, left, right) => {
+        while(left < right) {
+            if(s[right] !== s[left]) {
+                return false
+            }
+            left++
+            right--
+        }
+        return true
+    }
+    let left = 0
+    let right = s.length - 1
+    while(left < right) {
+        if(s[left] !== s[right]) {
+            // 检查删除左边或右边字符后是否为回文
+            return isPalindrome(s, left + 1, right) || isPalindrome(s, left, right - 1)
+        } else {
+            left++
+            right--
+        }
+    }
+    // 如果完整遍历未发现不匹配，则为回文
+    return true
+}
+
+// 107、回文子字符串的个数
+// 给定一个字符串，计算该字符串中有多少个回文连续子字符串。
+// 例如，字符串 "abc" 有 3 个回文子字符串，分别为 "a"、"b" 和 "c"；而字符串 "aaa" 有 6 个回文子字符串，分别为 "a"、"a"、"a"、"aa"、"aa" 和 "aaa"。
+// 思路：中心扩展法
+//  a、 每个字符或相邻的字符对 都可以作为回文的中心。
+// 	b、	从中心向两边扩展，检查是否形成回文子串。
+// 	c、	对每个回文子串计数，最终返回总数。
+function countSubstrings(s) {
+    let expandAroundCenter = (s, left, right) => {
+        let count = 0
+        while(left >= 0 && right < s.length && s[left] === s[right]) {
+            count++
+            left++
+            right--
+        }
+        return count
+    }
+    let res = 0
+    for(let i = 0; i < s.length; i++) {
+        // 以单个字符为中心
+        res += expandAroundCenter(s, i, i)
+        //以两个字符为中心
+        res += expandAroundCenter(s, i, i + 1)
+    }
+    return res
+}
+
+// 108、删除倒数第 k 个节点”
+// 如果给定一个链表，要求删除链表中的倒数第 k 个节点，假设链表中节点的总数为 n，那么 1 ≤ k ≤ n，并且只能遍历链表一次。
+// 思路： 跟24题思路类似，快慢指针 
+//       要删除第k个节点，那找出倒数第k+1个节点就好了，先让快指针走k+1步，然后快慢指针一起走，直到快指针走到末尾，慢指针就在倒数第k+1个，找出来就可以删除了
+// 注意点： 有可能要删除头节点，所以得加一个哑节点指向头节点
+function deleteKNode(pHead, k) {
+    if (!pHead || k < 0) {
+        return pHead; // 空链表或非法输入
+    }
+
+    let dum = new ListNode(0)
+    dum.next = pHead
+    let p1 = dum // 快指针
+    let p2 = dum // 慢指针
+
+    // 快指针先走k+1步
+    while(k >= 0) {
+        if(!p1) {
+            return pHead
+        }
+        p1 = p1.next
+        k--
+    }
+
+    // 快慢指针同步移动
+    while(p1) {
+        p1 = p1.next
+        p2 = p2.next
+    }
+
+    // 删除目标节点
+    p2.next = p2.next.next
+
+    return dum.next // 返回实际头节点
+}
+
+// 109、链表中环的入口节点
+// 如果一个链表中包含环，那么应该如何找出环的入口节点？从链表的头节点开始顺着 next 指针方向进入环的第 1 个节点为环的入口节点
+// 思路： 和25是同一题
+function circlePoint(pHead) {
+    if(!pHead) {
+        return null
+    }
+    let fast = pHead
+    let slow = pHead
+    // 快指针一次走2步，慢指针一次走1步
+    while(fast && fast.next) {
+        fast = fast.next.next
+        slow = slow.next
+        // 相遇时说明有环
+        if(slow === fast) {
+            // 将慢指针重新指向头节点
+            slow = pHead
+            // 同时走一步
+            while(slow !== fast) {
+                slow = slow.next
+                fast = fast.next
+            }
+            return slow
+        }
+    }
+    return null
+}
+
+// 110、两个链表的第 1 个重合节点”
+// 输入两个单向链表，需要找出它们的第 1 个重合节点
+// 思路： 与61题是同一题
+// 新加一种方法： 双指针
+//      a、使用两个指针，分别从两个链表的头开始遍历。
+// 	    b、当指针 A 到达链表 A 的尾部时，让它指向链表 B 的头；指针 B 也是一样。
+//  	c、这样一来，当两个指针同时走完了两个链表的长度，它们就会在公共节点处相遇，或者同时为 null。
+// 1 → 2 → 3 → 4 → 5 → 6 → 8 → 9 → 4 → 5 → 6 → 1 → 2 → 3 → 4 → 5 → 6 → 8 → 9 → [4] → 5 → 6
+// 8 → 9 → 4 → 5 → 6 → 1 → 2 → 3 → 4 → 5 → 6 → 8 → 9 → 4 → 5 → 6 → 1 → 2 → 3 → [4] → 5 → 6
+// 如上所示，两个指针分别交替走l1和l2最后指针会在公共节点入口【4】处相遇
+function findFirstCommonNode(l1, l2) {
+    let p1 = l1
+    let p2 = l2
+    while(p1 !== p2) {
+        p1 = p1 ? p1.next : p2
+        p2 = p2 ? p2.next : p1
+    }
+    return p1
+}
+
+// 111、反转链表
+// 定义一个函数，输入一个链表的头节点，反转该链表并输出反转后链表的头节点
+// 思路：与25题是同一题
+
+// 112、链表中的数字相加
+// 给定两个表示非负整数的单向链表，要求实现这两个整数的相加并且把它们的和仍然用单向链表表示。
+// 链表中的每个节点表示整数十进制的一位，并且头节点对应整数的最高位数而尾节点对应整数的个位数。
+// 例如，两个链表分别表示整数 123 和 531，它们的和为 654，需要返回表示和的链表
+// 思路： 先让较长的链表走两链表之差gap步，然后一起走，一起相加每位，用较长的那个链表保存结果
+function listSum(l1, l2) {
+    const getLen = (l) => {
+        let len = 0;
+        while (l) {
+            len++;
+            l = l.next;
+        }
+        return len;
+    }
+
+    let len1 = getLen(l1);
+    let len2 = getLen(l2);
+    let gap = Math.abs(len1 - len2);
+
+    // 调整较长链表的指针，使两个链表从相同的起始位置开始同步遍历
+    if (len1 > len2) {
+        while (gap) {
+            l1 = l1.next;
+            gap--;
+        }
+    } else {
+        while (gap) {
+            l2 = l2.next;
+            gap--;
+        }
+    }
+
+    // 初始化一个新链表
+    let dummy = new ListNode(0);
+    let current = dummy;
+
+    let carry = 0; // 用来处理进位
+    while (l1 || l2 || carry) {
+        let sum = carry;
+        if (l1) {
+            sum += l1.val;
+            l1 = l1.next;
+        }
+        if (l2) {
+            sum += l2.val;
+            l2 = l2.next;
+        }
+
+        carry = Math.floor(sum / 10); // 计算进位
+        current.next = new ListNode(sum % 10); // 新建一个节点保存当前结果
+        current = current.next; // 移动到新节点
+    }
+
+    return dummy.next; // 返回去掉哑节点后的结果链表
+}
+
+// 上面的优化如下
+function listSum(l1, l2) {
+    let dummy = new ListNode(0); // 哑节点，用于返回结果链表
+    let current = dummy; // 当前节点指针，用于构建结果链表
+    let carry = 0; // 进位
+    let p1 = l1, p2 = l2;
+    
+    // 同时遍历两个链表并加和，直到两个链表均遍历完
+    while (p1 || p2 || carry) {
+        let sum = carry; // 从上一个节点的进位开始
+        
+        // 加上当前节点的值
+        if (p1) {
+            sum += p1.val;
+            p1 = p1.next;
+        }
+        if (p2) {
+            sum += p2.val;
+            p2 = p2.next;
+        }
+
+        // 更新进位
+        carry = Math.floor(sum / 10); // 保留进位
+        current.next = new ListNode(sum % 10); // 当前节点存储的是 sum 的个位
+        current = current.next; // 移动当前指针到下一个节点
+    }
+    
+    return dummy.next; // 返回哑节点之后的结果链表
+}
+
+// 思路2、反转两个链表，相加然后反转
+function listSum(l1, l2) {
+    // 反转两个链表
+    l1 = reverseList(l1);
+    l2 = reverseList(l2);
+    
+    let dummy = new ListNode(0); // 哑节点，用于返回结果链表
+    let current = dummy; // 当前节点指针，用于构建结果链表
+    let carry = 0; // 进位
+    
+    // 相加两个反转后的链表
+    while (l1 || l2 || carry) {
+        let sum = carry; // 从上一个节点的进位开始
+        
+        // 加上当前节点的值
+        if (l1) {
+            sum += l1.val;
+            l1 = l1.next;
+        }
+        if (l2) {
+            sum += l2.val;
+            l2 = l2.next;
+        }
+
+        // 更新进位
+        carry = Math.floor(sum / 10); // 保留进位
+        current.next = new ListNode(sum % 10); // 当前节点存储的是 sum 的个位
+        current = current.next; // 移动当前指针到下一个节点
+    }
+    
+    // 反转结果链表
+    return reverseList(dummy.next); // 返回反转后的链表
+}
+
+// 113、重排链表
+// 给定一个链表，链表中节点的顺序是L0->L1->L2->...->Ln-1-> Ln ，需要重排链表使节点的顺序变成 L0->Ln->L1->Ln-1->L2->Ln-2...
+function reorderList(l) {
+    
+}
