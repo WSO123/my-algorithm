@@ -4781,6 +4781,46 @@ function listSum(l1, l2) {
 
 // 113、重排链表
 // 给定一个链表，链表中节点的顺序是L0->L1->L2->...->Ln-1-> Ln ，需要重排链表使节点的顺序变成 L0->Ln->L1->Ln-1->L2->Ln-2...
-function reorderList(l) {
-    
+// 思路： 快慢指针，慢指针走1步，快指针走2步
+//      a、	分为两半：使用快慢指针将链表分为两个部分。慢指针每次走一步，快指针每次走两步。当快指针到达链表末尾时，慢指针正好指向链表的中间。
+//      b、	反转后半部分：反转链表的后半部分，这样可以方便地从尾部开始依次插入。
+//      c、	合并两部分：交替合并前半部分和反转后的后半部分。
+function reorderList(head) {
+    if(!head || !head.next) {
+        return head
+    }
+
+    // 使用快慢指针找到中间节点
+    let slow = head, fast = head
+    while(fast && fast.next) {
+        slow = slow.next
+        fast  = fast.next.next
+    }
+
+    // 将后半部分反转
+    let second = slow.next
+    slow.next = null // 断开前后两部分
+    second = reverseList(second)
+
+    // 合并两个链表
+    let first = head
+    while(second) {
+        // 存fisrt除第一个节点的部分
+        let tmp1 = first.next;  // 记录当前first节点的下一个节点
+        let tmp2 = second.next; // 记录当前second节点的下一个节点
+        
+        first.next = second;   // 将first指向second，表示L0 -> Ln
+        second.next = tmp1;    // 将second指向first.next，即Ln -> L1（第一个链表的下一个节点）
+        
+        first = tmp1;  // 移动first指针到下一个节点L1
+        second = tmp2;  // 移动second指针到下一个节点Ln-1
+    }
+
+    return head
 }
+
+// 114、回文链表
+// 判断一个链表是不是回文，要求解法的时间复杂度是o(n) ，并且不得使用超过 o(1) 的辅助空间。
+// 如果一个链表是回文，那么链表的节点序列从前往后看和从后往前看是相同的。例如，给定一个具体的链表，判断其是否为回文链表。
+// 思路： 由于回文链表的对称性，可尝试把链表分成前后两半，然后把其中一半反转，再比较两半是否相同。若链表节点总数是偶数，前半段链表反转后应与后半段链表相同；
+//      若节点总数是奇数，把链表分成前后两半时不包括中间节点，前半段链表反转后与后半段链表（不包括中间节点）也应相同
