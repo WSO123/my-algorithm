@@ -4824,3 +4824,41 @@ function reorderList(head) {
 // 如果一个链表是回文，那么链表的节点序列从前往后看和从后往前看是相同的。例如，给定一个具体的链表，判断其是否为回文链表。
 // 思路： 由于回文链表的对称性，可尝试把链表分成前后两半，然后把其中一半反转，再比较两半是否相同。若链表节点总数是偶数，前半段链表反转后应与后半段链表相同；
 //      若节点总数是奇数，把链表分成前后两半时不包括中间节点，前半段链表反转后与后半段链表（不包括中间节点）也应相同
+// 奇数情况： 1 → 2 → 3 → 4 → 5 → 6 -> 7
+//                      p1
+//                                   p2
+function isPalindromeList(head) {
+    if(!head || !head.next) {
+        return true
+    }
+
+    // 找出中间节点
+    let slow = head
+    let fast = head
+    while(fast && fast.next) {
+        slow = slow.next
+        fast = fast.next.next
+    }
+
+    // 如果是链表长度是奇数，最后fast是有值的
+    // 如果链表长度是奇数， slow指向后半部分的第一个值上
+    if(fast) {
+        slow = slow.next
+    }
+
+    // 反转后半部分的链表，得到反转后的头节点
+    let reversedHalf = reverseList(slow)
+
+    // 比较两部分
+    let p1 = head
+    let p2 = reversedHalf
+    while(p2) {
+        if(p1.val !== p2.val) {
+            return false
+        }
+        p1 = p1.next
+        p2 = p2.next
+    }
+
+    return true
+}
