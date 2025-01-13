@@ -5181,3 +5181,51 @@ function groupAnagrams(words) {
 
     return Array.from(map.values());
 }
+
+// 121、外星语言是否排序
+// 有一门外星语言，它的字母表刚好包含所有的英文大小写字母，只是字母表的顺序不同。给定一组单词和字母表顺序，请判断这些单词是否按字母表的顺序排序
+//  例 如， 输 ⼊ ⼀ 组 单词["oﬀer","is", "coming"] ，以 及 字⺟ 表 顺序"zyxwvutsrqponmlkjihgfedcba"，
+//  由于字⺟'o'在字⺟表中位于'i'的前⾯，因此单词"oﬀer"排在"is"的前⾯；同样，由于字⺟'i'在字⺟表中位于
+// 'c'的前⾯，因此单词"is"排在"coming"的前⾯。因此，这⼀组单词是按照字⺟表顺序排序的，应该输出true
+// 思路： 	
+// 1.	将给定的字母表顺序转换为哈希表，用于快速查找每个字母的顺序位置。
+// 2.	遍历单词列表，依次比较相邻单词：
+//     •	按照字母表顺序比较两个单词的字母。
+//     •	如果当前字母的顺序不符合外星语言的排序规则，则返回 false。
+//     •	如果所有单词都符合规则，返回 true。
+function isAlienSorted(words, order) {
+    // 创建字母表顺序的哈希表
+    let orderMap = new Map()
+    for(let i = 0; i < order.length; i++) {
+        orderMap.set(order[i], i)
+    }
+
+    // 比较两个单词的排序
+    const isOrder = (word1, word2) => {
+        let len1 = word1.length
+        let len2 = word2.length
+        let minLen = Math.min(len1, len2)
+
+        for(let i = 0; i < minLen; i++) {
+            let char1 = word1[i]
+            let char2 = word2[i]
+            let index1 = orderMap.get(char1)
+            let index2 = orderMap.get(char2)
+
+            if(index1 !== index2) {
+                return index1 < index2
+            }
+        }
+
+        // 如果minLen个字母相同，短的在前面
+        return len1 <= len2
+    }
+
+    for(let i = 0; i < words.length - 1; i++) {
+        if(!isOrder(words[i], words[i+1])) {
+            return false
+        }
+    }
+
+    return true
+}
