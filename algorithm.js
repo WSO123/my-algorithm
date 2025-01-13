@@ -5082,3 +5082,30 @@ class LRU {
         }
     }
 }
+
+// 119、有效变位词
+// 给定两个字符串s和t，判断他们是不是同一组变位词，在一组变位词中，他们的字符及每个字符出现的次数相同，但字符的顺序不能相同
+// 思路： 哈希表
+function isAnagram(s, t) {
+    if(s.length !== t.length) {
+        return false
+    }
+
+    let sMap = new Map()
+    for(let char of s) {
+        sMap.set(char, (sMap.get(char) || 0) + 1)
+    }
+
+
+    for(let char of t) {
+        if(!sMap.has(char) || sMap.get(char) === 0) {
+            return false
+        }
+
+        sMap.set(char, sMap.get(char) - 1)
+    }
+
+    return true
+}
+
+
