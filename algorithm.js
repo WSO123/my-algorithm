@@ -5282,6 +5282,40 @@ function findMinDifference(timePoints) {
     // 计算跨夜
     const crossDiff = toMinutes - last + first
     minDiff = minDiff = Math.min(minDiff, crossDiff)
-    
+
     return minDiff
+}
+
+// 123、后缀表达式
+// 后缀表达式是一种算术表达式，它的操作符在操作数后面。输入一个用字符串数组表示的后缀表达式，请输出该后缀表达式的计算节点，假设输入的一定是有效的后缀表达式
+// 例如,['2', '1', '3', '*', '+']表示2 + 1*3
+// 思路： 使用栈
+function evalRPN(tokens) {
+    const cal = (num1, num2, operator) => {
+        switch(operator) {
+            case '+':
+                return num1 + num2
+            case '-':
+                return num1 - num2
+            case '*':
+                return num1 * num2
+            case '/':
+                return ~~(num1 / num2) // 使用 ~~ 取整
+            default:
+                return 0
+        }
+    }
+
+    let stack = []
+    for(let token of tokens) {
+        if(['-', '+', '/', '*'].includes(token)) {
+            let num1 = stack.pop()
+            let num2 = stack.pop()
+            stack.push(cal(num2, num1, token))
+        } else {
+            stack.push(parseInt(token))
+        }
+    }
+
+    return stack[0]
 }
