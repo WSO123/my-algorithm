@@ -5108,4 +5108,76 @@ function isAnagram(s, t) {
     return true
 }
 
+// 120、变位词组
+// 给定一组单词，请将他们按照变位词饭组
+// 例如，输入一组单词['eat', 'tea', 'ate', 'nat', 'bat']，这组单词可以分为三组[''eat', 'tea', 'ate']、['nat']、['bat']
+// 思路1、对于每个单词，将其字符排序，作为唯一标识符，相同的键归为一组
+function groupAnagrams(words) {
+    let map = new Map()
+    for(let word of words) {
+        let key = word.split('').sort().join('')
+        if(!map.has(key)) {
+            map.set(key, [word])
+        } else {
+            let group = map.get(key)
+            group.push(word)
+            map.set(key, group)
+        }
+    }
 
+    return Array.from(map.values())
+}
+// 思路2、质数乘积法
+// 每个字母用一个质数表示，如：
+// 	•	a -> 2, b -> 3, c -> 5, ..., z -> 101。
+// 	•	对于每个单词，将其字符对应的质数相乘，得到一个唯一的乘积作为键。
+// 	•	因为质数的乘积具有唯一性，不同的字母组合会产生不同的乘积键
+function groupAnagrams(words) {
+    const primes = [
+        2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 
+        31, 37, 41, 43, 47, 53, 59, 61, 67, 
+        71, 73, 79, 83, 89, 97, 101
+    ]; // 每个字母对应的质数
+    const map = new Map();
+
+    for(let word of words) {
+        let key = 1
+        for(let char of word) {
+            key *= primes[char.charCodeAt(0) - 'a'.charCodeAt(0)]
+        }
+
+        if(!map.has(key)) {
+            map.set(key, [word])
+        } else {
+            let group = map.get(key)
+            group.push(word)
+            map.set(key, group)
+        }
+    }
+
+    return Array.from(map.values())
+}
+
+// 思路3、字符计数法
+function groupAnagrams(words) {
+    const map = new Map();
+
+    for (let word of words) {
+        // 统计每个字符的频率
+        const count = new Array(26).fill(0);
+        for (let char of word) {
+            count[char.charCodeAt(0) - 'a'.charCodeAt(0)]++;
+        }
+        // 将频率数组转换为字符串作为键
+        const key = count.join('#');
+        if(!map.has(key)) {
+            map.set(key, [word])
+        } else {
+            let group = map.get(key)
+            group.push(word)
+            map.set(key, group)
+        }
+    }
+
+    return Array.from(map.values());
+}
