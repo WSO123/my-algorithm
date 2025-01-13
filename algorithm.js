@@ -5229,3 +5229,59 @@ function isAlienSorted(words, order) {
 
     return true
 }
+
+// 122、最小时间差
+// 给定一组范围在00:00至23:59的时间，求任意两个时间之间的最小时间差。
+// 例如，输入时间数组['23:50','23:59','00:00'], '23:59','00:00'间只有1分钟间隔，是最小时间差
+// 思路： 
+//	    1.	时间转换：将每个时间字符串 hh:mm 转换为从午夜起的分钟数。
+//      2.	使用布尔桶：创建一个大小为  1440  的布尔数组 buckets，标记所有出现的时间点。
+//      3.	遍历桶：
+//      •	找到所有出现的时间点，记录相邻时间的最小差值。
+//      •	计算首尾时间点的跨午夜差值。
+function findMinDifference(timePoints) {
+    const totalMinutes = 1440 // 一天有1440分钟
+    const toMinutes = (time) => { // 时间转换成分钟
+        const [hours, minutes] = time.split(':').map(Number)
+        return hours * 60 + minutes
+    }
+
+    if(timePoints.length> totalMinutes) { //时间点重复了
+        return 0
+    }
+
+    // 创建布尔桶
+    const buckets =  new Array(totalMinutes).fill(false)
+
+    for(let time of timePoints) {
+        let minutes = toMinutes(time)
+        if(buckets[minutes]) { // 有重复的时间
+            return 0
+        }
+        buckets[minutes] = true
+    }
+
+    let prev = -1
+    // first和last用来计算跨日的时间
+    let first = -1
+    let last = -1
+    let minDiff = Infinity
+    for(let i = 0; i < totalMinutes; i++) {
+        if(buckets[i]) {
+            if(prev !== -1) {
+                minDiff = Math.min(minDiff, i - prev)
+                prev = i
+                if(first === -1) { // 记录第一个时间点
+                    first = i
+                }
+                last = i // 记录最后一个时间点
+            } 
+        }
+    }
+
+    // 计算跨夜
+    const crossDiff = toMinutes - last + first
+    minDiff = minDiff = Math.min(minDiff, crossDiff)
+    
+    return minDiff
+}
