@@ -5498,3 +5498,47 @@ function getMaxRectArea(matrix) {
     return maxArea;
 }
 
+// 128、滑动窗口的平均值
+// 请实现如下类型的数据结构 MovingAverage：
+// 1.	MovingAverage(int size)：构造器，用一个大小为 size 的数据流。
+// 2.	double next(int val)：接收一个新值 val，返回当前数据流的移动平均值。
+// 思路： 使用队列
+class MovingAverage {
+    constructor(size) {
+        this.size = size
+        this.queue = []
+        this.sum = 0
+    }
+
+    next(val) {
+        this.queue.push(val)
+        this.sum += val
+        if(this.queue.length > this.size) {
+            this.sum -= this.queue.shift()
+        }
+        return this.sum / this.queue.length
+    }
+}
+
+// 129、最近请求次数
+// 写一个 RecentCounter 类来计算最近的请求。
+// 它只有一个方法：ping(int t)，其中 t 代表以毫秒为单位的某个时间。
+// 返回过去 3000 毫秒内的 ping 数。
+// 假设每次调用函数的ping参数t都比之前调用的参数值大
+// 思路： 使用队列
+class RecentCounter {
+    constructor(size) {
+        this.queue = []
+        this.size = 3000 // window size
+    }
+
+    ping(t) {
+        this.queue.push(t)
+
+        // 如果窗口已经超过3000ms，移除队列头部元素，直到size小于等于3000ms
+        while(this.size < t - this.queue[0]) {
+            this.queue.shift()
+        }
+        return this.queue.length
+    }
+}
