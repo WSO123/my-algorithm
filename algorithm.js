@@ -4866,6 +4866,99 @@ function isPalindromeList(head) {
 // 115、展平多级双向链表
 // 在一个多级双向链表中，节点除了有两个指针分别指向前、后两个节点，还有一个指针指向它的子链表，并且子链表也是一个双向链表，其节点也有指向子链表的指针。
 // 需要将这样的多级双向链表展平成普通的双向链表，即所有节点都没有子链表。
+// 思路：
+//  .	遍历链表时，如果节点存在 child，将其展开：
+// 	•	递归地展平子链表。
+// 	•	将展开后的子链表插入到当前节点和它的 next 节点之间。
+// 	•	处理 prev 和 next 的指针更新。
+// 	•	将 child 指针置为 null。
+// 	.	继续处理下一个节点。
 function flattenList(head) {
-    
+    if(!head) {
+        return head
+    }
+
+    const flat = (node) => {
+        let cur = node
+        let tail = null
+        while(cur) {
+            const next =  cur.next
+            if(cur.chiild) {
+                // 展开子链表
+                const childHead = cur.chiild
+                const childTail = flat(childHead)
+
+                // 插入子链表
+                cur.next = childHead
+                childHead.prev = cur
+
+                // 如果有后续节点，将子链表和后续节点连接
+                if(next) {
+                    childTail.next = next
+                    next.prev = childTail
+                }
+
+                // 清楚child指针
+                cur.child = null
+
+                // 更新当前尾节点
+                tail = childTail
+            } else {
+                tail = cur
+            }
+
+            cur = next
+        }
+
+        return tail
+    }
+
+    flat(head)
+    return head
+}
+
+// 116、排序的循环链表
+// 在一个循环链表中节点的值递增排序，请设计一个算法在该循环链表中插入节点，并保证插入节点之后循环链表仍然是怕序的
+// 思路: 
+//      试图在链表中找到相邻的两个节点，如果这两个节点的前一个节点值比待插入的小，后一个值比待插入的大，那么就插入到这两个节点之间
+//      如果不符合，则待插入节点大于最大值或小于最小值，插入到最大节点和最小节点之间
+//      边界条件：链表节为空，插入节点是唯一节点，next指向自己。链表有一个节点，插入节点后，两个节点互相指向对方
+function insert(head, insertVal) {
+    const newNode = new ListNode(insertVal)
+    // 链表为空
+    if(head === null) {
+        head = newNode
+        node.next = head
+        return head
+    }
+
+    // 链表只有一个节点
+    if(head.next === head) {
+        head.next = newNode
+        newNode.next = head
+        return head
+    }
+
+    let cur = head
+    let next = cur.next
+    let biggest = head
+
+    // 遍历数组找到cur.val <= insertVal && insertVal <= next.val
+    while(!(cur.val <= insertVal && next.val >= insertVal) && next!== head) {
+        cur = next
+        next = next.next
+        if(cur.val >= biggest.val) {
+            biggest = cur
+        }
+    }
+
+    if(cur.val <= insertVal && insertVal <= next.val) {
+        cur.next = newNode
+        newNode.next = next
+    } else { // 如果遍历完还是没有找到，新节点比最大值大或比最小值小
+        newNode.next = biggest.next
+        biggest.next = newNode
+    }
+
+    return head
 }
