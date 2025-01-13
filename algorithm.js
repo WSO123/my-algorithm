@@ -4962,3 +4962,51 @@ function insert(head, insertVal) {
 
     return head
 }
+
+// 117、插入、删除和随机访问都是o(1)的容器
+// 设计一个数据结构，使如下3个操作的时间复杂度都是o(1)
+//  insert: 如果数据集中不包含一个数值，则添加进去
+//  remove: 如果数据集中包含一个数值，则删除
+//  getRandom: 随机返回数据集中的一个数值，要求每个数值返回的概率相同
+// 思路： 使用数组实现随机访问，使用哈希表存储值到数组的映射方便快速插入和删除
+class RandomizedSet {
+    constructor() {
+        this.data = [] // 存储数据
+        this.indexMap = new Map() // 存储值到数组的索引
+    }
+
+    insert(val) {
+        if(this.indexMap.has(val)) {
+            return false
+        }
+
+        this.data.push(val) // 存在末尾
+        this.indexMap.set(val, this.data.length - 1) // 更新索引
+        return true
+    }
+
+    remove(val) {
+        if(!this.indexMap.has(val)) {
+            return false
+        }
+
+        // 用最后一个元素替换被删除元素保持  O(1)  的复杂度。
+        const indexDelete = this.indexMap.get(val)
+        const lastEle = this.data[this.data.length - 1]
+
+        // 用最后一个元素替换要删除的元素
+        this.data[indexDelete] = lastEle
+        this.indexMap.set(lastEle, index)
+
+        // 删除最后一个元素
+        this.data.pop()
+        this.indexMap.delete(val)
+
+        return true
+    }
+
+    getRandom() {
+        const randomIndex = Math.floor(Math.random() * this.data.length)
+        return this.data[randomIndex]
+    }
+}
