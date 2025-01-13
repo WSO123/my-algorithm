@@ -5467,4 +5467,34 @@ function getMaxArea(heights) {
 
 // 127、矩阵中最大的矩形
 // 请在一个由0、1组成的矩阵中找出最大的只包含1的矩形并输出它的面积
+// 思路： 把矩阵可以转成整几个直方图，就可以把问题转换成直方图的最大面积了
+// [
+//    [1, 0, 1, 0, 0],
+//    [0, 0, 1, 1, 1],
+//    [1, 1, 1, 1, 1],
+//    [1, 0, 0, 1, 0]
+// ]
+// 把上面的矩阵以行为基线可以转换成几个直方图：
+// [1, 0, 1, 0, 0]、[0, 0, 2, 1, 1]、[1, 1, 3, 2, 2]、[2, 0, 0, 3,0 ]
+function getMaxRectArea(matrix) {
+    if (matrix.length === 0 || matrix[0].length === 0) {
+        return 0; // 边界条件，空矩阵
+    }
+
+    const rows = matrix.length;
+    const cols = matrix[0].length;
+    const heights = new Array(cols).fill(0); // 初始化直方图高度数组
+    let maxArea = 0;
+
+    for (let i = 0; i < rows; i++) {
+        // 构建直方图
+        for (let j = 0; j < cols; j++) {
+            heights[j] = matrix[i][j] === 0 ? 0 : heights[j] + 1;
+        }
+        // 计算当前直方图的最大矩形面积
+        maxArea = Math.max(maxArea, getMaxArea(heights));
+    }
+
+    return maxArea;
+}
 
