@@ -5542,3 +5542,6 @@ class RecentCounter {
         return this.queue.length
     }
 }
+
+// 130、在完全二叉树中插入节点
+
