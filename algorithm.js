@@ -5465,4 +5465,6 @@ function getMaxArea(heights) {
     return calculateArea(0, heights.length - 1);
 }
 
-// 127、
+// 127、矩阵中最大的矩形
+// 请在一个由0、1组成的矩阵中找出最大的只包含1的矩形并输出它的面积
+
