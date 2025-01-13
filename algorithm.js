@@ -5374,3 +5374,26 @@ function lastPalents(nums) {
     }
     return stack
 }
+
+// 125、每日温度
+// 输入一个数组，他们每个数字是某天的温度，请计算需要等几天才会出现更高的温度
+// 例如，输入[35, 31, 33, 36, 34], 那么输出为[3,1,1,,0,0]
+// 思路： 使用一个栈存储温度在数组中的下标，然后一边入栈一边比较
+function dailyTemperatures(temperatures) {
+    let len = temperatures.length
+    let res = new Array(len).fill(0)
+    let stack = [] // 存储温度在数组中的下标，一边入栈一边比较，并且方便计算天数差值
+
+    for(let i = 0; i < len; i++) {
+        // 当当前温度大于栈顶下标对应的温度时
+        while(stack.length > 0 && temperatures[i] > temperatures[stack[stack.length - 1]]) {
+            let prev = stack.pop() // 栈顶下标出栈
+            res[prev] = i - prev  // 计算当前天数差值
+        }
+
+        stack.push(i) // 当前下标入栈
+    }
+    return res
+}
+
+// 126、
