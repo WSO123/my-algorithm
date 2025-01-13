@@ -5319,3 +5319,58 @@ function evalRPN(tokens) {
 
     return stack[0]
 }
+
+// 124、小行星碰撞
+// 输入一个表示小行星的数组，数组中每个数字的绝对值表示小行星的大小，数字的正负号表示小行星的方向，正号表示向右飞行，负号表示向左飞行，如果两个小行星相撞，那么体积小的那个最终会爆炸消失
+// 如果两个小行星大小都相同，那么最终都会消失，飞行相同的小行星永远不会相撞。求最终剩下的小行星
+// 例如，有六颗小行星[4, 5, -6, 4, 8, -5]
+// 思路： 使用栈，从左到右入栈
+function lastPalents(nums) {
+    if (nums.length === 0) return []; // 如果输入为空，直接返回空数组
+
+    let stack = [nums[0]]
+    for(let i = 1; i < nums.length; i++) {
+        let first = stack[stack.length - 1]
+        let cur = nums[i]
+        if(first > 0 && cur < 0) {
+            if(first + cur > 0) {
+                continue
+            } else if(first + cur <  0) {
+                stack.pop()
+                stack.push(nums[i])
+            } else {
+                stack.pop()
+            }
+        } else {
+            stack.push(nums[i])
+        }
+    }
+    return stack
+}
+
+// 优化
+function lastPalents(nums) {
+    if (nums.length === 0) return []; // 如果输入为空，直接返回空数组
+    
+    let stack = []
+    for(let cur of nums) {
+       while(stack.length && stack[stack.length - 1] > 0 && cur < 0) {
+            let top = stack[stack.length - 1]
+            if(top + cur === 0) {
+                stack.pop()
+                cur = 0 // 淘汰
+                break
+            } else if(top + cur > 0) {
+                cur = 0
+                break
+            } else {
+                stack.pop()
+            }
+       }
+
+       if(cur !== 0) {
+        stack.push(cur)
+       }
+    }
+    return stack
+}
