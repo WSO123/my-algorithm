@@ -5396,4 +5396,73 @@ function dailyTemperatures(temperatures) {
     return res
 }
 
-// 126、
+// 126、直方图最大矩形面积， 难度：困难
+// 直方图是由排列在同一基线上的相邻柱子组成的图形，输入一个由非负数组成的数组，数组中的数组是直方图中柱子的高。求直方图中最大的举行面积，假设直方图中柱子的宽度都是1
+// 例如，输入[3,2,5,4,6,1,4,2],输出12
+// 思路1： 单调栈，用一个栈保存直方图中的柱子，并且栈中的柱子高度递增排序，为了方便计算宽度，栈中保存下标，可以根据下标得到高度
+//      假设从左到右逐一扫描数组中的柱子，如果当前柱子的高度大于位于栈顶的高度，那么把该柱子下标入栈，否则将位于栈顶的柱子下标出栈，并且计算栈顶的柱子为顶的最大矩形面积
+// 
+
+function getMaxArea(nums) {
+    let stack = []
+    stack.push(-1)
+
+    let maxArea = 0
+    
+    for(let i = 0; i < nums.length; i++) {
+        // 当前柱子高度小于等于栈顶柱子时，处理栈顶柱子
+        while(stack[stack.length - 1] !== -1 && nums[stack[stack.length - 1]] >= nums[i]) {
+            // 如果当前柱子的高度小于位于栈顶的高度，那么把栈顶的柱子出栈，并计算栈顶的柱子为顶的最大矩形面积
+            let popIndex = stack.pop()
+            let height = nums[popIndex]
+            let width = i - stack[stack.length - 1] - 1 // 不减1的话会把当前i位置算进去
+            maxArea = Math.max(maxArea, height * width)
+        }
+
+        stack.push(i) // 入栈
+    }
+
+    // 处理栈中剩余的柱子
+    while(stack[stack.length - 1] !== -1) {
+        let popIndex = stack.pop()
+        let height = nums[popIndex]
+        let width = nums.length - stack[stack.length  - 1] - 1 // 不减1的话会把边界包括进去
+        maxArea = Math.max(maxArea, height * width)
+    }
+
+    return maxArea
+}
+// 思路2: 分治法
+//      如果当前子数组为空，则返回面积为 0。
+// 		找到当前范围内的最矮柱子索引。
+// 		计算以最矮柱子高度为基础的最大矩形面积。
+// 		对左右子数组递归求解，返回三者中的最大值。
+
+function getMaxArea(heights) {
+    // 分治法
+    const calculateArea = (start, end) => {
+        if (start > end) return 0; // 空区间，面积为 0
+
+        // 找到当前范围内最矮的柱子
+        let minIndex = start;
+        for (let i = start; i <= end; i++) {
+            if (heights[i] < heights[minIndex]) {
+                minIndex = i;
+            }
+        }
+
+        // 以最矮柱子为基础计算面积
+        let currentArea = heights[minIndex] * (end - start + 1);
+
+        // 递归计算左右区域的最大面积
+        let leftArea = calculateArea(start, minIndex - 1);
+        let rightArea = calculateArea(minIndex + 1, end);
+
+        // 返回三者中的最大值
+        return Math.max(currentArea, leftArea, rightArea);
+    };
+
+    return calculateArea(0, heights.length - 1);
+}
+
+// 127、
