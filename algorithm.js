@@ -5010,3 +5010,75 @@ class RandomizedSet {
         return this.data[randomIndex]
     }
 }
+
+// 118、最近最少使用缓存LRU
+// 请设计实现一个LRU，要求如下操作复杂度的O(1)
+// get:  如果缓存中存在key，则返回对应的值，否则返回-1
+// put:  如果包含key，则它的值设为val， 否则添加key及val，在添加时，如果容量已满，则删除最近最少使用的键
+// 思路： 可以使用哈希表 + 数组实现LRU，但是更新元素时效性时会有移动数组的值，有O(n)的操作
+//      所以采用双向链表，操作任意两个节点，只需要这两个节点，就可以在o(1)时间进行操作了
+// 双向链表节点类
+class Node {
+    constructor(key, value) {
+        this.key = key; // 键
+        this.value = value; // 值
+        this.prev = null; // 前驱节点
+        this.next = null; // 后继节点
+    }
+}
+class LRU {
+    constructor(cacheSize) {
+        this.cacheSize = cacheSize
+        this.map = new Map() // 存储key-node
+        // 初始化双向链表，存储最近最久未处理节点
+        this.head = new Node(0, 0) // 虚拟头节点
+        this.tail = new Node(0, 0) // 虚拟尾节点
+        this.head.next = this.tail
+        this.tail.prev = this.head
+    }
+
+    _remove(node) {
+        node.prev.next = node.next
+        node.next.prev = node.prev
+    }
+
+    _appendHead(node) {
+        node.next = this.head.next // node的next指向第一个节点
+        this.head.next.prev = node // 第一个节点的prev指向node
+
+        this.head.next = node // 虚拟头节点head的next指向node
+        node.prev = this.head // node的prev指向head
+    }
+
+    get(key) {
+        if(!this.map.has(key)) {
+            return -1
+        }
+
+        const node = this.map.get(key) // 获取节点
+        this._remove(node) // 链表中移除当前节点
+        this._appendHead(node) // 该节点添加到头部
+
+        return node.value
+    }
+
+    put(key, value) {
+        if(this.map.has(key)) {
+            const node = this.map.get(key)
+            node.value = value
+            this._remove(node)
+            this._appendHead(node)
+        } else {
+            if(this.map.size === this.cacheSize) { // 值已满，移除最久没用的节点
+                const nodeRemove = this.tail.prev // 因为使用的是虚拟尾节点，简化操作，所以最后一个节点是this.tail.prev
+                this._remove(nodeRemove)
+                this.map.delete(nodeRemove.key)
+            }
+
+            //创建新节点
+            const newNode = new Node(key, value)
+            this.map.set(key, newNode)
+            this._appendHead(newNode)
+        }
+    }
+}
