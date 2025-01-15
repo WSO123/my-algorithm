@@ -5634,9 +5634,10 @@ class CBTInserter {
 
 // 131、二叉树中每层的最大值
 // 输入一颗二叉树，请找出每层的最大值
+// 思路1、使用队列实现
 function largestValues(root) {
     if(!root) {
-        return null
+        return []
     }
 
     let queue = [root]
@@ -5660,6 +5661,94 @@ function largestValues(root) {
     return res
 }
 
-// 132、
+// 思路2: 使用两个队列实现，在层序遍历中，一个队列表示当前层的节点，一个表示下一层的节点，交替使用
+function largestValues(root) {
+    if(!root) {
+        return []
+    }
+
+    let res = []
+    let curQueue = [root]
+    let nextQueue = []
+
+    while(curQueue.length) {
+        let maxValue = -Infinity
+        for(let node of curQueue) {
+            maxValue = Math.max(maxValue, node.val)
+            if(node.left) {
+                nextQueue.push(node.left)
+            }
+
+            if(node.right) {
+                nextQueue.push(node.right)
+            }
+        }
+
+        curQueue = nextQueue
+        nextQueue = []
+        res.push(maxValue)
+    }
+
+    return res
+}
+// 132、二叉树最底层最左边的值
+// 如何在一颗二叉树中找出最底层最左边节点的值？假设二叉树中最少有一个节点。
+// 思路1： 层序遍历，深度优先搜索
+function findBottomLeftValue(root) {
+    if(!root) {
+        return null
+    }
+
+    let queue = [root]
+    let leftBottom = root.val
+
+    while(queue.length) {
+        let levelLen = queue.length
+
+        for(let i = 0; i < levelLen; i++) {
+            let node = queue.shift()
+
+            if(i === 0) {
+                leftBottom = node.val 
+            }
+
+            if(node.left) {
+                queue.push(node.left)
+            }
+            if(node.right) {
+                queue.push(node.right)
+            }
+        }
+    }
+
+    return leftBottom
+}
+
+// 思路2: 深度优先搜索，更推荐的做法
+function findBottomLeftValue(root) {
+    if(!root) {
+        return null
+    }
+
+    let maxDepth = -1
+    let leftBottom = root.val
+
+    const dfs = (node, depth) => {
+        if(!node) return
+
+        // 如果当前深度比最大深度大，更新最左值
+        if(depth > maxDepth) {
+            maxDepth = depth
+            leftBottom = node.val
+        }
+
+        // 先递归左子树，再递归右子树
+        dfs(node.left, depth + 1)
+        dfs(node.right, depth + 1)
+    }
+
+    dfs(root, 0)
+    return leftBottom
+}
 
 
