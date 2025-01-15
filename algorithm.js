@@ -1776,14 +1776,15 @@ function serialize(root) {
 // 反序列化
 function deSerialize(str) {
     const nodes = str.split(',')
-    const index = 0 // 用于遍历nodes数组
+    let index = 0 // 用于遍历nodes数组
     const buildTree = () => {
+        // 遇到 '#' 表示当前节点为空
         if(nodes[index] === '#') {
             index++
             return null
         }
 
-        let node = new BinaryTreeNode(nodes[index].val)
+        let node = new BinaryTreeNode(nodes[index])
         index++
 
         // 前序遍历的左子树和右子树节点挨着，所以遍历完左子树，剩下的节点都是右子树的节点，所以这样顺序写没问题
@@ -5979,4 +5980,42 @@ function pruneTree(root) {
 
     // 检查根是否需要剪掉
     return root.val === 0 && !root.left && !root.right ? null : root;
+}
+
+// 138、序列化和反序列化二叉树
+// 与39题是同一道题
+
+// 139、从根节点到叶节点到路径数字之和
+// 在一棵二叉树中所有节点都在0-9的范围之内，从根节点到叶节点到路径表示一个数字，求二叉树中所有路径表示的数字之和
+// 如：有3条路径，395、391、302.和为1088
+//       3
+//     /  \
+//    9    0
+//   / \    \
+//  5   1    2
+// 思路： 深度优先遍历
+function sumNumbers(root) {
+    if(!root) {
+        return 0
+    }
+
+    let sum = 0
+    const dfs = (node, s) => {
+        if(!node) {
+            return
+        }
+
+        s += node.val // 拼接当前节点的值
+
+        if(!node.left && !node.right) {  // 如果是叶子节点，将当前路径数字转换为整数，加入到 nums 数组
+            sum += parseInt(s)
+        }
+
+        // 继续递归左右子树
+        dfs(node.left, s)
+        dfs(node.right, s)
+    }
+
+    dfs(root,  '')
+    return sum
 }
