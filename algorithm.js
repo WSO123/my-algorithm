@@ -1420,6 +1420,7 @@ function printFromTopToBottom(root) {
 }
 // b、分行从上到下打印二叉树
 // 本质就是层序遍历，也就是广度优先搜索
+// 方法一
 function printTreeInLines(root) {
     if(root === null) {
         return 
@@ -1449,6 +1450,33 @@ function printTreeInLines(root) {
             toPrint = nextLevel
             nextLevel = 0
         }
+    }
+}
+// 方法二、这个方式比较推荐
+function printTreeInLines(root) {
+    if(root === null) {
+        return 
+    }
+    let queue = [] // 层序遍历通常是用队列实现的
+    queue.push(root)
+    while(queue.length > 0) {
+
+        let levelLen = queue.length
+
+        for(let i = 0; i < levelLen; i++) {
+            let node = queue.shift()
+            console.log(node.value)
+
+            if(node.left) {
+                queue.push(node.left)
+            }
+
+            if(node.right) {
+                queue.push(node.right)
+            }
+        }
+
+        console.log(' ')
     }
 }
 
@@ -5544,4 +5572,94 @@ class RecentCounter {
 }
 
 // 130、在完全二叉树中插入节点
+// 假设你有一个完全二叉树，要求实现一个数据结构 CBTInserter，它包含以下几个功能：
+// 构造函数 CBTInserter(TreeNode root)：使用给定的完全二叉树的根节点进行初始化。
+// 方法 insert(int v)：将值为 v 的节点插入到完全二叉树中，并返回插入节点的父节点的值。
+// 方法 get_root()：返回完全二叉树的根节点
+// 思路： 完全二叉树插入节点是按照从上到下，从左到右的顺序添加节点的，也就是说这就是二叉树的层序遍历
+//      所以在初始化的时候可以按广度优先搜索的方式把可以添加子节点的节点计入到一个队列里，方便插入的时候使用
+class TreeNode {
+    constructor(val) {
+      this.val = val;
+      this.left = null;
+      this.right = null;
+    }
+}
+class CBTInserter {
+    constructor(root) {
+        this.root = root
+        this.queue = []
+
+        // 初始化队列
+        // 通过层序遍历，将当前树中可以插入子节点的节点加入 queue
+        const bfsQueue = [root]
+        while(bfsQueue.length) {
+            let node  = bfsQueue.shift()
+
+            // 将可以插入节点的节点加入到queue
+            if(!node.left || !node.right) {
+                this.queue.push(node)
+            }
+
+            if(node.left) {
+                bfsQueue.push(node.left)
+            }
+
+            if(node.right) {
+                bfsQueue.push(node.right)
+            }
+        }
+    }
+
+    insert(v) {
+        const newNode = new BinaryTreeNode(v)
+        const parent = this.queue[0] // 获取第一个可插入子节点的节点
+
+        if(!parent.left) {
+            parent.left = newNode
+        } else {
+            parent.right = newNode
+
+            this.queue.shift() // 该节点子节点已满，出队
+        }
+
+        this.queue.push(newNode) // 新节点人队，便于为了插入新节点
+        return parent
+    }
+
+    get_root() {
+        return this.root
+    }
+}
+
+// 131、二叉树中每层的最大值
+// 输入一颗二叉树，请找出每层的最大值
+function largestValues(root) {
+    if(!root) {
+        return null
+    }
+
+    let queue = [root]
+    let res = []
+
+    while(queue.length > 0) {
+        let maxValue = -Infinity
+        let levelLen = queue.length
+        for(let i = 0; i < levelLen; i++) {
+            let node = queue.shift()
+            maxValue = Math.max(maxValue, node.val)
+            if(node.left) {
+                queue.push(node.left)
+            }
+            if(node.right) {
+                queue.push(node.right)
+            }
+        }
+        res.push(maxValue)
+    }
+    return res
+}
+
+// 132、
+
 
