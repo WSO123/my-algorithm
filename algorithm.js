@@ -6272,5 +6272,5 @@ function findNextNode(root) {
         }
     }
 
-    return ancestor
+    return successor
 }
