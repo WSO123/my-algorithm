@@ -6228,3 +6228,49 @@ function increasingBST(root) {
     return root;  // 返回展平后的根节点
 }
 
+// 143、二叉树下的一个节点
+// 给定一个二叉搜索树和它的一个节点p，请找出中序遍历的顺序该节点p的下一个节点。假设二叉搜索树中节点值都是唯一的
+// 例如
+//        8
+//      /   \
+//     6    10
+//    / \   / \
+//   5  7  9  11
+// 8的下一个节点是9
+// 思路1、与第9题是同一题
+// 思路2、去中序遍历
+// 思路3、
+//      1 节点p有右子树：
+//  	   后继节点是右子树中的最左节点。
+//      2 节点p没有右子树：
+// 	       向上查找，直到找到一个祖先节点，该节点是它父节点的左子节点，那么该父节点就是后继节点。
+// 	       如果没有符合条件的祖先，说明 p是中序遍历的最后一个节点，没有后继节点。
+function findNextNode(root) {
+    if (!root || !p) return null
+
+    // 如果节点 p 有右子树
+    if(p.right) {
+        let node = p.right
+        while(node.left) {
+            node = node.left
+        }
+
+        return node
+    }
+
+    // 如果节点 p 没有右子树
+    let successor = null
+    let ancestor = root
+
+    while(ancestor !== p) {
+        // 这里巧妙用了二叉搜索树的性质，中序遍历是递增的，左子树值小于等于根节点值，根节点值小于等于右子树节点值，所以可以用这个来缩小搜索范围
+        if(p.val < ancestor.val) { 
+            successor = ancestor // 更新潜在后继节点
+            ancestor = ancestor.left
+        } else {
+            ancestor = ancestor.right
+        }
+    }
+
+    return ancestor
+}
