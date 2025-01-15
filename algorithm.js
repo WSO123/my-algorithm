@@ -6143,3 +6143,88 @@ function maxPathSum(root) {
 }
 
 // 142、展平二叉搜索树
+// 给定一棵二叉搜索树，请调整节点的指针使每个节点都没有左子节点。调整之后的树看起来像一个链表，但仍然是二叉搜索树
+// 思路1： 调整之后的二叉搜索树是递增的，而中序遍历的值是递增的，所以直观的方法是采用中序遍历
+// 迭代法
+function increasingBST(root) {
+    if(!root) return null
+    let stack = []
+    let cur = root
+    let first = null
+    let prev = null // 记录当前节点的前一个节点
+    while(cur || stack.length) {
+        while(cur) { // 不断向左走
+            stack.push(cur)
+            cur = cur.left
+        }
+
+        cur = stack.pop() // 左子树空，访问根节点
+
+        if(prev) {
+            prev.right = cur
+        } else { // first设置为最左节点
+            first = cur
+        }
+
+        prev = cur
+        cur.left = null // 删除当前节点的左子节点
+        cur = cur.right // 到右子树
+    }
+
+    return first
+}
+// 递归法
+function increasingBST(root) {
+    if(!root) return null
+    let first = null
+    let prev = null
+
+    const core = (node) => {
+        if(!node) return
+
+        core(node.left)
+        
+        if(prev) {
+            prev.right = node
+        } else {
+            first = node
+        }
+
+        node.left = null
+
+        core(node.right)
+    }
+
+    core(root)
+    return first
+}
+
+// 思路2: 前序遍历，最常用的展平方法
+// 迭代法
+function increasingBST(root) {
+    if(!root) return null 
+
+    let stack = [root];  // 使用栈来模拟前序遍历
+
+    while (stack.length) {
+        let node = stack.pop();
+
+        // 如果右子节点存在，先压入栈中
+        if (node.right) {
+            stack.push(node.right);
+        }
+        // 如果左子节点存在，压入栈中
+        if (node.left) {
+            stack.push(node.left);
+        }
+
+        // 将左指针置空，并将右指针指向栈顶节点
+        if (stack.length > 0) {
+            node.right = stack[stack.length - 1];
+        }
+        node.left = null;  // 将当前节点的左指针置空
+    }
+
+    return root;  // 返回展平后的根节点
+}
+
