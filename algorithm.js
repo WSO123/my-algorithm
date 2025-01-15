@@ -5815,4 +5815,102 @@ function rightSideView(root) {
     return res
 }
 
+// 134、二叉树的中序遍历
+// 方法1: 递归
+function inOrder(root) {
+    const res = []
+    const core = (node) => {
+        if(!node) return
+
+        core(node.left)
+        res.push(node.val)
+        core(node.right)
+    }
+
+    core(root)
+    return res
+}
+// 方法2: 迭代
+function inOrder(root) {
+    const stack = []
+    const res= []
+    let cur = root
+
+    while(cur || stack.length) {
+        while(cur) { // 不断向左走
+            stack.push(cur)
+            cur = cur.left
+        }
+
+        cur = stack.pop() // 左子树空，访问根节点
+
+        res.push(cur.val)
+        cur = cur.right // 到右子树
+    }
+
+    return res
+}
+
+// 135、二叉树的前序遍历
+// 方法1、递归
+function preOrder(root) {
+    let res = []
+    const core = (node) => {
+        if(!node) return
+
+        res.push(node.val)
+        core(node.left)
+        core(node.right)
+    }
+
+    core(root)
+    return res
+}
+// 方法2、迭代
+function preOrder(root) {
+    if (!root) return []
+    const stack = [root]
+    const res = []
+    while(stack.length) {
+        const node = stack.pop()
+        res.push(node.val) // 根
+        // 注意这里先压入右子树，再压入左子树，这样会再出栈时先处理左子树，这样保证了根左右的顺序
+        if (node.right) stack.push(node.right); // 先压入右子树
+        if (node.left) stack.push(node.left);   // 再压入左子树
+    }
+    return res
+}
+
+// 136、二叉树的后序遍历
+// 方法1、递归
+function postOrder(root) {
+    const res = []
+    const core = (node) => {
+        if(!node) return
+
+        core(node.left)
+        core(node.right)
+        res.push(node.val)
+    }
+
+    core(root)
+    return res
+}
+// 方法2、迭代
+function postOrder(root) {
+    if (!root) return []
+    const stack = [root]
+    const res = []
+    while(stack.length) {
+        const node = stack.pop()
+        res.push(node.val) // 根
+        // 这里先压入左子树，再压入右子树，出栈道时候会先处理右子树，再处理左子树
+        if(node.left) stack.push(node.left) //左
+        if(node.right) stack.push(node.right) // 右
+    }
+    // 上面得到的根右左,需要反转得到根左右
+    return res.reverse() // 最后反转结果得到后序遍历 
+}
+
+// 137、二叉树剪枝
 
