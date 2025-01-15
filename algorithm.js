@@ -6274,3 +6274,9 @@ function findNextNode(root) {
 
     return successor
 }
+
+// 144、所有大于或等于节点的值之和
+// 给定一棵二叉搜索树，请将每个节点的值替换为原树中大于或等于该节点值的所有节点值之和，假设二叉搜索树中节点值都是唯一的
+function convertBST(root) {
+    
+}
