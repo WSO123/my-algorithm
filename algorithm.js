@@ -5913,4 +5913,70 @@ function postOrder(root) {
 }
 
 // 137、二叉树剪枝
+// 一棵二叉树的所有节点要么是0，要么是1，请剪除该二叉树所有节点全是0的子树
+// 例如：
+//     1
+//   /  \
+//  0    0
+// / \  / \
+//0  0  0  1
+// 剪成
+//  1
+//   \
+//    0
+//     \
+//      1
+// 思路： 一个节点如果可以被删除，那么它的值是0，它的子树所有节点的值也是0
+//      那么要判断一个节点该不该被删除，后序遍历符合要求，因为后序遍历在处理该节点的时候，子树已经全被处理过了
+// 方法1、递归
+function pruneTree(root) {
+    if(!root) {
+        return null
+    }
 
+    // 后序遍历：先处理左右子树，再处理当前节点
+    root.left = pruneTree(root.left)
+    root.right = pruneTree(root.right)
+
+    // 当前节点为 0 且左右子树均为 null，则删除当前节点
+    if(root.left === null && root.right === null && root.val === 0) {
+        return null
+    }
+
+    // 返回当前节点
+    return root
+}
+
+// 方法2、迭代
+function pruneTree(root) {
+    if (!root) return null;
+
+    const stack = [root]; // 栈用于模拟递归
+    const parents = new Map(); // 记录每个节点的父节点
+
+    while (stack.length) {
+        const node = stack.pop();
+
+        if (!node.left && !node.right && node.val === 0) {
+            // 当前节点是叶子节点且值为0，剪掉它
+            const parent = parents.get(node);
+            if (parent) {
+                if (parent.left === node) parent.left = null;
+                if (parent.right === node) parent.right = null;
+            }
+        } else {
+            // 非叶子节点或值不为0
+            if (node.left) {
+                parents.set(node.left, node); // 标记父节点
+                stack.push(node.left);
+            }
+            if (node.right) {
+                parents.set(node.right, node); // 标记父节点
+                stack.push(node.right);
+            }
+        }
+    }
+
+    // 检查根是否需要剪掉
+    return root.val === 0 && !root.left && !root.right ? null : root;
+}
