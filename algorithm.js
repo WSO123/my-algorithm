@@ -6019,3 +6019,84 @@ function sumNumbers(root) {
     dfs(root,  '')
     return sum
 }
+
+// 140、向下的路径节点值之和
+// 给定一棵二叉树和一个值sum，求二叉树中节点值之和等于sum的路径的数量。路径的定义为二叉树指向子节点的指针向下移动所经过的节点，但不一定从根节点开始，也不一定到叶节点结束
+//
+//       5
+//     /   \
+//    2     4
+//   /\    / \
+//  1  6  3   7
+// 如上面有两条节点值之和等于8的， 5->2->1和2->6
+// 思路： 采用深度优先搜索，路径并不一定从根节点开始，也不一定到叶节点结束。可以通过递归遍历树，并在每个节点尝试不同的路径来解决这个问题
+//      对于每一个节点，尝试从该节点开始向下的路径，检查路径的节点值之和是否等于 sum
+//      每次进入一个新节点时，都需要重新计算路径和，若路径和等于 sum，则将计数器加1
+function pathSum(root, sum) {
+    let count = 0
+
+     // 辅助递归函数，用来从每个节点开始找路径和
+    const dfs = (node, target) => {
+        if(!node) return
+
+        // 如果当前节点的值等于目标值，路径符合条件
+        if(node.val === target) {
+            count++
+        }
+
+        // 递归检查左子树和右子树
+        dfs(node.left, target - node.val)
+        dfs(node.right, target - node.val)
+    }
+    const traverse = (node) => {
+        if(!node) return
+
+        // 从当前节点出发查找路径和
+        dfs(node, sum)
+
+        // 递归检查左子树和右子树
+        traverse(node.left)
+        traverse(node.right)
+    }
+
+    traverse(root)
+
+    return count
+}
+
+// 优化：可以用前缀和和哈希表优化
+function pathSum(root, sum) {
+    let count = 0;
+    const prefixSum = new Map();
+    
+    // 初始化前缀和为0的路径
+    prefixSum.set(0, 1);
+
+    // 深度优先搜索（DFS）函数
+    const dfs = (node, currentSum) => {
+        if (!node) return;
+
+        // 当前路径的和
+        currentSum += node.val;
+
+        // 如果当前路径和减去前缀和等于sum，则找到符合条件的路径
+        if (prefixSum.has(currentSum - sum)) {
+            count += prefixSum.get(currentSum - sum);
+        }
+
+        // 更新当前路径和的前缀和次数
+        prefixSum.set(currentSum, (prefixSum.get(currentSum) || 0) + 1);
+
+        // 遍历左右子树
+        dfs(node.left, currentSum);
+        dfs(node.right, currentSum);
+
+        // 在回溯时撤销当前节点的前缀和
+        prefixSum.set(currentSum, prefixSum.get(currentSum) - 1);
+    };
+
+    // 从根节点开始深度优先搜索
+    dfs(root, 0);
+
+    return count;
+}
