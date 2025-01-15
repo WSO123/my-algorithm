@@ -5751,4 +5751,68 @@ function findBottomLeftValue(root) {
     return leftBottom
 }
 
+// 133、二叉树的右侧视图
+// 给定一棵二叉树，如果站在二叉树的右侧，那么从上到下的节点构成二叉树的右侧视图
+//    8
+//   / \
+//  6   10
+// / \
+//5   7
+// 如上的右侧视图是8、10、7
+// 思路1: 层序遍历，找出每层的最右节点
+function rightSideView(root) {
+    if(!root) {
+        return []
+    }
+
+    let queue = [root]
+    let res = []
+    while(queue.length) {
+        let levelLen = queue.length
+
+        for(let i = 0; i < levelLen; i++) {
+            let node = queue.shift()
+
+            if(i === levelLen -1) {
+                res.push(node.val)
+            }
+
+            if(node.left) {
+                queue.push(node.left)
+            }
+
+            if(node.right) {
+                queue.push(node.right)
+            }
+        }
+    }
+
+    return res
+}
+// 思路2:深度优先搜索,注意一点是先右后左
+function rightSideView(root) {
+    if(!root) {
+        return []
+    }
+
+    let maxDepth = -1
+    let res = []
+    const dfs = (node, depth) => {
+        if(!node) return
+
+        // 如果当前深度比最大深度大，更新最右值
+        if(depth > maxDepth) {
+            maxDepth = depth
+            res.push(node.val)
+        }
+
+        // 先递归右子树，再递归左子树
+        dfs(node.right, depth + 1)
+        dfs(node.left, depth + 1)
+    }
+
+    dfs(root, 0)
+    return res
+}
+
 
