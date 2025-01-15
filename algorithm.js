@@ -6100,3 +6100,46 @@ function pathSum(root, sum) {
 
     return count;
 }
+
+// 141、节点值之和最大的路径
+// 在二叉树中将路径定义为顺着节点之间的连接从任意一个节点开始到达任意一个节点所经过的所有节点。路径中至少包含一个节点，不一定经过二叉树的根节点，也不一定经过叶节点。
+// 给定非空二叉树，请求处二叉树所有路径上节点之和的最大值。
+//       -9
+//      /  \
+//     4  20
+//       / \
+//     15   7
+//     /
+//   -3
+// 如上15、20、 7的路径最大，为42
+// 思路：题中的路径可能同时经过一个节点的左右子节点
+//      由于路径可能只经过左子树或右子树而不经过根节点，为了求二叉树的路径上节点值和的最大值，
+//      需要先求左右子树路径节点和的最大值，求出经过经过根节点的路径节点和的最大值
+//      之后对三者比较，所以看起来就是后序遍历
+function maxPathSum(root) {
+    if(!root) return 0
+    let maxValue = -Infinity
+
+    const dfs = (node) => {
+        if(!node) return 0
+
+        // 递归计算左右子树的最大贡献值，取最大值为 0，避免负数
+        let leftMax = Math.max(dfs(node.left), 0)
+        let rightMax = Math.max(dfs(node.right), 0)
+
+        // 计算以当前节点为根节点的最大路径和
+        const curSum = node.val + leftMax + rightMax
+
+        // 更新最大路径和
+        maxValue = Math.max(maxValue, curSum)
+
+        // 返回当前节点的最大贡献值，只能选择左子树或右子树中的一个，因为路径不能分叉
+        return node.val + Math.max(leftMax,rightMax)
+    }
+
+    dfs(root)
+
+    return maxValue
+}
+
+// 142、展平二叉搜索树
