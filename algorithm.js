@@ -6360,3 +6360,117 @@ class BSTIterator {
         return this.stack.length > 0
     }
 }
+// 优化方法二、比较好理解的写法
+class BSTIterator {
+    constructor(root) {
+        this.cur = root
+        this.stack = []
+    }
+
+    next() {
+        while(this.cur) {
+            this.stack.push(this.cur)
+            this.cur = this.cur.left
+        }
+
+        this.cur = this.stack.pop()
+
+        const val = this.cur.val
+        this.cur = this.cur.right
+        return val
+    }
+
+    hasNext() {
+        return this.cur || this.stack.length
+    }
+}
+
+// 146、二叉搜索树中两个节点的值之和
+// 给定一棵二叉搜索树和一个值k，请判断该树中是否存在值之和等于k的两个节点。假设节点值均唯一
+// 如下，存在和等于12的5和7， 不存在和为22的节点
+//       8
+//      / \
+//     6  10
+//   / \   / \
+//  5  7   9  11
+// 思路1：使用哈希表，存储节点的值，遍历时，检查哈希表里是否存在k-v的节点
+function findTarget(root, k) {
+    const map = new Map()
+    map.set(root.val, root)
+    let stack = [root]
+    while(stack.length) {
+        let node = stack.pop()
+        if(map.has(k - node.val)) {
+            return true
+        }
+        map.set(node.val, node)
+        if(node.right) stack.push(node.right)
+        if(node.left) stack.push(node.left)
+    }
+
+    return false
+} 
+
+// 思路2：双指针 + 中序遍历递增性质
+function findTarget(root, k) {
+    const nums = []
+    const core = (node) => {
+        if(!node) return
+
+        core(node.left)
+        nums.push(node.val)
+        core(node.right)
+    }
+
+    // 中序遍历得到递增数组
+    core(root)
+
+    // 双指针找出两数之和
+    let left = 0
+    let right = nums.length -1 
+    while(left < right) {
+        const sum = nums[left] + nums[right]
+
+        if(sum === k) {
+            return true
+        } else if(sum < k) {
+            left++
+        } else {
+            right--
+        }
+    }
+    return false
+}
+
+// 思路3: 在不存储中序遍历结果的情况下，使用二叉搜索树的特性和双指针搜索。每次找到一个节点值 node.val，递归地从树中寻找 k - node.val
+//  1.	定义一个函数，用于在树中查找某个值。
+// 	2.	遍历树的每个节点，并尝试找到 k - 当前节点值。
+// 	3.	注意避免重复使用同一个节点。
+function findTarget(root, k) {
+    const find = (node, targetVal, originNode) => {
+        if(!node) {
+            return false
+        }
+
+        if(node.val === targetVal && node !== originNode) {
+            return true
+        }
+
+        // 利用了二叉搜索树的特性，右子树大于等于根节点值，来选择搜索范围
+        return node.val > target ?  find(node.left, targetVal, originNode) : find(node.right, targetVal, originNode)
+    }
+
+    const dfs = (node) => {
+        if(!node) {
+            return false
+        }
+
+        if(find(node, k - node.val, node)){
+            return true
+        }
+
+        return dfs(node.left) || dfs(node.right)
+    }
+
+    return dfs(root)
+}
