@@ -6296,4 +6296,67 @@ function convertBST(root) {
     return sum
 }
 
-// 145、
+// 145、二叉搜索树的迭代器
+// 请实现二叉搜索树的迭代器BSTIterator,它主要有如下3个函数
+// 构造函数：输入二叉搜索树的根节点初始化迭代器
+// 函数next：返回二叉搜索树中下一个最小节点的值
+// 函数hasNext:返回二叉搜索树是否还有下一个节点
+// 思路：中序遍历，使用stack初始化
+class BSTIterator {
+    constructor(root) {
+        this.queue = []
+
+        const stack = []
+        let cur = root
+        while(cur || stack.length) {
+            while(cur) {
+                stack.push(cur)
+                cur = cur.left
+            }
+
+            cur = stack.pop()
+
+            this.queue.push(cur)
+            cur = cur.right
+        }
+    }
+
+    next() {
+        return (this.queue.shift()).val
+    }
+
+    hasNext() {
+        return this.queue.length > 0
+    }
+}
+
+// 优化,将中序遍历拆分，使得可以暂停和继续执行
+class BSTIterator {
+    constructor(root) {
+        this.stack = []
+        this.pushLeft(root)
+    }
+
+    // 将左链所有节点入栈
+    pushLeft(node) {
+        while(node) {
+            this.stack.push(node)
+            node = node.left
+        }
+    }
+
+    next() {
+        const cur = this.stack.pop()
+
+        // 如果当前节点有右子树，将右子树的左链入栈
+        if(cur.right) {
+            this.pushLeft(cur.right)
+        }
+
+        return cur.val
+    }
+
+    hasNext() {
+        return this.stack.length > 0
+    }
+}
