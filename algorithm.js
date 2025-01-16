@@ -6474,3 +6474,74 @@ function findTarget(root, k) {
 
     return dfs(root)
 }
+
+// 147、值和下标之差都在给定的范围内
+// 给定一个整数数组nums和两个正数k、t，请判断是否存在两个不同的下标i和j满足i和j之差的绝对值不大于给定的k，并且两个数值nums[i]和nums[j]的差的绝对值不大于给定的t
+// 思路1:使用set,存储k个数字，移动窗口的时候进行添加和减少，同时判断
+function containValueDiff(nums, k, t) {
+    if(k <=0 || t < 0) {
+        return false
+    }
+
+    let set = new Set()
+    for(let i = 0; i < nums.length; i++) {
+        for(let val of set) {
+            // 检查是否满足条件相差绝对值小于等于t
+            if(Math.abs(val - nums[i]) <= t) {
+                return true
+            }
+        }
+        
+        set.add(nums[i])
+
+        // 确保窗口内的元素个数不大于k，也就是满足两个不同的下标i和j满足i和j之差的绝对值不大于给定的k
+        if(set.size > k) {
+            set.delete(nums[i - k])
+        }
+    }
+
+    return false
+}
+
+// 思路2: 可以构建平衡搜索二叉树， 添加删除查找的效率都是o(logk),k是窗口内节点数量，跟上面的解法一样，但时间复杂度将为o(nlogk)
+// 思路3: 使用桶 + 滑动窗口
+//      按照值区间对数组元素进行分桶， 每个桶大小为t+1，
+//      也就是值为0 - t的放在第一个桶里， t+1 - 2t+1的放在第二个桶里，依次类推
+//      这样分桶下来，在同一个桶里的两个元素的差的绝对值必定小于等于t
+//      首先，在迭代过程中控制窗口的大小不大于k
+//      然后，如果拿到一个值，在当前桶已经存在元素，说明找到了结果
+//          否则，然后在前一个桶和后一个桶中找是否符合的
+function containValueDiff(nums, k, t) {
+    if(k <=0 || t < 0) {
+        return false
+    }
+
+    const buckets = new Map() // 存储桶中的元素
+    const getBucketId = (num, size) => Math.floor(num / size) // 分桶
+
+    for(let i = 0; i < nums.length; i++) {
+        let id = getBucketId(nums[i], t + 1) // 分桶id
+
+        // 当前元素所在桶里已经有值，代表符合要求
+        if(buckets.has(id)) {
+            return true
+        }
+
+        // 去在相邻的两个桶里找是否符合结果的
+        if(
+            buckets.has(id - 1) && Math.abs(nums[i] - buckets.get(id - 1) <= t) || 
+            buckets.has(id + 1) && Math.abs(nums[i] - buckets.get(id + 1) <= t)
+        ) {
+            return true
+        }
+
+        // 把当前元素入桶
+        buckets.set(id, nums[i])
+
+        // 如果当前窗口大小超过k，移除最左边的元素
+        if(i >= k) {
+            buckets.delete(getBucketId([i - k], t + 1))
+        }
+    }
+    return false
+}
