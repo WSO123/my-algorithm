@@ -6600,3 +6600,85 @@ class MyCalendar {
         return true
     }
 }
+
+// 148、数据流的第k大数字
+// 请设计一个KthLargest，它每次从数据流中读取一个数字，并得出第k大数字，该构造函数有两个值，最开始的整数数组nums（长度>=k）和整数k
+// 还有一个add函数，用来添加从数据流中新的数字并返回它已经读取的第k大数字
+// 思路： 使用小根堆，维护小根堆的节点个数为k，堆顶就是第k大节点，在添加节点时先删除堆顶元素，然后再添加元素，再取出堆顶元素就是第k大数字了
+class kthLargest {
+    constructor(nums, k) {
+        this.k = k
+        this.heap = [] // 小根堆
+
+        // 初始化堆
+        for(const num of nums) {
+            this.add(num)
+        }
+    }
+
+    add(val) {
+        // 堆中元素小于k直接插入
+        if(this.heap.length < this.k) {
+            this.heap.push(val)
+
+            // 插入新元素，调整堆
+            this.heapifyUp(this.heap.length - 1)
+        } else if(val > this.heap[0]) { 
+            // 堆中有k个元素时，且插入的值大于堆顶值，也就是大于了k个数中最小的，这时应该删除这个堆顶值，替换为val
+            this.heap[0] = val
+
+            // 替换堆顶元素后调整堆
+            this.heapifyDown(0)
+        }
+    }
+
+    // 插入新元素后调整堆
+    // 触发时机：插入元素到堆末尾	从下往上调整
+    heapifyUp(index) {
+        while(index) { // 还没到根节点
+            // 找到父节点
+            const parentIndex = Math.floor((index - 1) / 2) 
+            // 如果父节点的值小于等当前节点值，符合小根堆，结束调整
+            if(this.heap[parentIndex] <= this.heap[index]) {
+                break
+            } else {
+                // 大于，交换
+                [this.heap[parentIndex], this.heap[index]] =  [this.heap[index],this.heap[parentIndex]]
+                index = parentIndex // 更新当前节点为父节点，继续向上调整
+            }
+            
+        }
+    }
+
+    // 删除或替换堆顶元素后调整堆
+    // 触发时机：堆顶元素被移除或替换	从上往下调整
+    heapifyDown(index) {
+        const lend = this.heap.length
+
+        while(true) {
+            let smallest = index // 假设当前节点是最小的
+            const left = 2 * index + 1 // 当前节点左子节点
+            const right = 2 * index  + 2 // 右子节点
+
+            // 如果左子节点存在且比当前节点小
+            if(left < len && this.heap[left] < this.heap[smallest]) {
+                smallest = left
+            }
+            // 如果右子节点存在且比当前节点小
+            if(right < len && this.heap[right] < this.heap[smallest]) {
+                smallest = right
+            }
+
+            // 如果当前节点已经是最小的了，结束
+            if(smallest === index) {
+                break
+            } else {
+                // 把当前节点和较小的子节点交换
+                [this.heap[index], this.heap[smallest]] = [this.heap[smallest], this.heap[index]]
+
+                index = smallest // 更新为当前节点为子节点的位置，继续调整
+            }
+
+        }
+    }
+}
