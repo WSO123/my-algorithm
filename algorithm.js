@@ -6491,7 +6491,7 @@ function containValueDiff(nums, k, t) {
                 return true
             }
         }
-        
+
         set.add(nums[i])
 
         // 确保窗口内的元素个数不大于k，也就是满足两个不同的下标i和j满足i和j之差的绝对值不大于给定的k
@@ -6544,4 +6544,59 @@ function containValueDiff(nums, k, t) {
         }
     }
     return false
+}
+
+// 148、日程表
+// 请实现一个类型MyCalendar用来记录自己的日程安排，该类型用方法book在日程表中添加一个区域为[start,end)的事项。
+//  如果这个区间之前没有其他事项，则成功添加，并返回true， 否则返回false
+// 思路1、使用数组存储数据，每次添加检查是否有重叠
+class MyCalendar {
+    constructor() {
+        this.booking = []
+    }
+
+    book(start, end) {
+        for(const [ s, e] of this.booking) {
+            if(Math.max(start, s) < Math.min(end, e)) {
+                // 新区间与已预订区间有重叠
+                return false
+            }
+        }
+
+        this.booking.push([start, end])
+        return true
+    }
+}
+// 思路2、平衡二叉搜索树查找和添加节点的时间复杂度是o(logn)，这样可以提高时间效率
+//      先找出大于等于start的最小值， 然后比较end，如果比end小则冲突
+//      然后找出小于start的最大值，然后拿出它对应的结束时间和start比较，如果比start大，则冲突
+class MyCalendar {
+    constructor() {
+        this.tree = new Set() // 模拟平衡二叉搜索树，从小到大存储起始时间
+        this.ends = new Map() // 存储起始时间对应的结束时间
+    }
+
+    book(start, end) {
+        // 先找出大于等于start的最小值
+        const greaterThanStart = [...this.tree].find(x => x >= start)
+
+        // 如果比end小则重合
+        if(greaterThanStart && greaterThanStart < end) {
+            return false
+        }
+
+        // 找出小于start的最大值
+        const lessThanStart = [...this.tree].reverse().find(x => x < start)
+        // 拿出它对应的结束时间和start比较，如果比start大，则冲突
+        if(lessThanStart && this.ends.get(lessThanStart) > start) {
+            return false
+        }
+
+        // 添加新区间
+        this.tree.add(start)
+
+        this.ends.set(start, end)
+
+        return true
+    }
 }
