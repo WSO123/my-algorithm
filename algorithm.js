@@ -6277,6 +6277,23 @@ function findNextNode(root) {
 
 // 144、所有大于或等于节点的值之和
 // 给定一棵二叉搜索树，请将每个节点的值替换为原树中大于或等于该节点值的所有节点值之和，假设二叉搜索树中节点值都是唯一的
+// 思路： 替换成大于等于该节点的所有节点值之和，由此得出遍历顺序结果应该是单调的，所以采用中序遍历，
+//      但是二叉搜索的的中序遍历是从小到大的，所以应该换个顺序，右 中 左，并实时使用一个sum来存储当前的累加值
 function convertBST(root) {
-    
+    let sum = 0
+    const core = (node) => {
+        if(!node) return
+
+        core(node.right)
+
+        // 更新节点值和累加和
+        sum += node.val;
+        node.val = sum;
+
+        core(node.left)
+    }
+    core(root)
+    return sum
 }
+
+// 145、
