@@ -6653,7 +6653,7 @@ class kthLargest {
     // 删除或替换堆顶元素后调整堆
     // 触发时机：堆顶元素被移除或替换	从上往下调整
     heapifyDown(index) {
-        const lend = this.heap.length
+        const len = this.heap.length
 
         while(true) {
             let smallest = index // 假设当前节点是最小的
@@ -6681,4 +6681,139 @@ class kthLargest {
 
         }
     }
+}
+
+// 149、出现频率最高的k个数字
+// 请找出数组中出现频率最高的k个数字，
+// 例如k等于2时，输入数组时[1,2,2,1,3,1]，由于数字1出现了3次，数字3出现了2次，数字3出现了1次，因此出现频率最高的2个数字是1和2
+// 思路1、使用堆，构建小根堆，维护堆的大小是k，根据频率进行对比
+class MinHeap {
+    constructor(compare) {
+        this.compare = compare
+        this.heap = []
+    }
+
+    size() {
+        return this.heap.length
+    }
+
+    // 得到堆顶元素
+    peek() {
+        return this.heap[0]
+    }
+
+    push(val) {
+        this.heap.push(val)
+        this.heapifyUp(this.heap.length - 1)
+    }
+
+    // 删除堆顶
+    pop() {
+        if(this.size() === 1) {
+            return this.heap.pop()
+        }
+
+        const top = this.heap[0]
+        // 删除堆顶，用最后一个元素作为堆顶
+        this.heap[0] = this.heap.pop()
+        // 再从堆顶开始向下调整
+        this.heapifyDown(0)
+        return top
+    }
+
+    heapifyUp(index) {
+        while(index) {
+            const parentIndex = Math.floor((index - 1) / 2)
+
+            // if(this.heap[parentIndex] <= this.heap[index]) {
+            if(this.compare(this.heap[parentIndex], this.heap[index])) {
+                break
+            } else {
+                [this.heap[parentIndex], this.heap[index]] = [this.heap[index], this.heap[parentIndex]]
+                index = parentIndex
+            }
+        }
+    }
+
+    heapifyDown(index) {
+        const len = this.size()
+        while(true) {
+            let smallest = index
+            let left = 2 * index + 1
+            let right = 2 * index  + 2
+
+            // if(left < len && this.heap[left] < this.heap[smallest]) {
+            if(left < len && this.compare(this.heap[left], this.heap[smallest])) {
+                smallest = left
+            }
+
+            // if(right < len && this.heap[right] < this.heap[smallest]) {
+            if(right < len && this.compare(this.heap[right], this.heap[smallest])) {
+                smallest = right
+            }
+
+            if(smallest === index) {
+                break
+            } else {
+                [this.heap[smallest], this.heap[index]] = [this.heap[index], this.heap[smallest]]
+                index = smallest
+            }
+        }
+    }
+}
+
+function topK(nums, k) {
+    let map = new Map()
+
+    // 统计数字出现的频率
+    for(let num of nums) {
+        map.set(num, (map.get(num) || 0) + 1)
+    }
+
+    const compare = (a, b) =>{
+         return map.get(a) <= map.get(b)
+    }
+    const heap = new MinHeap(compare)
+
+    const keysArray = Array.from(map.keys());
+    // 入桶
+    for(let key of keysArray) {
+        heap.push(key)
+        if(heap.size() > k) {
+            heap.pop()
+        }
+    }
+
+    return heap.heap()
+}
+// 思路2、桶排序
+//      将数字按频率进行分组，之后按组查找频率最高的k个数字
+function topK(nums, k) {
+    let map = new Map()
+
+    // 统计数字出现的频率
+    for(let num of nums) {
+        map.set(num, (map.get(num) || 0) + 1)
+    }
+
+    // 使用频率分桶，为了确保值从0 - nums.length的数都被分桶，需要nums.length + 1个桶
+    let buckets = new Array(nums.length + 1).map(() => [])
+
+    // 向桶中装东西，下标对应出现的次数
+    for (let [num, freq] of map) {
+        buckets[freq].push(num);
+    }
+
+    let res = []
+    // 从桶里取数字，从高到低取
+    for(let i = buckets.length - 1; i >= 0; i--) {
+        for(let j = 0; j < buckets[i].length; j++) {
+            res.push(buckets[i][j])
+            if(res.length === k) {
+                return res
+            }
+        }
+    }
+
+    return res
 }
