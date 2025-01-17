@@ -6817,3 +6817,101 @@ function topK(nums, k) {
 
     return res
 }
+
+// 150、和最小的k个数对
+// 给定两个递增排序的整数数组，从两个数组中各取一个数字u和v组成一个数对(u,v),请找出和最小的k个数对
+// 例如两个数组[1,5,13,21]和[2,4,9,15]，和最小的3个数对为(1,2)、(1,4)和(2,5)
+// 思路： 使用大根堆存储数对，保持堆大小在k
+class MaxHeap {
+    constructor(compare) {
+        this.compare = compare || this.originCompare
+        this.heap = []
+    }
+
+    originCompare(a, b) {
+        return a > b
+    }
+
+    size() {
+        return this.heap.length
+    }
+
+    // 得到堆顶元素
+    peek() {
+        return this.heap[0]
+    }
+
+    push(val) {
+        this.heap.push(val)
+        this.heapifyUp(this.heap.length - 1)
+    }
+
+    // 删除堆顶
+    pop() {
+        if(this.size() === 1) {
+            return this.heap.pop()
+        }
+
+        const top = this.heap[0]
+        // 删除堆顶，用最后一个元素作为堆顶
+        this.heap[0] = this.heap.pop()
+        // 再从堆顶开始向下调整
+        this.heapifyDown(0)
+        return top
+    }
+
+    heapifyUp(index) {
+        while(index) {
+            const parentIndex = Math.floor((index - 1) / 2)
+
+            if(this.compare(this.heap[parentIndex], this.heap[index])) {
+                break
+            } else {
+                [this.heap[parentIndex], this.heap[index]] = [this.heap[index], this.heap[parentIndex]]
+                index = parentIndex
+            }
+        }
+    }
+
+    heapifyDown(index) {
+        const len = this.size()
+        while(true) {
+            let largest = index
+            let left = 2 * index + 1
+            let right = 2 * index  + 2
+
+            if(left < len && this.compare(this.heap[left], this.heap[largest])) {
+                largest = left
+            }
+
+            if(right < len && this.compare(this.heap[right], this.heap[largest])) {
+                largest = right
+            }
+
+            if(largest === index) {
+                break
+            } else {
+                [this.heap[largest], this.heap[index]] = [this.heap[index], this.heap[largest]]
+                index = largest
+            }
+        }
+    }
+}
+
+function kSmallestPairs(nums1, nums2, k) {
+    // 用来维持最小的k个数对
+    const compare = (a, b) =>  a[0] + a[1] > b[0]+ b[1]
+
+    const heap = new MaxHeap(compare)
+
+    for(let i = 0; i < nums1.length; i++) {
+        for(let j = 0; j < nums2.length; j++) {
+            heap.push([nums1[i], nums2[j]])
+            if(heap.size() > k) {
+                heap.pop()
+            }
+        }
+    }
+
+    return heap.heap
+}
