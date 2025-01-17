@@ -7067,7 +7067,7 @@ class Trie {
         let cur = this.root
         for(let char of prefix) {
             if(!cur.children[char]) {
-                return false // 如果是单词的结束，返回当前的前缀
+                return false
             }
 
             cur = cur.children[char]
@@ -7263,4 +7263,75 @@ function minLenEncoding(words) {
     let encodeTrice = new EncodingTrice(words)
 
     return encodeTrice.getEncodeingLen()
+}
+
+// 155、单词之和
+// 设计实现一个类型MapSum
+// insert，输入一个字符串和一个整数，在数据集合中添加一个字符串以及对应的值，如果已经包含，则将对应的值换成新值
+// sum，输入一个字符串，返回数据集合中所有该改字符串为前缀的字符串对应的值之和
+class MapSum {
+    constructor() {
+        this.root = new TrieNode()
+        this.map = new Map()
+    }
+
+    insert(str, val) {
+        const has = this.map.has(str)
+        this.map.set(str, val)
+        if(has) {
+            return 
+        }
+
+        let cur = this.root
+        for(let char of str) {
+            if(!cur.children[char]) {
+                cur.children[char] = new TrieNode()
+            }
+            cur = cur.children[char]
+        }
+
+        cur.isEndOfWord = true
+    }
+
+    // 查找当前单词的最后一个节点
+    _searchLastNode(word) {
+        let cur = this.root
+        for(let char of word) { // 沿着children往下遍历
+            if(!cur.children[char]) {
+                return null // 如果某个字符不存在，则返回 null
+            }
+
+            cur = cur.children[char]
+        }
+
+        return cur
+    }
+
+    sum(str) {
+         // 查找前缀对应的最后一个节点
+        const node = this._searchLastNode(str)
+
+        if(!node) {
+            return 0
+        }
+
+        let res = 0
+        let stack = [{curRes: str,  node}]
+        while(stack.length) {
+            let { curRes, node } = stack.pop()
+
+            // 如果当前节点是单词结尾，则将对应的值加入结果
+            if(node.isEndOfWord) {
+                res += this.map.get(curRes)
+            }
+
+            // 遍历当前节点的子节点
+            for(let char in node.children) {
+                stack.push({ curRes: curRes + char, node: node.children[char]})
+            }
+            
+        }
+
+        return res
+    }
 }
