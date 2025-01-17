@@ -4912,9 +4912,9 @@ function flattenList(head) {
         let tail = null
         while(cur) {
             const next =  cur.next
-            if(cur.chiild) {
+            if(cur.child) {
                 // 展开子链表
-                const childHead = cur.chiild
+                const childHead = cur.child
                 const childTail = flat(childHead)
 
                 // 插入子链表
@@ -6975,7 +6975,7 @@ class MinHeap {
     heapifyDown(index) {
         const len = this.size();
         while (true) {
-            let smallest = index;  // 修改为 smallest
+            let smallest = index; 
             let left = 2 * index + 1;
             let right = 2 * index + 2;
 
@@ -7019,4 +7019,194 @@ function kSmallestPairs(nums1, nums2, k) {
     }
 
     return res
+}
+
+// 151、实现前缀树
+// 请设计实现一棵前缀树Trie
+// insert，在前缀树中添加一个字符串
+// search，查找字符串，找到返回true，没找到返回false
+// startWith，查找字符串前缀，如果前缀树中包含以该前缀开头的字符串返回true，否则false
+// 
+class TrieNode {
+    constructor() {
+        this.children = {} // 子节点
+        this.isEndOfWord = false // 标记成一个单词的结束
+    }
+}
+class Trie {
+    constructor() {
+        this.root = new TrieNode()
+    }
+
+    insert(word) {
+        let cur = this.root
+        for(let char of word) { // 沿着children往下遍历/创建
+            if(!cur.children[char]) {
+                cur.children[char] = new TrieNode()
+            }
+            cur = cur.children[char]
+        }
+
+        cur.isEndOfWord = true // 标记单词结束
+    }
+
+    search(word) {
+        let cur = this.root
+        for(let char of word) { // 沿着children往下遍历
+            if(!cur.children[char]) {
+                return false // 如果某个字符不存在，则返回 false
+            }
+
+            cur = cur.children[char]
+        }
+
+        return cur.isEndOfWord // 如果有标记末尾，true
+    }
+
+    startWith(prefix) {
+        let cur = this.root
+        for(let char of prefix) {
+            if(!cur.children[char]) {
+                return false // 如果是单词的结束，返回当前的前缀
+            }
+
+            cur = cur.children[char]
+        }
+
+        return true
+    }
+
+    // 查找字典中有word的前缀, 如果有它的前缀返回前缀，否则返回它本身
+    wordHasPrefixInTrice(word) {
+       let cur = this.root
+       let res = ''
+       for(let char of word) {
+            if(cur.children[char]) {
+                res += char
+                cur = cur.children[char]
+                if(cur.isEndOfWord) {
+                    return res
+                }
+            } else {
+                break
+            }
+       }
+
+       return word // 没找到匹配的前缀，返回原词
+    }
+}
+
+// 152、替换单词
+// 英语单词中有一个概念叫词根，在词根后面加上若干字符就能拼出更长的单词
+// 现在给一个由词根组成的字典和一个英语句子，如果句子中的单词在字典中有它的词根，则用它的词根替换该单词；如果该单词没有词根，则保留该单词，输出替换后的句子
+// 思路：创建一个字典树，把这些词根加入字典树，然后逐个替换字典树中已有词根的单词
+function replaceWord(dict, s) {
+    let trice = new Trie()
+
+    // 词根存入字典树
+    for(let dic of dict) {
+        trice.insert(dic)
+    }
+
+    let words = s.split(' ')
+    for(let i = 0; i < words.length; i++) {
+        words[i] = trice.wordHasPrefixInTrice(words[i])
+    }
+
+    return words.join(' ')
+}
+
+// 153、神奇的字典
+// 请实现有如下两个操作的字典
+// buildDict，输入单词，创建一个字典
+// search，输入一个单词，判断能否修改单词中的一个字符，修改之后的单词是字典中的一个单词
+// 思路： 字典树
+//      在查找的时候使用深度优先搜索查找
+class MagicTrice {
+    constructor() {
+        this.root = new TrieNode
+    }
+
+    buildDict(words) {
+        for(let word of words) {
+            let cur = this.root
+            for(let char of word) {
+                if(!cur.children[char]) {
+                    cur.children[char] = new TrieNode()
+                }
+
+                cur = cur.children[char]
+            }
+
+            cur.isEndOfWord = true
+        }
+    }
+
+
+    // 递归实现
+    search(word) {
+        // 辅助函数：递归检查修改一个字符后的单词是否存在
+        const  _search = (word, index, node, modified) => {
+            // 如果已经遍历到单词末尾
+            if(index === word.length) {
+                return modified && node.isEndOfWord
+            }
+
+            const char = word[index]
+
+            // 尝试不修改当前字符，直接继续下去
+            if(node.children[char]) {
+                if(_search(word, index  + 1, node.children[char], modified)) {
+                    return true
+                }
+            }
+
+            // 如果还没有修改过字符，尝试修改当前字符
+            if(!modified) {
+                for(let newChar in node.children) {
+                    if(newChar !== char) {
+                        if(_search(word, index + 1, node.children[newChar], true)) {
+                            return true
+                        }
+                    }
+                }
+            }
+
+            return false
+        }
+
+        return _search(word, 0, this.root, false)
+    }
+
+    
+    // 迭代实现
+    search(word) {
+        let stack = [{ index: 0, node: this.root, modified: false }];
+        while (stack.length > 0) {
+            let { index, node, modified } = stack.pop();
+
+            // 如果遍历到单词末尾，且已修改字符且是字典中的单词，则返回 true
+            if (index === word.length) {
+                if (modified && node.isEndOfWord) {
+                    return true;
+                }
+                continue;
+            }
+            let char = word[index];
+            // 如果当前字符存在，继续往下遍历
+            if (node.children[char]) {
+                stack.push({ index: index + 1, node: node.children[char], modified });
+            }
+
+             // 如果还没有修改过字符，尝试修改当前字符
+            if (!modified) {
+                for(let newChar in node.children) {
+                    if(newChar !== char) {
+                        stack.push({ index: index + 1, node: node.children[newChar], modified: true });
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }
