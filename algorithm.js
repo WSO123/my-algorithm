@@ -7269,6 +7269,7 @@ function minLenEncoding(words) {
 // 设计实现一个类型MapSum
 // insert，输入一个字符串和一个整数，在数据集合中添加一个字符串以及对应的值，如果已经包含，则将对应的值换成新值
 // sum，输入一个字符串，返回数据集合中所有该改字符串为前缀的字符串对应的值之和
+// 思路：先找出当前单词的最后一个节点，然后再以这个节点为其实开始去查找，找到的每个单词都是以这个单词为前缀的
 class MapSum {
     constructor() {
         this.root = new TrieNode()
@@ -7334,4 +7335,71 @@ class MapSum {
 
         return res
     }
+}
+
+// 156、最大的异或
+// 输入一个整数数组，每个数都大于等于0，请计算其中任意两个数组的异或的最大值
+// 例如，在[1,3,4,7]中，3和4的异或结果最大，异或结果为7
+// 思路：
+// 1.	构建字典树（Trie）：
+// •	每个数字可以表示为二进制数，将其按位插入到字典树中。这样，字典树的每一层表示二进制的每一位。
+// •	字典树的插入方式是从高位（最左边的位）开始插入，这样可以方便地在树中找到最大的异或结果。
+// 2.	查找最大异或值：
+// •	对于每个数字，将它与树中已有的数字进行异或，尽量选择与当前数字二进制表示最不相同的路径，这样可以得到更大的异或值。
+// 3.	步骤：
+// •	首先，插入树中每个数字的二进制表示。
+// •	然后，对于每个数字，尝试与树中已有数字进行异或，找到能得到最大值的组合。
+class BinaryTrice {
+    constructor() {
+        this.root = new TrieNode()
+    }
+
+    // 插入一个数的二进制到字典树
+    insert(num) {
+        let cur = this.root
+        // 假设32位二进制整数
+        for(let i = 31; i >= 0; i--) {
+            const bit = (num >> i) & 1 // 获取num第i位
+            if(!cur.children[bit]) {
+                cur.children[bit] = new TrieNode()
+            }
+
+            cur = cur.children[bit]
+        }
+    }
+
+    // 查找和num异或值最大的数
+    findMaxXOR(num) {
+        let cur = this.root
+        let maxXOR = 0
+
+        for(let i = 31; i >= 0; i--) {
+            const bit = (num >> i) & 1 // 获取num第i位
+            // 找到与当前位不同的路径，因为每个二进制节点只有两条路径0或1，所以这样就可能找到另外一条可以与当前位异或值位1的路径
+            const oppsizeBit = 1 - bit 
+            if(cur.children[oppsizeBit]) { // 如果有，把当前位加入到结果里
+                maxXOR = maxXOR | (1 << i)
+            } else {
+                cur = cur.children[bit]
+            }
+        }
+
+        return maxXOR
+    }
+}
+
+function findMaxXOR(nums) {
+    const trie = new BinaryTrice()
+    let maxXOR = 0
+    trie.insert(nums[0]) // 插入第一个数字
+
+    // 遍历数组中每个数字，查找最大异或值
+    for(let i = 1; i < nums.length; i++) {
+        // 查找当前数字与字典树中已有数字的最大异或值
+        maxXOR = Math.max(maxXOR, trie.findMaxXOR(nums[i]))
+        // 将当前数字插入字典树
+        trie.insert(nums[i])
+    }
+
+    return maxXOR
 }
