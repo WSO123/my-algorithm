@@ -7210,3 +7210,57 @@ class MagicTrice {
         return false;
     }
 }
+
+// 154、最短的单词编码
+// 输入一个包含n个单词的数组，可以把他们编码成一个字符串和下标，例如，单词数组['time', 'me', 'bell']可以编码成一个字符串‘time#bell#’
+// 然后这些单词可以通过下标[0,2,5]得到。对于每个下标，都可以从编码得到的字符串中相应的位置开始扫描，直到遇到#字符前所有经过的子字符串为单词数组中的一个单词
+// 例如，从下标为2的位置开始扫描，直到遇到#前经过的子字符串me是给定单词数组的第二个单词，
+// 给定一个单词数组，请问按照上述规则把这些单词编码之后得到的最短字符串的长度是多少？
+// 思路：对于有相同前缀的字符串可以用字典树求的
+class EncodingTrice {
+    constructor(words) {
+        this.root =  new TrieNode()
+        if(words)  {
+            this.buildTree(words)
+        }
+    }
+
+    // 这道题的编码是需要共享后缀的在同一个路径里，所以初始化的时候要反向插入
+    buildTree(words) {
+        for(let word of words) {
+            let cur = this.root
+            for (let i = word.length - 1; i >= 0; i--) {  // 从后往前插入
+                let char = word[i];
+                if (!cur.children[char]) {
+                    cur.children[char] = new TrieNode();
+                }
+                cur = cur.children[char];
+            }
+            cur.isEndOfWord = true
+        }
+    }
+
+    // 计算最短编码的长度
+    getEncodeingLen() {
+        let res = 0
+        let stack = [{ curRes: '',  node: this.root}]
+        while(stack.length) {
+            let { curRes, node } = stack.pop()
+            const nodeChildren = Object.keys(node.children)
+            // 如果当前路径已经遍历到底，加入到res
+            if(!nodeChildren.length && node.isEndOfWord) {
+                res += curRes.length + 1 // +1 是因为需要加上 '#'
+            } else { // 否则继续向下遍历
+                for(let char in node.children) {
+                    stack.push({ curRes: curRes + char, node: node.children[char] })
+                }
+            }
+        }
+        return res
+    }
+}
+function minLenEncoding(words) {
+    let encodeTrice = new EncodingTrice(words)
+
+    return encodeTrice.getEncodeingLen()
+}
