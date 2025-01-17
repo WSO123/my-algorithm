@@ -6821,7 +6821,7 @@ function topK(nums, k) {
 // 150、和最小的k个数对
 // 给定两个递增排序的整数数组，从两个数组中各取一个数字u和v组成一个数对(u,v),请找出和最小的k个数对
 // 例如两个数组[1,5,13,21]和[2,4,9,15]，和最小的3个数对为(1,2)、(1,4)和(2,5)
-// 思路： 使用大根堆存储数对，保持堆大小在k
+// 思路1： 使用大根堆存储数对，保持堆大小在k，
 class MaxHeap {
     constructor(compare) {
         this.compare = compare || this.originCompare
@@ -6914,4 +6914,109 @@ function kSmallestPairs(nums1, nums2, k) {
     }
 
     return heap.heap
+}
+// 思路2、使用小根堆，大小维持在k，堆顶始终存储当前最小的
+//      a、利用数组递增性质，先让nums1的所有数和nums2[0]配对初始化小根堆
+//      b、循环：取出堆顶 [num1, num2, idx2]作为结果的元素
+//              接着将[num1, nums2[idx2 + 1]] 加入堆中
+//             （因为两个数组都是递增的，剩下的元素就在[num1,nums2[idx2 + 1]]，以及[num2, num1的下一个元素]，这两个对里选出
+//              而后者初始化时已经在堆里了，所以只需要把前者加入堆里就行了）
+class MinHeap {
+    constructor(compare) {
+        this.compare = compare || this.originCompare;
+        this.heap = [];
+    }
+
+    originCompare(a, b) {
+        return a < b;  // 以小的为优先，确保堆顶是最小的
+    }
+
+    size() {
+        return this.heap.length;
+    }
+
+    // 得到堆顶元素
+    peek() {
+        return this.heap[0];
+    }
+
+    push(val) {
+        this.heap.push(val);
+        this.heapifyUp(this.heap.length - 1);
+    }
+
+    // 删除堆顶
+    pop() {
+        if (this.size() === 1) {
+            return this.heap.pop();
+        }
+
+        const top = this.heap[0];
+        // 删除堆顶，用最后一个元素作为堆顶
+        this.heap[0] = this.heap.pop();
+        // 再从堆顶开始向下调整
+        this.heapifyDown(0);
+        return top;
+    }
+
+    heapifyUp(index) {
+        while (index) {
+            const parentIndex = Math.floor((index - 1) / 2);
+
+            if (this.compare(this.heap[parentIndex], this.heap[index])) {
+                break;
+            } else {
+                [this.heap[parentIndex], this.heap[index]] = [this.heap[index], this.heap[parentIndex]];
+                index = parentIndex;
+            }
+        }
+    }
+
+    heapifyDown(index) {
+        const len = this.size();
+        while (true) {
+            let smallest = index;  // 修改为 smallest
+            let left = 2 * index + 1;
+            let right = 2 * index + 2;
+
+            if (left < len && this.compare(this.heap[left], this.heap[smallest])) {
+                smallest = left;
+            }
+
+            if (right < len && this.compare(this.heap[right], this.heap[smallest])) {
+                smallest = right;
+            }
+
+            if (smallest === index) {
+                break;
+            } else {
+                [this.heap[smallest], this.heap[index]] = [this.heap[index], this.heap[smallest]];
+                index = smallest;
+            }
+        }
+    }
+}  
+function kSmallestPairs(nums1, nums2, k) {
+    const heap = new MinHeap()
+    const res = []
+
+    // 初始化堆，让nums1的所有元素和nums2的第一个元素配对
+    for(let i = 0; i < nums1.length; i++) {
+        heap.push([nums1[i], nums2[0], 0])
+    }
+
+    while(k-- && heap.size()) {
+        // 取出当前最小值加入结果集
+        const  [num1, num2, idx2] = heap.pop()
+        res.push([num1, num2])
+
+        // 再将当前最小值的num1和nums2剩余的值匹配加入堆里
+        // 因为两个数组都是递增的。所以
+        // 剩下的元素就在num1和num2的下一个元素组成的对，以及num2和num1的下一个元素组成的对，这两个对里选出，而后者已经在堆里了，所以只需要把前者加入堆里就行了
+        if(idx2 + 1 < nums2.length) {
+            heap.pop([num1, nums2[idx2 + 1], idx2 + 1])
+        }
+    }
+
+    return res
 }
