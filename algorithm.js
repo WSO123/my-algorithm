@@ -7667,4 +7667,38 @@ function countingSort(nums) {
 }
 
 // 165、数组相对排序
-// 
+// 输入两个数组arr1和arr2，其中数组arr2中每个数字都唯一，并且都是数组arr1中的数字。请将数组arr1中的数字按照arr2中的数字的相对顺序排序
+// 如果arr1中的数字在arr2中没有出现，那么将这些数字按递增顺序排在后面，假设数组中所有数值都在0-1000范围
+// 例如，输入[3,3,7,3,9,2,1,7,2]和[3,2,1],则数组排序后是[3,3,3,2,2,2,1,7,7,9]
+// 思路：
+//      a、使用计数排序把arr1的数字频次作为值、数字作为下标存起来，构建成counts数组
+//      b、循环arr2，取出存起来的数字，加入数组，并清空次数
+//      c、这样counts数组里就只剩arr2中不包含的数了，这部分的值可以使用正常的计数排序做
+function relativeSort(arr1, arr2) {
+    // 构建成counts数组,统计出现次数
+    let counts  = new Array(1001).fill(0)
+    for(let num of arr1) {
+        counts[num]++
+    }
+
+    // 按照arr2进行排序
+    let index = 0
+    for(let i = 0; i < arr2.length; i++) {
+        while(counts[arr2[i]]) {
+            arr1[index] = arr2[i]
+            index++
+            counts[arr2[i]]--
+        }
+    }
+
+    // 排序剩余的数字
+    for(let i = 0; i < counts.length; i++) {
+        while(counts[i]) {
+            arr1[index] = i
+            index++
+            counts[i]--
+        }
+    }
+
+    return arr1
+}
