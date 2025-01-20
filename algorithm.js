@@ -461,6 +461,26 @@ function findMin(numbers) {
     return numbers[mid]
 }
 
+// 优化
+function findMin(nums) {
+    let left = 0;
+    let right = nums.length - 1;
+
+    while (left < right) {
+        let mid = Math.floor((left + right) / 2);
+
+        if (nums[mid] > nums[right]) {
+            // 最小值在右半部分
+            left = mid + 1;
+        } else {
+            // 最小值在左半部分或 mid 本身是最小值
+            right = mid;
+        }
+    }
+
+    return nums[left];  // 或者 return nums[right]，left === right 时就是最小值的位置
+}
+
 // 13、矩阵中的路径
 // 给出["a","b","c","e"],["s","f","c","s"],["a","d","e","e"]，寻找是否存在"abcced"
 function hasPath(matrix, str) {
@@ -7442,4 +7462,56 @@ function findMaxPos(nums) {
         }
     }
     return left
+}
+
+// 159、排序数组中只出现一次的数字
+// 在一个排序数组中,除一个数字只出现一次外，其他数字都出现了两次，请找出这个唯一只出现一次的数字
+// 例如、[1,1,2,2,3,4,4,5,5]中3只出现一次
+// 思路1： 与68题是同一题，所有值异或，得到的值就是只有一次的值
+function findOnceNum(nums) {
+   let res = nums[0]
+   for(let i = 1; i < nums.length; i++) {
+        res ^= nums[i]
+   }
+   return res
+}
+// 思路2: 哈希
+function findOnceNum(nums) {
+    let map = new Map();
+    let res = null;
+    for (let num of nums) {
+        map.set(num, (map.get(num) || 0) + 1);
+    }
+
+    // 遍历 Map 查找只出现一次的数字
+    for (let [num, count] of map.entries()) {
+        if (count === 1) {
+            res = num;
+            break;  // 找到第一个出现一次的数字后退出
+        }
+    }
+
+    return res;
+}
+// 思路3、二分查找
+//    排序的数组中只出现一次的数字只会指向偶数位置，因此使用二分查找，保证结果指向偶数位置
+function findOnceNum(nums) {
+    let left = 0
+    let right = nums.length - 1
+    while(left < right) {
+        let mid = (left + right) >> 1
+
+        if(mid % 2 !== 0) {
+            mid--
+        }
+
+         // 值在右半部分
+        if(nums[mid] === nums[mid + 1]) {
+            left = mid + 2
+        } else { // 值在所半部分或者是mid本身
+            right = mid
+        }
+    }
+
+    return nums[left]
 }
