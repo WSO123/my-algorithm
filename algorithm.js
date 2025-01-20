@@ -7876,3 +7876,33 @@ function listSort(head) {
 
     return mergeList(leftList, rightList)
 }
+
+// 169、合并排序链表
+// 输入k个排序链表，请将他们合并成一个排序的链表
+// 例如，输入3个排序链表：
+// 1->4->7,2->5->8,3->6->9
+// 合并为1->2->3->4->5->6->7->8->9
+// 思路： 使用归并排序，将n个链表分为两个部分
+
+function combineSortedLists(lists) {
+   const mergeLists = (lists, start, end) => {
+        // 当范围只有一个列表时，直接返回该列表
+        if (start + 1 === end) {
+            return lists[start];
+        }
+        // 计算中间位置，将范围划分为两部分
+        let mid = (start + end) >> 1;
+        // 递归合并左半部分列表
+        let l1 = mergeLists(lists, start, mid);
+        // 递归合并右半部分列表
+        let l2 = mergeLists(lists, mid, end);
+        // 合并左右两部分结果
+        return mergeList(l1, l2);
+    };
+
+    if (lists.length === 0) {
+        return null;
+    }
+
+    return mergeLists(lists, 0, lists.length);
+}
