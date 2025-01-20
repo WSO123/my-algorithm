@@ -408,6 +408,7 @@ function frogJump(n) {
 // 12、找出旋转数组最小的数字
 // 给定一个递增排序的数组的一个旋转，输出旋转数组的最小元素
 // 例如，数组[3, 4, 5, 1, 2]是[1, 2, 3, 4, 5]的一个旋转，该数组的最小元素为1。
+// 思路： 二分查找
 // a、可以考虑到旋转数组的特性，数组中会有两个单调的子数组，其交界处的节点就是最小值，在最小值左边元素单调递增，右边及右边的元素单调递增，左边的数组元素都大于右边的数组元素
 // b、 可以使用两个指针，p1指向数组首位，p2指向数组末尾
 // c、 算出中间位置mid
@@ -7402,4 +7403,43 @@ function findMaxXOR(nums) {
     }
 
     return maxXOR
+}
+
+// 157、查找插入的位置
+// 在排序整数数组中查找目标值 t 的插入位置，如果数组中包含 t，则返回其下标；若不包含，则返回将 t 按顺序插入数组后的下标
+function findInsertPos(nums, t) {
+    if (nums.length === 0) {
+        return 0;
+    }
+    let left = 0
+    let right = nums.length - 1
+    while(left < right) {
+        let mid = (left + right) >> 1
+        if(nums[mid] < t) {
+            left = mid + 1
+        } else {
+            right = mid
+        }
+    }
+    return left
+}
+
+// 158、山峰数组的顶部
+// 在一个长度大于或等于 3 的数组中，该数组前若干数字递增，之后数字递减，找出数组中最大值的位置
+// 思路： 二分查找
+// [1,2,3,4,5,4,2,1,0]
+function findMaxPos(nums) {
+    let left = 0
+    let right = nums.length - 1
+    while(left < right) {
+        // 比较 mid 和 mid + 1
+        if (nums[mid] < nums[mid + 1]) {
+            // 说明最大值在右边
+            left = mid + 1;
+        } else {
+            // 说明最大值在左边或是 mid 本身就是最大值
+            right = mid;
+        }
+    }
+    return left
 }
