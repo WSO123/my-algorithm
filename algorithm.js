@@ -7825,4 +7825,54 @@ function mergeSort(nums) {
     return nums
 }
 
-// 
+// 168、 链表排序
+// 输入一个链表的头节点，请将该链表排序
+// 思路： 归并排序
+//      a、将链表分为两部分，分别进行排序，再合并两部分，递归
+//      b、分为两部分的方法可以用快慢指针实现，快指针走一步，慢指针走两步，快指针走到末尾，慢指针刚好走到中间
+//      c、合并有序链表，可以用两个指针，分别从两个链表头节点开始走，采用第26题第方法
+function mergeList(l1, l2) {
+    let dum = new ListNode(0)
+    let cur = dum
+    while(l1 && l2) {
+        if(l1.val < l2.val) {
+            cur.next = l1
+            l1 = l1.next
+        } else {
+            cur.next = l2
+            l2 = l2.next
+        }
+    }
+
+    // 拼接剩余部分
+    cur.next = l1 || l2;
+
+    return dum.next
+}
+function splitList(head) {
+    if(!head || !head.next) {
+        return head
+    }
+    let slow = head
+    let fast = head
+    let prev = null;
+    while(fast && fast.next) {
+        prev = slow
+        slow = slow.next
+        fast = fast.next.next
+    }
+
+    prev.next = null
+    return slow
+}
+function listSort(head) {
+    if(!head || !head.next) {
+        return head
+    }
+
+    let mid = splitList(head) // 把链表分为两部分，返回第二部分的头节点
+    let leftList = listSort(head)
+    let rightList = listSort(mid)
+
+    return mergeList(leftList, rightList)
+}
