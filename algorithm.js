@@ -7539,12 +7539,39 @@ function pickIndex(w) {
     let right = prefixSum.length - 1
     while(left < right) {
         let mid = (left + right) >> 1
-        if(prefixSum[mid] > target) {
+        if(prefixSum[mid] > randomNum) {
             right = mid
         } else {
             left = mid + 1
         }
     }
 
+    // left == right，此时搜索范围已经缩小到一个位置。
+	// 在这个位置上，prefixSums[left] 是第一个大于 randomNum 的元素，因此 left 就是我们要返回的结果。
     return left
+}
+
+// 161、求平方根
+// 输入一个非负整数，请计算它的平方根。正数的平方根有两个，只输入其中的正数平方根。如果平方根不是整数，那么只输出它的整数部分
+// 例如，如果输入4则输出2，如果输出18则输出4
+// 思路：如果一开始不知道问题的解是什么，但是知道解的范围是多少，可以使用二分查找
+//      正整数的平方根一定大于1，也就是说，正整数num的平方根在1-num之间, 具体的说，在1- (num >> 1 + 1)之间
+function mySqrt(num) {
+    if(num < 2) return num // num = 0 或num = 1
+    let left = 1
+    let right = (num >> 1)  + 1
+
+    while(left <= right) {
+        let mid = (left + right) >> 1
+
+        if(mid * mid <= num) {
+            if((mid + 1) * (mid + 1) > num) {
+                return mid
+            } else {
+                left = mid + 1
+            }
+        } else {
+            right = mid -1
+        }
+    }
 }
