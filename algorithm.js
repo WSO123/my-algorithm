@@ -7515,3 +7515,36 @@ function findOnceNum(nums) {
 
     return nums[left]
 }
+
+// 160、按权重生成随机数
+// 输入一个正整数数组w。数组中每个数字w[i]表示下标i的权重，请实现一个函数pickIndex根据权重比例随机选择一个下标
+// 例如，权重数组w为[1,2,3,4]，那么函数pickIndex将有10%的概率选择0，20%的概率选择1，30%的概率选择2，40%的概率选择3
+// 思路： 
+//      构造前缀和数组可以快速确定权重分布范围，如题中前缀和数组为[1, 3, 6, 10],则生成一个0-10范围的随机数，0-1时返回0，1-3时返回1，3-6时返回2， 6-10时返回3
+//      查询落在哪个区间时可以使用二分查找
+function pickIndex(w) {
+    // 构建前缀和数组
+    let prefixSum = []
+    let sum = 0
+    for(let i = 0; i < w.length; i++) {
+        sum += w[i]
+        prefixSum.push(sum)
+    }
+
+    // 生成目标值
+    const randomNum = Math.random() * sum
+
+    // 二分查找
+    let left = 0
+    let right = prefixSum.length - 1
+    while(left < right) {
+        let mid = (left + right) >> 1
+        if(prefixSum[mid] > target) {
+            right = mid
+        } else {
+            left = mid + 1
+        }
+    }
+
+    return left
+}
