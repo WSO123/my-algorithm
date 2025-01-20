@@ -7914,7 +7914,8 @@ function combineSortedLists(lists) {
         return null;
     }
 
-    let heap = new MinHeap()
+    const compare = (a, b) => a.val <= b.val
+    let heap = new MinHeap(compare)
 
     // k个链表的头节点放入小根堆里
     for(let list of lists) {
@@ -7926,6 +7927,7 @@ function combineSortedLists(lists) {
     let dum = new ListNode(0)
     let cur = dum
 
+    // 依次取出堆顶最小值
     while(heap.size()) {
         let minNode = heap.pop()
         cur.next  = minNode
