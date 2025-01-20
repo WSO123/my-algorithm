@@ -7882,8 +7882,7 @@ function listSort(head) {
 // 例如，输入3个排序链表：
 // 1->4->7,2->5->8,3->6->9
 // 合并为1->2->3->4->5->6->7->8->9
-// 思路： 使用归并排序，将n个链表分为两个部分
-
+// 思路1： 使用归并排序，将n个链表分为两个部分
 function combineSortedLists(lists) {
    const mergeLists = (lists, start, end) => {
         // 当范围只有一个列表时，直接返回该列表
@@ -7905,4 +7904,37 @@ function combineSortedLists(lists) {
     }
 
     return mergeLists(lists, 0, lists.length);
+}
+// 思路2：采用小根堆实现
+//   a、使用k个指针指向k个链表的头节点，初始化的时候把k个链表的头节点放入小根堆里
+//   b、每次从小根堆取出一个最小节点，这个节点属于哪个链表就将该链表的下一个再入堆，
+//       就这样依此类推
+function combineSortedLists(lists) {
+    if (lists.length === 0) {
+        return null;
+    }
+
+    let heap = new MinHeap()
+
+    // k个链表的头节点放入小根堆里
+    for(let list of lists) {
+        if(list) {
+            heap.push(list)
+        }
+    }
+
+    let dum = new ListNode(0)
+    let cur = dum
+
+    while(heap.size()) {
+        let minNode = heap.pop()
+        cur.next  = minNode
+        cur = cur.next
+
+        if(minNode && minNode.next) {
+            heap.push(minNode.next);
+        }
+    }
+
+    return dum.next
 }
