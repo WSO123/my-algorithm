@@ -7741,3 +7741,88 @@ function findK(numbers, k) {
 
     return numbers[k - 1]
 }
+
+// 167、归并排序
+// 递归
+function mergeSort(nums) {
+    const merge = (left, right) => {
+        let res = []
+        let i = 0, j = 0;
+        
+        // 合并两个有序数组，降序排列
+        while(i < left.length && j < right.length) {
+            if(left[i] > right[j]) {
+                res.push(left[i])
+                i++
+            } else {
+                res.push(right[j])
+                j++
+            }
+        }
+
+         // 拼接剩余元素
+        return [...res, ...left.slice(i), ...right.slice(j)]
+    }
+
+    let len = nums.length
+    if(len <= 1) {
+        return nums
+    }
+
+    // 分割数组
+    const mid = len >> 1
+    const leftArr = nums.slice(0, mid)
+    const rightArr = nums.slice(mid)
+
+    // 递归排序并合并
+    return merge(mergeSort(leftArr), mergeSort(rightArr))
+}
+
+// 迭代
+function mergeSort(nums) {
+    const merge = (left, right) => {
+        let res = []
+        let i = 0, j = 0;
+        
+        // 合并两个有序数组，降序排列
+        while(i < left.length && j < right.length) {
+            if(left[i] > right[j]) {
+                res.push(left[i])
+                i++
+            } else {
+                res.push(right[j])
+                j++
+            }
+        }
+
+         // 拼接剩余元素
+        return [...res, ...left.slice(i), ...right.slice(j)]
+    }
+
+    let len = nums.length
+    if(len <= 1) {
+        return nums
+    }
+
+    // 从长度为 1 的子数组开始，两两合并
+    for(let size = 1; size < len; size *= 2) {
+        for(let start = 0; start < len; start += size * 2) {
+            const mid = Math.min(start + size, len)
+            const end = Math.min(start + size * 2, len)
+
+            // 分割数组
+            const leftArr = nums.slice(start, mid)
+            const rightArr = nums.slice(mid, end)
+
+            // 合并后放回原数组
+            const merged = merge(leftArr, rightArr)
+            for(let i = 0; i < merged.length; i++) {
+                nums[start + i] = merged[i]
+            }
+        }
+    }
+
+    return nums
+}
+
+// 
