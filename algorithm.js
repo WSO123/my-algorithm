@@ -7636,4 +7636,35 @@ function merge(intervals) {
     return res
 }
 
-// 164、
+// 164、计数排序，适用于数组长度为n，数值范围为k，k << 1的场景
+// 例如，[2, 3, 4, 2, 3, 2, 1]排序
+function countingSort(nums) {
+    // 得出数的值的范围
+    let min = Infinity
+    let max = -Infinity
+    for(let num of nums) {
+        min = Math.min(min, num)
+        max = Math.max(max, num)
+    }
+
+    // 统计出现次数，下标为num - min
+    let counts = new Array(max - min + 1).fill(0)
+    for(let num of nums) {
+        counts[num - min]++
+    }
+
+    // 将排序后的元素放回原数组
+    let index = 0
+    for(let i = 0; i < counts.length; i++) {
+        while(counts[i]) {
+            nums[index] = i + min
+            index++
+            counts[i]--
+        }
+    }
+
+    return nums
+}
+
+// 165、数组相对排序
+// 
