@@ -2053,7 +2053,7 @@ function quickSort(numbers, start = 0, end = numbers.length - 1) {
 
 // 45、找出数组中出现次数最多的一个数， 不关心是否有多个数字出现相同的最大次数
 function find(numbers) {
-    let length = numbers.length
+    let len = numbers.length
     let result = numbers[0];
     let times = 1;
     for (let i = 1; i < len; i++) {
@@ -2141,7 +2141,7 @@ function getLeastNumbersBySort(numbers, k) {
 // 思路：已经有固定套路o(n)时间复杂度的方法，基于快排到partition
 //      如果基于数组的第k个数字调整，使得比第k个数字小的数组都位于数组左边，比第k个数字大的数字都位于数组右边，
 //      这样位于k处的数字就是第k大的
-function findK(numbers) {
+function findK(numbers, k) {
     const partition = (numbers, start, end) => {
         let pivot = numbers[end]; // 选择最后一个元素作为基准（pivot）
         let i = start - 1; // i 用于跟踪小于或等于 pivot 的元素的最后一个索引
@@ -7701,4 +7701,43 @@ function relativeSort(arr1, arr2) {
     }
 
     return arr1
+}
+
+// 166、数组中第k大的数字
+// 思路： 与第47题是同一题
+const myPartition = (numbers, start, end) => {
+    let pivot = numbers[end]
+    let i = start - 1
+
+    for(let j = start; j < end; j++) {
+        if(numbers[j] <= pivot) {
+            i++ 
+            [numbers[i], numbers[j]] = [numbers[j], numbers[i]]
+        }
+    }
+
+    [numbers[i+1], numbers[end]] = [numbers[end], numbers[i+1]]
+
+    return i+1
+}
+function findK(numbers, k) {
+    if(k <= 0 || k > numbers.length) {
+        return 
+    }
+
+    let len = numbers.length
+    let start = 0
+    let end = len - 1
+    let index = myPartition(numbers, start, end)
+    while(index !== k - 1) {
+        if(index > k - 1) {
+            end = index - 1
+            index = myPartition(numbers, start, end)
+        } else {
+            start = index + 1
+            index =  myPartition(numbers, start, end)
+        }
+    }
+
+    return numbers[k - 1]
 }
