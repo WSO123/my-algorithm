@@ -7575,3 +7575,37 @@ function mySqrt(num) {
         }
     }
 }
+
+// 162、狒狒吃香蕉
+// 狒狒很喜欢吃香蕉，一天它发现了n堆香蕉，第i堆有piles[i]根香蕉，门卫刚好走开，h小时才回来，狒狒想再门卫回来前吃完所有香蕉
+// 请问每小时至少吃多少根？如果每小时吃k根，而它吃的某堆剩余数目少于k，那么只会将这一堆吃完，下一个小时才开始吃另一堆
+// 思路： 二分查找，每小时最少吃1根，最大吃每堆里的最大值max，也就是值的范围是1 - max， 可以采用二分查找
+function minEatingCount(piles, h) {
+     // 计算以某速度吃所有香蕉所需要的小时数
+    const getHour = (speed) => {
+        let hours = 0
+        for(let num of piles) {
+            hours += Math.ceil(num / speed)
+        }
+        return hours
+    }
+
+    // 找到最大堆数的香蕉
+    let max = 0
+    for(let num of piles) {
+        max = Math.max(max, num)
+    }
+
+    let left = 1
+    let right = max
+    while(left < right) {
+        let mid = (left + right) >> 1
+        if(getHour(mid) > h) { // 如果吃完香蕉需要的时间大于 h，说明速度太慢
+            left  = mid + 1
+        } else { // 目前满足条件，向左收敛区间，但不排除mid是最优解
+            right = mid
+        }
+    }
+
+    return left
+}
