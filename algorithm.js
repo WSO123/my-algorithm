@@ -7609,3 +7609,31 @@ function minEatingCount(piles, h) {
 
     return left
 }
+
+// 163、合并区间
+// 输入一个区间的集合，请将重叠的区间合并，每个区间用两个数字比较，分别表示区间的起始位置和结束位置
+// 例如，区间[[1,3], [4, 5], [8, 10], [2, 6], [9, 12], [15, 18]], 合并重叠的区间后得到[[1, 6], [8, 12], [15, 18]]
+// 思路： 先使用区间左边界对区间数组进行排序， 然后再依次比较是否有重合,有重合，就合并
+function merge(intervals) {
+    intervals.sort((a, b) => a[0] - b[0])
+
+    let i = 0
+    let res = []
+    while(i < intervals.length) {
+        let temp = [intervals[i][0], intervals[i][1]]
+        let j = i + 1
+
+        // 如果前一个区间的右边界，大于后一个区间的左边界，代表可以合并
+        while(j < intervals.length && intervals[j][0] < intervals[i][1]) {
+            temp[1] = intervals[j][1]
+            j++
+        }
+
+        res.push(temp)
+        i = j
+    }
+
+    return res
+}
+
+// 164、
