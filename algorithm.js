@@ -7940,3 +7940,28 @@ function combineSortedLists(lists) {
 
     return dum.next
 }
+
+// 170、所有子集
+// 输入一个不含重复数字的集合，请找出图的所有子集
+// 例如，[1,2]有4个子集，分别是[], [1], [2], [1, 2]
+// 思路： 回溯法
+//      a、使用回溯法，每次选择一个元素加入结果，然后递归选择下一个元素
+//      b、递归结束条件是，当选择的元素个数等于集合的长度时，就停止递归
+//      c、每次递归结束后，需要撤销选择，将当前元素从结果中删除
+function subSets(nums) {
+    const res = []
+    const dfs = (nums, start, path) => {
+        // 将当前路径加入结果
+        res.push([...path])
+
+        // 从当前起点开始，尝试加入每一个元素
+        for(let i = start; i < nums.length; i++) {
+            path.push(nums[i])
+            dfs(nums, i + 1, path)
+            path.pop() // 回溯
+        }
+    }
+
+    dfs(nums, 0, [])
+    return res
+}
