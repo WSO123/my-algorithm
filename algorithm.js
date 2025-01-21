@@ -8178,6 +8178,9 @@ function permuteUnique(nums) {
 // 177、生成匹配的括号
 // 输入一个正整数n，请输出所有包含n个左括号和n个右括号的组合，要求每个组合的左括号和右括号匹配
 // 例如，输入n=3，输出[((())), (()()), (())(), ()(()), ()()()]
+// 思路：回溯法
+//      注意点是，如果左括号的数量大于右括号的数量，说明可以添加右括号 ')'
+//      如果左括号的数量大于0，说明可以添加左括号 '('
 function generateParenthesis(n) {
     const res = []
     const dfs = (left, right, path) => {
@@ -8201,5 +8204,44 @@ function generateParenthesis(n) {
         }
     }
     dfs(n, n, '')
+    return res
+}
+
+// 178、分割回文子字符串
+// 输入一个字符串，要求将它分割成若干子字符串，使每个子字符串都是回文，输出所有可能的分割方案
+// 例如输入google，输出[['g', 'o', 'o', 'g', 'l', 'e'], ['g', 'oo', 'g', 'l', 'e']]和['goog', 'l', 'e']]
+function splitStr(s) {
+    const isPalindrome = (s) => {
+        let left = 0, right = s.length - 1
+        while(left < right) {
+            if(s[left] !== s[right]) {
+                return false
+            }
+            left++
+            right--
+        }
+        return true
+    }
+
+    const res = []
+    const dfs = (s, start, path) => {
+        if(start === s.length) {
+            res.push([...path])
+            return
+        }
+
+        // 遍历字符串，尝试所有可能的子串
+        for(let i = start; i < s.length; i++) {
+            // 获取子串（注意 +1），substring截取的字符串，不包括第二个参数本身所在的位置
+            const subStr = s.substring(start, i + 1)
+            if(isPalindrome(subStr)) {
+                path.push(subStr)
+                dfs(s, i + 1, path)
+                path.pop()
+            }
+        }
+    }
+
+    dfs(s, 0, [])
     return res
 }
