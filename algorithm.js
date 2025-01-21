@@ -8174,3 +8174,32 @@ function permuteUnique(nums) {
     dfs(nums, [])
     return res
 }
+
+// 177、生成匹配的括号
+// 输入一个正整数n，请输出所有包含n个左括号和n个右括号的组合，要求每个组合的左括号和右括号匹配
+// 例如，输入n=3，输出[((())), (()()), (())(), ()(()), ()()()]
+function generateParenthesis(n) {
+    const res = []
+    const dfs = (left, right, path) => {
+        if(left === 0 && right === 0) {
+            res.push(path)
+            return
+        }
+
+        // 如果还有左括号可以添加，递归添加一个左括号 '('
+        if(left) {
+            path += '('
+            dfs(left - 1, right, path)
+            path = path.substring(0, path.length - 1)
+        }
+
+        // 如果右括号的数量大于左括号的数量，说明可以添加右括号 ')'
+        if(right > left) {
+            path += ')'
+            dfs(left, right - 1, path)
+            path = path.substring(0, path.length - 1)
+        }
+    }
+    dfs(n, n, '')
+    return res
+}
