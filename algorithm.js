@@ -7968,4 +7968,29 @@ function subSets(nums) {
 
 // 171、包含k个元素的组合
 // 输入n和k，请输出从1到n中选取k个数的所有组合
-// 例如，如果
+// 例如，如果n=3，k=2，则输出[1,2], [1,3], [2,3]
+// 思路： 回溯法
+//      a、使用回溯法，每次选择一个元素加入结果，然后递归选择下一个元素
+//      b、递归结束条件是，当选择的元素个数等于k时，就停止递归
+//      c、每次递归结束后，需要撤销选择，将当前元素从结果中删除
+function combine(n, k) {
+    const res = []
+    const dfs = (n, k, start, path) => {
+        // 如果当前路径长度等于k，将其加入结果数组
+        if(path.length === k) {
+            res.push([...path])
+            return
+        }
+
+        // 从当前起点开始，尝试加入每一个元素
+        for(let i = start; i <= n; i++) {
+            path.push(i)
+            dfs(n, k, i + 1, path)
+            path.pop() // 回溯
+        }
+    }
+
+    dfs(n, k, 1, [])
+
+    return res
+}
