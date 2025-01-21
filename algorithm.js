@@ -8210,6 +8210,10 @@ function generateParenthesis(n) {
 // 178、分割回文子字符串
 // 输入一个字符串，要求将它分割成若干子字符串，使每个子字符串都是回文，输出所有可能的分割方案
 // 例如输入google，输出[['g', 'o', 'o', 'g', 'l', 'e'], ['g', 'oo', 'g', 'l', 'e']]和['goog', 'l', 'e']]
+// 思路：回溯法
+//      a、使用回溯法，每次选择一个子字符串，然后递归选择下一个子字符串
+//      b、递归结束条件是，当选择的子字符串的长度等于字符串的长度时，就停止递归
+//      c、每次递归结束后，需要撤销选择，将当前子字符串从结果中删除
 function splitStr(s) {
     const isPalindrome = (s) => {
         let left = 0, right = s.length - 1
@@ -8245,3 +8249,55 @@ function splitStr(s) {
     dfs(s, 0, [])
     return res
 }
+
+// 179、恢复ip地址
+// 输入一个只包含数字的字符串，请列举出所有可能的ip地址，要求每个ip地址的每个数字在0-255之间
+// 例如，输入10203040，输出10.20.30.40、102.0.30.40和10.203.0.40
+// 思路：回溯法,和上题差不多的解法,需要注意的是
+//      a、一个合法的ip地址，字符串长度在4-12之间，可以依据这个进行剪枝
+//      b、每次的子路径的长度不能超过3，因为ip的每个数字在0-255之间，也可以利用这个做剪枝
+function restoreIpAddresses(s) {
+    const res = []
+    // 判断是否符合ip地址的每一个数字
+    const isRight = (num) => {
+        if(num.length > 1 && num[0] === '0') {
+            return false
+        }
+        const n = Number(num);
+        return n >= 0 && n <= 255
+    }
+
+    const dfs = (s, start, path) => {
+        // 提前退出条件：如果长度不在 [4, 12] 范围内，直接返回
+        if (s.length < 4 || s.length > 12) {
+            return;
+        }
+
+        if(start === s.length && path.length === 4) {
+            res.push(path.join('.'))
+            return
+        }
+
+        // 如果分割的部分超过4个，则直接返回
+        if(path.length > 4) {
+            return
+        }
+
+        for(let i = start; i < s.length && i < start + 3; i++) {
+            const num = s.substring(start, i + 1)
+            if(isRight(num)) {
+                path.push(num)
+                dfs(s, i + 1, path)
+                path.pop()
+            }
+        }
+    }
+
+    dfs(s, 0, [])
+    return res
+}
+
+// 180、爬楼梯的最少成本
+// 一个数组cost的所有数字都是正数，它的第i个数字表示在一个楼梯的第i个台阶往上爬的成本，在支付了成本cost[i]之后
+// 可以从第i级往上爬1级或2级。假设台阶至少有2级，既可以从第0级台阶出发，也可以从第1级台阶出发，请计算爬到楼梯顶部的最少成本
+// 例如，输入[1, 100, 1, 1, 100, 1],则输出4，从第0级台阶出发，可以爬到第2级台阶，然后爬2级，最后爬到第5级台阶
