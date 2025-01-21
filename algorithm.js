@@ -8130,7 +8130,42 @@ function presume(nums) {
             used[i] = true
 
             dfs(nums, path)
-            
+
+            path.pop()
+            used[i] = false
+        }
+    }
+
+    dfs(nums, [])
+    return res
+}
+
+// 176、包含重复元素集合的全排列
+// 给定一个可能包含重复数字的集合，请找出它的所有全排列
+// 例如，输入[1,1,2], 输出[[1,1,2], [1,2,1], [2,1,1]]
+// 思路：回溯法
+//     注意的是，和没有重复元素集合的全排列不一样的地方是，需要先排序，然后在递归选择下一个元素时，跳过重复元素和已使用的元素
+function permuteUnique(nums) {
+    const res = []
+    const used = new Array(nums.length).fill(false)
+    nums.sort((a,b) => a - b)
+    const dfs = (nums, path) => {
+        if(nums.length === path.length) {
+            res.push([...path])
+            return
+        }
+
+        for(let i = 0; i < nums.length; i++) {
+            // 如果已使用过，或和前一个元素相同且未使用过，跳过
+            if(used[i] || i > 0 && nums[i] === nums[i - 1] && !used[i - 1]) { 
+                continue
+            }
+
+            path.push(nums[i])
+            used[i] = true
+
+            dfs(nums, path)
+
             path.pop()
             used[i] = false
         }
