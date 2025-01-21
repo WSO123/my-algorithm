@@ -8009,7 +8009,7 @@ function combinationSum(nums, k) {
             return
         }
 
-        if(curSum > k) {
+        if(curSum > k) { // 剪枝
             return
         }
 
@@ -8024,4 +8024,55 @@ function combinationSum(nums, k) {
 
     dfs(nums, k, 0, [])
     return res
+}
+
+// 173、点菜问题
+// 有菜单menu，每个元素都代表一道菜的价格，假如你有n元钱，请问你最多可以点多少道菜
+function maxMenu(menu, n) {
+    let res = 0
+    const dfs = (menu, n, start, curMenu) => {
+        if(n < 0) {
+            return
+        }
+
+        if(n === 0) {
+            res = Math.max(res, curMenu.length)
+            return
+        }
+
+        for(let i = start; i < menu.length; i++) {
+            curMenu.push(menu[i])
+            // 递归使用i的话，就是允许重复点菜
+            // 如果不允许重复点菜，就递归使用i + 1
+            dfs(menu, n - menu[i], i, curMenu)
+            curMenu.pop()
+        }
+    }
+
+    dfs(menu, n, 0, [])
+    return res
+}
+// 限制点k道菜
+function maxMenu(menu, n, k) {
+    let res = 0;
+
+    const dfs = (menu, n, start, curMenu) => {
+        if (n < 0 || curMenu.length > k) {
+            return; // 超出预算或超过最大菜品数限制
+        }
+
+        if (n === 0) {
+            res = Math.max(res, curMenu.length); // 更新最大菜品数量
+            return;
+        }
+
+        for (let i = start; i < menu.length; i++) {
+            curMenu.push(menu[i]); // 选择当前菜品
+            dfs(menu, n - menu[i], i, curMenu); // 当前菜品可重复选择
+            curMenu.pop(); // 回溯，撤销选择
+        }
+    };
+
+    dfs(menu, n, 0, []);
+    return res;
 }
