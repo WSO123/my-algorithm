@@ -7994,3 +7994,34 @@ function combine(n, k) {
 
     return res
 }
+
+// 172、允许重复选择元素的组合
+// 给定一个没有重复数字的整数组合，请找出所有元素之和等于某个给定值的所有组合，同一个数字可以在组合中出现任意次
+// 思路：回溯法
+//      与常规的回溯法不一样的事情是，允许重复选择元素，所以在递归选择下一个元素时，需要从当前元素开始：dfs(nums, k, i, path)
+function combinationSum(nums, k) {
+    const res = []
+    const sum = (nums) => nums.reduce((a, b) => a + b, 0)
+    const dfs = (nums, k, start, path) => {
+        const curSum = sum(path)
+        if(curSum === k) {
+            res.push([...path])
+            return
+        }
+
+        if(curSum > k) {
+            return
+        }
+
+        for(let i = start; i < nums.length; i++) {
+            path.push(nums[i])
+            // 注意这里是i，而不是i + 1
+            // 因为允许重复选择元素
+            dfs(nums, k, i, path)
+            path.pop()
+        }
+    }
+
+    dfs(nums, k, 0, [])
+    return res
+}
