@@ -8156,7 +8156,7 @@ function permuteUnique(nums) {
         }
 
         for(let i = 0; i < nums.length; i++) {
-            // 如果已使用过，或和前一个元素相同且未使用过，跳过
+            // 如果已使用过，或和前一个元素相同且前一个元素未使用过，跳过
             if(used[i] || i > 0 && nums[i] === nums[i - 1] && !used[i - 1]) { 
                 continue
             }
