@@ -8076,3 +8076,35 @@ function maxMenu(menu, n, k) {
     dfs(menu, n, 0, []);
     return res;
 }
+
+// 174、包含重复元素的组合
+// 给定一个可能包含重复数字的整数集合，请找出所有元素之和等于某个给定值的所有组合，输出中不得包含重复的组合
+// 例如，如果输入的集合是[2，2，2，4，3，3]，给定值是8，那么输出是[[2,2,4], [2,3,3]]
+// 思路：回溯法
+//      注意点一点是，集合里包含重复元素，所以需要先排序，然后在递归选择下一个元素时，跳过重复元素
+function combinationSum(nums, k) {
+    nums.sort((a,b) => a - b)
+    const res = []
+    const sum = (nums) => nums.reduce((a, b) => a + b, 0)
+    const dfs = (nums, k, start, path) => {
+        const curSum = sum(path)
+        if(curSum === k) {
+            res.push([...path])
+            return
+        }
+        if(curSum > k) {
+            return
+        }
+
+        for(let i = start; i < nums.length; i++) {
+            if (i > start && nums[i] === nums[i - 1]) {
+                continue // 跳过重复元素
+            }
+            path.push(nums[i])
+            dfs(nums, k, i + 1, path)
+            path.pop()
+        }
+    }
+    dfs(nums, k, 0, [])
+    return res
+}
