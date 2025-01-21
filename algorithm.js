@@ -8108,3 +8108,34 @@ function combinationSum(nums, k) {
     dfs(nums, k, 0, [])
     return res
 }
+
+// 175、没有重复元素集合的全排列
+// 给定一个没有重复数字的集合，请找出她的所有全排列
+// 思路： 回溯法
+//      注意点是应该在添加元素的时候判断是否已经使用过当前元素
+function presume(nums) {
+    const res = []
+    const used = new Array(nums.length).fill(false)
+    const dfs = (nums, path) => {
+        if(nums.length === path.length) {
+            res.push([...path])
+            return
+        }
+
+        for(let i = 0; i < nums.length; i++) {
+            if(used[i]) { // 如果已使用过，跳过
+                continue
+            }
+            path.push(nums[i])
+            used[i] = true
+
+            dfs(nums, path)
+            
+            path.pop()
+            used[i] = false
+        }
+    }
+
+    dfs(nums, [])
+    return res
+}
