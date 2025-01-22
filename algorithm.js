@@ -8474,9 +8474,10 @@ function minCost(costs) {
 // 输入一个只包含0和1的字符串，其中0可以翻转成1，1可以翻转成0，请计算至少需要翻转多少个字符，才可以使所有0位于1的前面？
 // 例如，输入00110，至少需要翻转1次，把第一个0翻转成1，则00111
 // 思路：动态规划
-//       假设f(n)表示翻转到第n个字符需要的最小次数，则
-//       如果当前字符是1，那么f(n) = f(n - 1)
-//       如果当前字符是0，则把0翻转成1，那么f(n) = f(n - 1) + 1
+//       假设f(n)表示翻转到第n个字符需要的最小次数
+//       先只考考虑遇到0就翻转成1的情况
+//          如果当前字符是1，那么f(n) = f(n - 1)
+//          如果当前字符是0，则把0翻转成1，那么f(n) = f(n - 1) + 1
 //       前面是讨论0翻转成1的代价，还需要讨论把所有1翻转成0的代价，所以还需要使用一个变量记录到当前值时，把1翻转成0的代价
 //       综合起来：
 //          如果当前字符是1，那么f(n) = f(n - 1)
@@ -8500,4 +8501,41 @@ function minFlipsMonoIncr(s) {
     }
 
     return fn[n - 1]
+}
+
+// 185、最长斐波那契数列
+// 输入一个没用出发数字的单调递增数组，数组知识有3个数字，请问数组中最长的斐波那契数列的长度是多少？
+// 例如，如果输入数组[1,2,3,4,5,6,7,8],其中最长的斐波那契数列是1、2、3、5、8，所以输出5
+// 思路：动态规划
+//     假设f(i, j)表示以第i和第j个位置的数字作为数列最后两项时，得到的最大长度， j > i
+//      则f(i, j) =  f(k, i) + 1,其中k < i
+function lenLongestFibSubseq(nums) {
+    let n = nums.length
+
+    if(n < 3) { // 斐波那契数列必须大于等于3
+        return 0
+    }
+
+    // f(i, j)表示以第i和第j个位置的数字作为数列最后两项时，得到的最大长度
+    const fn = new Array(n).fill(0).map(() => new Array(n).fill(0))
+
+    // 索引映射
+    let indexMap = new Map()
+    for(let i = 0; i < n; i++) {
+        indexMap.set(nums[i], i)
+    }
+
+    let maxLen = 0
+    for(let i = 1; i < n; i++) {
+        for(let j = 0; j < i; j++) {
+            let prev = nums[i] - nums[j]
+            let k = indexMap.get(prev)
+            if(prev < nums[j] && k !== undefined) {  // prev 必须小于 nums[j]
+                fn[j][i] = fn[k][j] + 1
+                maxLen = Math.max(maxLen, fn[j][i])
+            }
+        }
+    }
+
+    return maxLen >= 3 ? maxLen : 0; // 长度至少为3才有效
 }
