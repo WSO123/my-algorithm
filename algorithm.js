@@ -8326,8 +8326,6 @@ function minCostClimbingStairs(cost) {
 // 优化上面代码的空间复杂度
 function minCostClimbingStairs(cost) {
     const n = cost.length
-    // fn[i]表示爬到第i级台阶的最小成本
-    const fn = new Array(n + 1).fill(0)
 
     // prev 初始化为 0 对应 fn[0]
     // cur 初始化为 0 对应 fn[1]
@@ -8375,9 +8373,6 @@ function rob(nums) {
         return nums[0]
     }
 
-    // fn[i]表示偷盗到第i号房屋的最大财物
-    const fn = new Array(n).fill(0)
-    
     let prev = nums[0]
     let cur = Math.max(nums[0], nums[1])
     for(let i = 2; i < n; i++) {
@@ -8387,4 +8382,64 @@ function rob(nums) {
     }
 
     return cur
+}
+
+// 182、环形房屋偷盗
+// 和181题一样，只是这条街是环形的
+// 请计算小偷最多可以在这条街上偷多少财产。
+// 思路：动态规划
+//      首尾相连，那么小偷就不能同时在0、n-1号房屋偷盗
+//      那么可以把这条街分为两部分，0-n-2和1-n-1，分别计算这两部分的最大财物，取两部分的最大值
+//      在这两个子问题中的方程都是：f(n) = max(f(n - 2) + nums[n], f(n - 1))
+function robCircle(nums) {
+    const n = nums.length
+    if(n === 1) {
+        return nums[0]
+    }
+
+    // 第一步、 计算0-n-2的最大财物
+    const fn1 = new Array(n).fill(0)
+    fn1[0] = nums[0]
+    fn1[1] = Math.max(nums[0], nums[1])
+    for(let i = 2; i < n - 1; i++) {
+        fn1[i] = Math.max(fn1[i - 2] + nums[i], fn1[i - 1])
+    }
+
+    // 第二步、计算1-n-1的最大财物
+    const fn2 = new Array(n).fill(0)
+    fn2[1] = nums[1]
+    fn2[2] = Math.max(nums[1], nums[2])
+    for(let i = 3; i < n; i++) {
+        fn2[i] = Math.max(fn2[i - 2] + nums[i], fn2[i - 1])
+    }
+
+    return Math.max(fn1[n - 2], fn2[n-1])
+}
+
+// 优化空间复杂度
+function robCircle(nums) {
+    const n = nums.length
+    if(n === 1) {
+        return nums[0]
+    }
+
+    // 第一步、 计算0-n-2的最大财物
+    let prev1 = nums[0]
+    let cur1 = Math.max(nums[0], nums[1])
+    for(let i = 2; i < n-1; i++) {
+        const next = Math.max(prev1 + nums[i], cur1)
+        prev1 = cur1
+        cur1 = next
+    }
+
+    // 第二步、计算1-n-1的最大财物
+    let prev2 = nums[1]
+    let cur2 = Math.max(nums[1], nums[2])
+    for(let i = 3; i < n; i++) {
+        const next = Math.max(prev2 + nums[i], cur2)
+        prev2 = cur2
+        cur2 = next
+    }
+
+    return Math.max(cur1, cur2)
 }
