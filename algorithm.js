@@ -8728,3 +8728,89 @@ function maxArea(grid) {
 
     return maxArea
 }
+
+// 188、二分图
+//  如果能将一个图的节点集合分割成两个独立的子集A和B，并使图中的每一条边的两个节点一个来自A集合，一个来自B集合，就将这个图称为二分图
+//  输入一个数组graph表示图，graph[i]表示第i个节点连接的所有节点，如果graph[i]为空，则表示第i个节点没有任何连接，请判断这个图是否是二分图
+// 思路： 图的染色法，是判断二分图的很高效的方法
+//       a、使用两个颜色表示集合A和集合B，如0和1，初始时所有节点都未染色
+//       b、从任意节点开始，将其染色，然后将其所有邻接点染成其他色，如果邻接点已经被染色，且颜色和当前节点相同，则不是二分图
+//       c、重复b，直到所有节点都被染色，如果所有节点都被染色，且颜色不冲突，则是一个二分图
+function isBipartite(graph) {
+    // 深度优先染色
+    const dfsInteral = (graph,i) => {
+        const stack = [i]
+        colors[i] = 0 // 初始节点染色为0
+
+        while(stack.length) {
+            const node = stack.pop()
+
+            for(let neighber of graph[node]) {
+                if(colors[neighber] === colors[node]) {
+                    return false
+                } else if(colors[neighber] === -1) {
+                    colors[neighber] = 1 - colors[node] // 染色为相反的颜色
+                    stack.push(neighber)
+                }
+            }
+        }
+        return true
+    }
+
+    // 深度优先搜索递归版本
+    const dfs = (graph, i, color) => {
+        // 如果当前节点已经染色，则判断颜色是否和当前节点相同
+        if(colors[i] !== -1) {
+            return colors[i] === color
+        }
+
+        // 给当前节点染色
+        colors[i] = color
+
+        for(let neighber of graph[i]) {
+            if(!dfs(graph, neighber, 1 - color)) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    // 广度优先染色
+    const bfs = (graph,i) => {
+        const queue = [i]
+        colors[i] = 0 // 初始节点染色为0
+        while(queue.length) {
+            let node = queue.shift()
+            // 相邻节点染色
+            for(let neighber of graph[node]) {
+                // 如果相邻节点已经染色，且颜色和当前节点相同，则不是二分图
+                if(colors[neighber] === colors[node]) {
+                    return false
+                } else if(colors[neighber] === -1) { // 如果相邻节点未被染色
+                    colors[neighber] = 1 - colors[node] // 染色为相反的颜色
+                    queue.push(neighber)
+                }
+            }
+        }
+        return true
+    }
+
+    const n = graph.length
+    // 使用一个colors数组表示节点的染色状态, -1表示未染色
+    const colors = new Array(n).fill(-1)
+
+    for(let i = 0; i < n; i++) {
+        if(colors[i] === -1) {
+            const setRes = dfs(graph,i, 0) // 深度优先搜索递归版本
+            // const setRes = bfs(graph,i) // 广度优先染色
+            // const setRes = dfsInteral(graph,i) // 深度优先染色
+
+            if(!setRes) {
+                return false
+            }
+        }
+    }
+
+    return true
+}
