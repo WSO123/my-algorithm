@@ -8585,14 +8585,14 @@ function minCuts(s) {
     // 预处理回文信息
     const isPalindrome = new Array(n).fill(0).map(() => new Array(n).fill(false))
 
-    for(let i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
         isPalindrome[i][i] = true // 单个字符是回文
     }
 
-    for(let len = 2; len <= n; len++) { // 子串长度从 2 开始
-        for(let i = 0; i < n - len + 1; i++) { // 起点从 0 开始
+    for (let len = 2; len <= n; len++) { // 子串长度从 2 开始
+        for (let i = 0; i < n - len + 1; i++) { // 起点从 0 开始
             let j = i + len - 1 // 终点
-            if(s[i] === s[j]) { 
+            if (s[i] === s[j]) {
                 isPalindrome[i][j] = len === 2 || isPalindrome[i + 1][j - 1]
             }
         }
@@ -8620,4 +8620,111 @@ function minCuts(s) {
 }
 
 // 剩下的动态规划，做完图的题目，再来做
-// 187、
+// 187、最大岛屿
+// 海洋岛屿地图可以用0、1组成的二维数组表示，水平或竖直方向相连的一组1表示一个岛屿，请计算最大的岛屿面积
+// 例如：下面有4个岛屿，最大的面积是5
+// [
+//     [1,1,0,0,1],
+//     [1,0,0,1,0],
+//     [1,1,0,1,0],
+//     [0,0,1,0,0]
+// ]
+// 思路： 把每个岛屿可以看作一个图，那么问题就转化为求图的节点个数
+function maxArea(grid) {
+    const m = grid.length
+    const n = grid[0].length
+    let maxArea = 0
+
+    // 深度优先搜索求图的节点个数
+    const dfs = (grid, i, j) => {
+        if (i < 0 || j < 0 || i >= m || j >= n || grid[i][j] === 0) {
+            return 0
+        }
+
+        grid[i][j] = 0 // 标记当前格子为已访问
+
+        // 四个方向：上下左右
+        const directions = [
+            [-1, 0], // 上
+            [1, 0],  // 下
+            [0, -1], // 左
+            [0, 1],  // 右
+        ];
+        // 初始化当前面积为 1
+        let area = 1;
+
+        // 遍历四个方向
+        for (const [dx, dy] of directions) {
+            area += dfs(grid, i + dx, j + dy);
+        }
+        return area
+    }
+
+    // 深度优先迭代版本
+    const dfsInteral = (grid, i, j) => {
+        // 检查起始点是否越界或不为陆地
+        if(grid[i][j] === 0) {
+            return 0
+        }
+
+        const stack = [[i, j]]
+        grid[i][j] = 0 // 标记已访问
+        let area = 1
+        // 四个方向,上下左右
+        const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // 上下左右
+        while(stack.length) {
+            const [x, y] = stack.pop()
+            for (let [dx, dy] of directions) {
+                dx += x
+                dy += y
+                if (dx >= 0 && dx < m && dy >= 0 && dy < n && grid[dx][dy] === 1) {
+                    stack.push([dx, dy])
+                    grid[dx][dy] = 0 // 标记已访问
+                    area++
+                }
+            }
+        }
+        return area
+    }
+
+    // 广度优先搜索求图的节点个数
+    const bfs = (grid, i, j) => {
+        // 检查起始点是否越界或不为陆地
+        if(grid[i][j] === 0) {
+            return 0
+        }
+        const queue = [[i, j]]
+        grid[i][j] = 0 // 标记已访问
+        let area = 1
+        // 四个方向,上下左右
+        const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // 上下左右
+        while (queue.length) {
+            const [x, y] = queue.shift()
+
+            for (let [dx, dy] of directions) {
+                dx += x
+                dy += y
+                if (dx >= 0 && dx < m && dy >= 0 && dy < n && grid[dx][dy] === 1) {
+                    queue.push([dx, dy])
+                    grid[dx][dy] = 0 // 标记已访问
+                    area++
+                }
+            }
+        }
+        return area
+    }
+
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (grid[i][j] === 1) {
+                // 遍历每个节点，计算每个岛屿的面积
+                // 这里求图的节点个数，可以采用DFS，也可以采用BFS实现
+                maxArea = Math.max(dfs(grid, i, j), maxArea)
+                // maxArea = Math.max(bfs(grid, i, j), maxArea)
+                // maxArea = Math.max(dfsInteral(grid, i, j), maxArea)
+            }
+        }
+    }
+
+    return maxArea
+}
