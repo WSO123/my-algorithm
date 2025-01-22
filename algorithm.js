@@ -8341,3 +8341,50 @@ function minCostClimbingStairs(cost) {
 
     return cur
 }
+
+// 181、房屋偷盗
+// 输入一个数组表示某条街道上的一排房屋内的财产数量。如果这条街相邻的房屋被盗会触发自动报警系统。
+// 请计算小偷最多可以在这条街上偷多少财产。
+// 例如，输入[2,3,4,5,3]表示每个屋子的财务值,如果小偷在0、2、4号房屋偷盗，则可以偷到财产2+4+3=9，这是得到最多的财物
+// 思路：动态规划
+//      假设f(n)表示偷盗到第n号房屋的最大财物，那么n处房屋偷盗的最大值可能是n-2处的最大值f(n-2)加上n处的财物nums[n],也可能是在n-1处的最大值f(n-1),结果取这两个的最大值
+//      那么f(n) = max(f(n - 2) + nums[n], f(n - 1))
+function rob(nums) {
+    const n = nums.length
+    if(n === 1) {
+        return nums[0]
+    }
+
+    // fn[i]表示偷盗到第i号房屋的最大财物
+    const fn = new Array(n).fill(0)
+
+    // 初始化偷到第0号和第1号房屋的最大财物
+    fn[0] = nums[0]
+    fn[1] = Math.max(nums[0], nums[1])
+    for(let i = 2; i < n; i++) {
+        fn[i] = Math.max(fn[i - 2] + nums[i], fn[i - 1])
+    }
+
+    return fn[n - 1]
+}
+
+// 优化空间复杂度
+function rob(nums) {
+    const n = nums.length
+    if(n === 1) {
+        return nums[0]
+    }
+
+    // fn[i]表示偷盗到第i号房屋的最大财物
+    const fn = new Array(n).fill(0)
+    
+    let prev = nums[0]
+    let cur = Math.max(nums[0], nums[1])
+    for(let i = 2; i < n; i++) {
+        const next = Math.max(prev + nums[i], cur)
+        prev = cur
+        cur = next
+    }
+
+    return cur
+}
