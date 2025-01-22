@@ -8618,3 +8618,6 @@ function minCuts(s) {
 
     return fn[n - 1]
 }
+
+// 剩下的动态规划，做完图的题目，再来做
+// 187、
