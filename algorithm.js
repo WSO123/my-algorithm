@@ -8489,10 +8489,10 @@ function minFlipsMonoIncr(s) {
     const fn = new Array(n).fill(0)
     // 初始化第0个字符的翻转次数
     fn[0] = s[0] === '0' ? 0 : 1
-    let countOnes  = 0 // 记录从左到右已经遍历的1的个数
+    let countOnes = 0 // 记录从左到右已经遍历的1的个数
 
-    for(let i = 1; i < n; i++) {
-        if(s[i] === '1') {
+    for (let i = 1; i < n; i++) {
+        if (s[i] === '1') {
             fn[i] = fn[i - 1]
             countOnes++
         } else {
@@ -8512,7 +8512,7 @@ function minFlipsMonoIncr(s) {
 function lenLongestFibSubseq(nums) {
     let n = nums.length
 
-    if(n < 3) { // 斐波那契数列必须大于等于3
+    if (n < 3) { // 斐波那契数列必须大于等于3
         return 0
     }
 
@@ -8521,16 +8521,16 @@ function lenLongestFibSubseq(nums) {
 
     // 索引映射
     let indexMap = new Map()
-    for(let i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
         indexMap.set(nums[i], i)
     }
 
     let maxLen = 0
-    for(let i = 1; i < n; i++) {
-        for(let j = 0; j < i; j++) {
-            let prev = nums[i] - nums[j]
+    for (let i = 1; i < n; i++) {
+        for (let j = 0; j < i; j++) {
+            let prev = nums[i] - nums[j] // 斐波那契数列的性质
             let k = indexMap.get(prev)
-            if(prev < nums[j] && k !== undefined) {  // prev 必须小于 nums[j]
+            if (prev < nums[j] && k !== undefined) {  // prev 必须小于 nums[j]
                 fn[j][i] = fn[k][j] + 1
                 maxLen = Math.max(maxLen, fn[j][i])
             }
@@ -8538,4 +8538,83 @@ function lenLongestFibSubseq(nums) {
     }
 
     return maxLen >= 3 ? maxLen : 0; // 长度至少为3才有效
+}
+
+// 186、输入一个字符串，请问至少要分割几次才可以使分割处的每个子字符串都是回文
+// 思路： 动态规划
+//      假设f(i)表示下标0到i，符合条件的分割的最少次数
+//      如果s[0:i]本身是回文，则f(i) = 0
+//      如果s[0:i]不是回文,假如0-i间有j，把s[0:i]分割成s[0:j - 1]和s[j:i]
+//          其中s[j:i]是回文，则f(i) = min(f(j - 1) + 1, f(i))
+function minCuts(s) {
+    const isPalindrome = (s, left, right) => {
+        while (left < right) {
+            if (s[left] !== s[right]) {
+                return false
+            }
+            left++
+            right--
+        }
+        return true
+    }
+    const n = s.length
+    // f(i)表示下标0到i，符合条件的分割的最少次数
+    const fn = new Array(n).fill(Infinity)
+
+    for (let i = 0; i < n; i++) {
+        // 如果s[0:i]本身是回文，则f(i) = 0
+        if (isPalindrome(s, 0, i)) {
+            fn[i] = 0
+        } else {
+            // 如果s[0:i]不是回文,假如0-i间有j，把s[0:i]分割成s[0:j - 1]和s[j:i]
+            for (let j = 0; j < i; j++) {
+                // 其中s[j:i]是回文，则f(i) = min(f(j - 1) + 1, f(i))
+                if (isPalindrome(s, j, i)) {
+                    fn[i] = Math.min((fn[j - 1] || 0) + 1, fn[i])
+                }
+            }
+        }
+    }
+
+    return fn[n - 1]
+}
+// 优化空间复杂度
+function minCuts(s) {
+    const n = s.length
+
+    // 预处理回文信息
+    const isPalindrome = new Array(n).fill(0).map(() => new Array(n).fill(false))
+
+    for(let i = 0; i < n; i++) {
+        isPalindrome[i][i] = true // 单个字符是回文
+    }
+
+    for(let len = 2; len <= n; len++) { // 子串长度从 2 开始
+        for(let i = 0; i < n - len + 1; i++) { // 起点从 0 开始
+            let j = i + len - 1 // 终点
+            if(s[i] === s[j]) { 
+                isPalindrome[i][j] = len === 2 || isPalindrome[i + 1][j - 1]
+            }
+        }
+    }
+
+    // f(i)表示下标0到i，符合条件的分割的最少次数
+    const fn = new Array(n).fill(Infinity)
+
+    for (let i = 0; i < n; i++) {
+        // 如果s[0:i]本身是回文，则f(i) = 0
+        if (isPalindrome[0][i]) {
+            fn[i] = 0
+        } else {
+            // 如果s[0:i]不是回文,假如0-i间有j，把s[0:i]分割成s[0:j - 1]和s[j:i]
+            for (let j = 0; j < i; j++) {
+                // 其中s[j:i]是回文，则f(i) = min(f(j - 1) + 1, f(i))
+                if (isPalindrome[j][i]) {
+                    fn[i] = Math.min((fn[j - 1] || 0) + 1, fn[i])
+                }
+            }
+        }
+    }
+
+    return fn[n - 1]
 }
