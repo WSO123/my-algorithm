@@ -7977,13 +7977,13 @@ function combine(n, k) {
     const res = []
     const dfs = (n, k, start, path) => {
         // 如果当前路径长度等于k，将其加入结果数组
-        if(path.length === k) {
+        if (path.length === k) {
             res.push([...path])
             return
         }
 
         // 从当前起点开始，尝试加入每一个元素
-        for(let i = start; i <= n; i++) {
+        for (let i = start; i <= n; i++) {
             path.push(i)
             dfs(n, k, i + 1, path)
             path.pop() // 回溯
@@ -8004,16 +8004,16 @@ function combinationSum(nums, k) {
     const sum = (nums) => nums.reduce((a, b) => a + b, 0)
     const dfs = (nums, k, start, path) => {
         const curSum = sum(path)
-        if(curSum === k) {
+        if (curSum === k) {
             res.push([...path])
             return
         }
 
-        if(curSum > k) { // 剪枝
+        if (curSum > k) { // 剪枝
             return
         }
 
-        for(let i = start; i < nums.length; i++) {
+        for (let i = start; i < nums.length; i++) {
             path.push(nums[i])
             // 注意这里是i，而不是i + 1
             // 因为允许重复选择元素
@@ -8031,16 +8031,16 @@ function combinationSum(nums, k) {
 function maxMenu(menu, n) {
     let res = 0
     const dfs = (menu, n, start, curMenu) => {
-        if(n < 0) {
+        if (n < 0) {
             return
         }
 
-        if(n === 0) {
+        if (n === 0) {
             res = Math.max(res, curMenu.length)
             return
         }
 
-        for(let i = start; i < menu.length; i++) {
+        for (let i = start; i < menu.length; i++) {
             curMenu.push(menu[i])
             // 递归使用i的话，就是允许重复点菜
             // 如果不允许重复点菜，就递归使用i + 1
@@ -8083,20 +8083,20 @@ function maxMenu(menu, n, k) {
 // 思路：回溯法
 //      注意点一点是，集合里包含重复元素，所以需要先排序，然后在递归选择下一个元素时，跳过重复元素
 function combinationSum(nums, k) {
-    nums.sort((a,b) => a - b)
+    nums.sort((a, b) => a - b)
     const res = []
     const sum = (nums) => nums.reduce((a, b) => a + b, 0)
     const dfs = (nums, k, start, path) => {
         const curSum = sum(path)
-        if(curSum === k) {
+        if (curSum === k) {
             res.push([...path])
             return
         }
-        if(curSum > k) {
+        if (curSum > k) {
             return
         }
 
-        for(let i = start; i < nums.length; i++) {
+        for (let i = start; i < nums.length; i++) {
             if (i > start && nums[i] === nums[i - 1]) {
                 continue // 跳过重复元素
             }
@@ -8117,13 +8117,13 @@ function presume(nums) {
     const res = []
     const used = new Array(nums.length).fill(false)
     const dfs = (nums, path) => {
-        if(nums.length === path.length) {
+        if (nums.length === path.length) {
             res.push([...path])
             return
         }
 
-        for(let i = 0; i < nums.length; i++) {
-            if(used[i]) { // 如果已使用过，跳过
+        for (let i = 0; i < nums.length; i++) {
+            if (used[i]) { // 如果已使用过，跳过
                 continue
             }
             path.push(nums[i])
@@ -8148,16 +8148,16 @@ function presume(nums) {
 function permuteUnique(nums) {
     const res = []
     const used = new Array(nums.length).fill(false)
-    nums.sort((a,b) => a - b)
+    nums.sort((a, b) => a - b)
     const dfs = (nums, path) => {
-        if(nums.length === path.length) {
+        if (nums.length === path.length) {
             res.push([...path])
             return
         }
 
-        for(let i = 0; i < nums.length; i++) {
+        for (let i = 0; i < nums.length; i++) {
             // 如果已使用过，或和前一个元素相同且前一个元素未使用过，跳过
-            if(used[i] || i > 0 && nums[i] === nums[i - 1] && !used[i - 1]) { 
+            if (used[i] || i > 0 && nums[i] === nums[i - 1] && !used[i - 1]) {
                 continue
             }
 
@@ -8184,20 +8184,20 @@ function permuteUnique(nums) {
 function generateParenthesis(n) {
     const res = []
     const dfs = (left, right, path) => {
-        if(left === 0 && right === 0) {
+        if (left === 0 && right === 0) {
             res.push(path)
             return
         }
 
         // 如果还有左括号可以添加，递归添加一个左括号 '('
-        if(left) {
+        if (left) {
             path += '('
             dfs(left - 1, right, path)
             path = path.substring(0, path.length - 1)
         }
 
         // 如果右括号的数量大于左括号的数量，说明可以添加右括号 ')'
-        if(right > left) {
+        if (right > left) {
             path += ')'
             dfs(left, right - 1, path)
             path = path.substring(0, path.length - 1)
@@ -8217,8 +8217,8 @@ function generateParenthesis(n) {
 function splitStr(s) {
     const isPalindrome = (s) => {
         let left = 0, right = s.length - 1
-        while(left < right) {
-            if(s[left] !== s[right]) {
+        while (left < right) {
+            if (s[left] !== s[right]) {
                 return false
             }
             left++
@@ -8229,16 +8229,16 @@ function splitStr(s) {
 
     const res = []
     const dfs = (s, start, path) => {
-        if(start === s.length) {
+        if (start === s.length) {
             res.push([...path])
             return
         }
 
         // 遍历字符串，尝试所有可能的子串
-        for(let i = start; i < s.length; i++) {
+        for (let i = start; i < s.length; i++) {
             // 获取子串（注意 +1），substring截取的字符串，不包括第二个参数本身所在的位置
             const subStr = s.substring(start, i + 1)
-            if(isPalindrome(subStr)) {
+            if (isPalindrome(subStr)) {
                 path.push(subStr)
                 dfs(s, i + 1, path)
                 path.pop()
@@ -8260,7 +8260,7 @@ function restoreIpAddresses(s) {
     const res = []
     // 判断是否符合ip地址的每一个数字
     const isRight = (num) => {
-        if(num.length > 1 && num[0] === '0') {
+        if (num.length > 1 && num[0] === '0') {
             return false
         }
         const n = Number(num);
@@ -8273,19 +8273,19 @@ function restoreIpAddresses(s) {
             return;
         }
 
-        if(start === s.length && path.length === 4) {
+        if (start === s.length && path.length === 4) {
             res.push(path.join('.'))
             return
         }
 
         // 如果分割的部分超过4个，则直接返回
-        if(path.length > 4) {
+        if (path.length > 4) {
             return
         }
 
-        for(let i = start; i < s.length && i < start + 3; i++) {
+        for (let i = start; i < s.length && i < start + 3; i++) {
             const num = s.substring(start, i + 1)
-            if(isRight(num)) {
+            if (isRight(num)) {
                 path.push(num)
                 dfs(s, i + 1, path)
                 path.pop()
@@ -8317,7 +8317,7 @@ function minCostClimbingStairs(cost) {
     // 初始化第0级和第1级台阶的最小成本,因为可以从第0级或第1级台阶出发,所以代价为0
     fn[0] = 0
     fn[1] = 0
-    for(let i = 2; i <=n; i++) {
+    for (let i = 2; i <= n; i++) {
         fn[i] = Math.min(fn[i - 1] + cost[i - 1], fn[i - 2] + cost[i - 2])
     }
 
@@ -8331,7 +8331,7 @@ function minCostClimbingStairs(cost) {
     // cur 初始化为 0 对应 fn[1]
     let prev = 0
     let cur = 0
-    for(let i = 2; i <= n; i++) {
+    for (let i = 2; i <= n; i++) {
         const next = Math.min(cur + cost[i - 1], prev + cost[i - 2])
         prev = cur
         cur = next
@@ -8349,7 +8349,7 @@ function minCostClimbingStairs(cost) {
 //      那么f(n) = max(f(n - 2) + nums[n], f(n - 1))
 function rob(nums) {
     const n = nums.length
-    if(n === 1) {
+    if (n === 1) {
         return nums[0]
     }
 
@@ -8359,7 +8359,7 @@ function rob(nums) {
     // 初始化偷到第0号和第1号房屋的最大财物
     fn[0] = nums[0]
     fn[1] = Math.max(nums[0], nums[1])
-    for(let i = 2; i < n; i++) {
+    for (let i = 2; i < n; i++) {
         fn[i] = Math.max(fn[i - 2] + nums[i], fn[i - 1])
     }
 
@@ -8369,13 +8369,13 @@ function rob(nums) {
 // 优化空间复杂度
 function rob(nums) {
     const n = nums.length
-    if(n === 1) {
+    if (n === 1) {
         return nums[0]
     }
 
     let prev = nums[0]
     let cur = Math.max(nums[0], nums[1])
-    for(let i = 2; i < n; i++) {
+    for (let i = 2; i < n; i++) {
         const next = Math.max(prev + nums[i], cur)
         prev = cur
         cur = next
@@ -8393,7 +8393,7 @@ function rob(nums) {
 //      在这两个子问题中的方程都是：f(n) = max(f(n - 2) + nums[n], f(n - 1))
 function robCircle(nums) {
     const n = nums.length
-    if(n === 1) {
+    if (n === 1) {
         return nums[0]
     }
 
@@ -8401,7 +8401,7 @@ function robCircle(nums) {
     const fn1 = new Array(n).fill(0)
     fn1[0] = nums[0]
     fn1[1] = Math.max(nums[0], nums[1])
-    for(let i = 2; i < n - 1; i++) {
+    for (let i = 2; i < n - 1; i++) {
         fn1[i] = Math.max(fn1[i - 2] + nums[i], fn1[i - 1])
     }
 
@@ -8409,24 +8409,24 @@ function robCircle(nums) {
     const fn2 = new Array(n).fill(0)
     fn2[1] = nums[1]
     fn2[2] = Math.max(nums[1], nums[2])
-    for(let i = 3; i < n; i++) {
+    for (let i = 3; i < n; i++) {
         fn2[i] = Math.max(fn2[i - 2] + nums[i], fn2[i - 1])
     }
 
-    return Math.max(fn1[n - 2], fn2[n-1])
+    return Math.max(fn1[n - 2], fn2[n - 1])
 }
 
 // 优化空间复杂度
 function robCircle(nums) {
     const n = nums.length
-    if(n === 1) {
+    if (n === 1) {
         return nums[0]
     }
 
     // 第一步、 计算0-n-2的最大财物
     let prev1 = nums[0]
     let cur1 = Math.max(nums[0], nums[1])
-    for(let i = 2; i < n-1; i++) {
+    for (let i = 2; i < n - 1; i++) {
         const next = Math.max(prev1 + nums[i], cur1)
         prev1 = cur1
         cur1 = next
@@ -8435,11 +8435,37 @@ function robCircle(nums) {
     // 第二步、计算1-n-1的最大财物
     let prev2 = nums[1]
     let cur2 = Math.max(nums[1], nums[2])
-    for(let i = 3; i < n; i++) {
+    for (let i = 3; i < n; i++) {
         const next = Math.max(prev2 + nums[i], cur2)
         prev2 = cur2
         cur2 = next
     }
 
     return Math.max(cur1, cur2)
+}
+
+// 183、粉刷房子
+// 一排n幢房子要粉刷成红色、绿色和蓝色，不同房子被粉刷成不同颜色的成本不同。
+// 用一个n*3的数组costs表示n幢房子分别被粉刷成红、绿、蓝的成本，请计算粉刷完所有房子最少的成本。
+// 要求任意相邻的房子被粉刷成不同颜色
+// 例如，输入[[17,2,16],[15,14,5],[13,3,1]]，则输出10，粉刷第0号房子为绿色，第1号房子为蓝色，第2号房子为绿色，总成本为2 + 5 + 3 = 10
+//  思路：动态规划
+//      假设f(n, color)表示第n号房子粉刷成color颜色时的最小成本，则f(n, color) = costs[n][color] + min(f(n - 1, k)) , k != color, j取值范围为0、1、2
+function minCost(costs) {
+    const n = costs.length
+    // fn[i][j]表示第i号房子粉刷成j颜色时的最小成本
+    const fn = new Array(n).fill(0).map(() => new Array(3).fill(0))
+
+    // 初始化第0号房子的最小成本
+    fn[0][0] = costs[0][0]
+    fn[0][1] = costs[0][1]
+    fn[0][2] = costs[0][2]
+
+    for (let i = 1; i < n; i++) {
+        fn[i][0] = costs[i][0] + Math.min(fn[i - 1][1], fn[i - 1][2])
+        fn[i][1] = costs[i][1] + Math.min(fn[i - 1][0], fn[i - 1][2])
+        fn[i][2] = costs[i][2] + Math.min(fn[i - 1][0], fn[i - 1][1])
+    }
+
+    return Math.min(fn[n - 1][0], fn[n - 1][1], fn[n - 1][2])
 }
