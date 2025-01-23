@@ -9230,3 +9230,79 @@ function findCourseOrder(n, lectures) {
     // 检查是否所有课程都能完成，如果不等于n说明有循环依赖
     return res.length === n ? res : []
 }
+
+// 196、外星文字典
+// 一种外星语言文字的字母都是英文字母，但字母的顺序未知。给定该语言排序的单词列表，请推测出可能的字母顺序。如果有多个可能的顺序，返回任意一个
+//  如果没有满足的顺序，返回空字符串
+// 思路： 拓扑排序
+//      假设每个单词的每个字母都看作一个节点，那么这几个字母所构成的节点就是图的一条路径，它们之间的顺序也可以看成一种依赖顺序，那么很容易想到问题可以变成求图的拓扑排序
+//      a、构建图和入度数组
+//      b、构建入度为0的队列，并依次弹出
+//      c、弹出后，更新入度数组，并将入度为0的节点加入队列
+//      d、重复b、c步骤，直到队列为空
+function alienOrder(words) {
+    const graph = new Map();
+    const inDegree = new Map();
+
+    // 初始化图和入度Map
+    for (let word of words) {
+        for (let char of word) {
+            if (!graph.has(char)) {
+                graph.set(char, []);
+                inDegree.set(char, 0);
+            }
+        }
+    }
+
+    // 构建图和入度数组
+    for (let i = 0; i < words.length - 1; i++) {
+        const word1 = words[i];
+        const word2 = words[i + 1];
+        const minLen = Math.min(word1.length, word2.length);
+
+        // 如果 word1 比 word2 长，并且 word2 是 word1 的前缀，那么这种情况下是无效的，因为在字典顺序中，较短的单词应该排在前面
+        if (word1.length > word2.length && word1.startsWith(word2)) {
+            return '';
+        }
+
+        // 这段代码比较两个单词的每个字符，直到找到第一个不同的字符
+        for (let j = 0; j < minLen; j++) {
+            if (word1[j] !== word2[j]) {
+                // 如果 a 和 b 不同，说明在字母顺序中， a 应该排在 b 之前
+                // a -> b
+                const a = word1[j];
+                const b = word2[j];
+
+                if (!graph.get(a).includes(b)) {
+                    graph.get(a).push(b);
+                    inDegree.set(b, inDegree.get(b) + 1);
+                }
+                break;
+            }
+        }
+    }
+
+    // 构建入度为0的队列
+    const queue = [];
+    for (const [char, degree] of inDegree.entries()) {
+        if (degree === 0) {
+            queue.push(char);
+        }
+    }
+
+    const res = [];
+    while (queue.length) {
+        const node = queue.shift();
+        res.push(node);
+
+        // 与node相连的节点的入度都减1
+        for (let neighber of graph.get(node) || []) {
+            inDegree.set(neighber, inDegree.get(neighber) - 1);
+            if (inDegree.get(neighber) === 0) {
+                queue.push(neighber);
+            }
+        }
+    }
+
+    return res.length === inDegree.size ? res.join('') : '';
+}
