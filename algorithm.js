@@ -8917,21 +8917,21 @@ function wordRoute(beginWord, endWord, list) {
 // 如果不可能打开，返回-1
 // 思路： 图的最短路径问题，广度优先搜索
 //      把密码锁的每个状态看作图中的每个节点，这些所有节点构成了一个图，那么求最少几次打开，就转换成了求图中的最短路径的问题
-function unLock(lockList, password) {
-    const getNeighbers = (status) => {
-        const res = []
-        for(let i = 0; i < 4; i++) {
-            const digit = parseInt(status[i])
+const getNeighbers = (status) => {
+    const res = []
+    for(let i = 0; i < 4; i++) {
+        const digit = parseInt(status[i])
 
-            // 向上拨动
-            res.push(status.slice(0, i) + (digit + 1) % 10 + status.slice(i + 1))
+        // 向上拨动
+        res.push(status.slice(0, i) + (digit + 1) % 10 + status.slice(i + 1))
 
-            // 向下拨动
-            res.push(status.slice(0, i) + (digit + 9) % 10 + status.slice(i + 1))
-        }
-
-        return res
+        // 向下拨动
+        res.push(status.slice(0, i) + (digit + 9) % 10 + status.slice(i + 1))
     }
+
+    return res
+}
+function unLock(lockList, password) {
     const lockSet = new Set(lockList) // 存储死锁状态方便快速查找
     if(lockSet.has(password)) {
         return -1
@@ -8954,4 +8954,95 @@ function unLock(lockList, password) {
         }
     }
     return -1
+}
+// 优化，采用双向广度优先搜索,分别从起始到目标开始向对方遍历
+function unLock(lockList, password) {
+    const lockSet = new Set(lockList) // 存储死锁状态方便快速查找
+    if(lockSet.has(password)) {
+        return -1
+    }
+
+    if (lockSet.has(password)) return -1;
+
+    const visited = new Set(); // 已访问的状态
+    let beginSet = new Set(['0000']); // 起始集合
+    let endSet = new Set([password]); // 目标集合
+    let step = 0; // 步数
+
+    while (beginSet.size && endSet.size) {
+        // 优化：始终从较小集合扩展
+        if (beginSet.size > endSet.size) {
+            [beginSet, endSet] = [endSet, beginSet];
+        }
+
+        const nextSet = new Set(); // 下一轮搜索集合
+
+        for (let status of beginSet) {
+            if (lockSet.has(status)) continue; // 死锁状态跳过
+            if (visited.has(status)) continue; // 已访问状态跳过
+
+            visited.add(status); // 标记已访问
+            for (const nextStatus of getNeighbers(status)) {
+                if (endSet.has(nextStatus)) return step + 1; // 双向相遇
+                if (!lockSet.has(nextStatus) && !visited.has(nextStatus)) {
+                    nextSet.add(nextStatus); // 加入下一轮搜索
+                }
+            }
+        }
+
+        beginSet = nextSet; // 更新起点集合
+        step++; // 增加步数
+    }
+
+    return -1; // 未找到路径
+}
+
+// 192、所有路径
+// 一个有向无环图由n个节点（标号从0到n-1， n>=2）组成，请找出从0到n-1的所有路径
+// 图由graph表示，数组的graph[i]表示包含所有从节点i可以直接到达的节点
+// 例如，输入[[1,2], [3],[3],[]], 输出0->1->3，0->2->3
+// 思路： 图的搜索所有路径，一般用深度优先遍历
+function allPath(graph) {
+    const n = graph.length
+    if(n <= 0) {
+        return []
+    }
+
+    const res = []
+    // 迭代版本
+    const dfsInteral = () => {
+        const stack = [0, [0]] // 初始化，第一个节点和路径
+        while(stack.length) {
+            let [node, path] = stack.pop()
+    
+            // 如果到达终点
+            if(node === n - 1) {
+                res.push(path)
+            }
+            // 遍历所有邻居
+            for(let neighber of graph[node]) {
+                stack.push([neighber, [...path, neighber]])
+            }
+        }
+    }
+
+    // 递归版本
+    const dfs = (node, path) => {
+        if(node === n - 1) {
+            res.push([...path])
+            return
+        }
+
+        for(let neighber of graph[node]) {
+            path.push(neighber)
+            dfs(neighber, path)
+            path.pop()
+        }
+    }
+
+
+    dfs(0, [0])
+    // dfsInteral()
+
+    return  res
 }
