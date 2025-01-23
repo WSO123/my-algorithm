@@ -8909,3 +8909,49 @@ function wordRoute(beginWord, endWord, list) {
 
     return 0
 }
+
+// 191、开密码锁
+// 一个密码锁由4个环形转轮组成，每个转轮由0-9这10个数字组成。每次可以上下拨动一个转轮，如可以将一个转轮从0拨到1，也可以从0拨到9
+// 密码锁有若干死锁状态，一旦4个转轮被拨到某个死锁状态，那么就不可能打开。密码锁的死锁状态可以用一个长度为4的字符串表示
+// 字符串中每个字符对应某个转轮上的数字。输入密码和它的所有死锁状态，请问至少需要拨到转轮多少次，才能从起始状态0000开始打开这个锁？
+// 如果不可能打开，返回-1
+// 思路： 图的最短路径问题，广度优先搜索
+//      把密码锁的每个状态看作图中的每个节点，这些所有节点构成了一个图，那么求最少几次打开，就转换成了求图中的最短路径的问题
+function unLock(lockList, password) {
+    const getNeighbers = (status) => {
+        const res = []
+        for(let i = 0; i < 4; i++) {
+            const digit = parseInt(status[i])
+
+            // 向上拨动
+            res.push(status.slice(0, i) + (digit + 1) % 10 + status.slice(i + 1))
+
+            // 向下拨动
+            res.push(status.slice(0, i) + (digit + 9) % 10 + status.slice(i + 1))
+        }
+
+        return res
+    }
+    const lockSet = new Set(lockList) // 存储死锁状态方便快速查找
+    if(lockSet.has(password)) {
+        return -1
+    }
+
+    const queue = [['0000', 1]]
+    const visited = new Set(['0000']) // 记录已访问过的状态
+
+    while(queue.length) {
+        const [status, len] = queue.shift()
+        const neighbers = getNeighbers(status) // 获取当前状态的所有相邻节点
+        for(let nextStatus of neighbers) {
+            if(nextStatus === password) {
+                return len + 1
+            }
+            if(!lockSet.has(nextStatus) && !visited.has(nextStatus)) {
+                queue.push([nextStatus, len + 1])
+                visited.add(nextStatus) // 标记已访问
+            }
+        }
+    }
+    return -1
+}
