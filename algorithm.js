@@ -8814,3 +8814,52 @@ function isBipartite(graph) {
 
     return true
 }
+
+// 189、矩阵中的距离
+// 输入一个由0和1组成的矩阵M，请输出一个大小相同的矩阵D，D中每个格子是矩阵M中对应格子离最近的0的距离，
+// 水平或垂直方向上相邻的格子距离为1，假设矩阵M中至少有一个0
+// [
+//     [0, 0, 0, 0],
+//     [0, 1, 0, 0],
+//     [0, 0, 0, 0],
+//     [0, 0, 1, 0],
+// ]
+// 思路： 典型多源最短路径问题，可以采用广度优先搜索, 把所有值为0的节点作为起点，从起点开始进行广度优先搜索
+//      可以把矩阵的每个格子看作一个节点，那么这个矩阵就可以看作一个无向图，每个格子与相邻的格子之间有一条边
+//      在这个问题中，从某个 0 出发，BFS 遍历过程中，首先访问到的每个 1，距离必然是最近的
+function distanceMatrix(M) {
+    const m = M.length
+    const n = M[0].length
+
+    // 初始化结果矩阵，每个格子初始化为-1，表示未访问过
+    const res = new Array(m).fill(0).map(() => new Array(n).fill(-1))
+    const queue = []
+
+    // 将所有0格子加入队列，且初始化结果矩阵
+    for(let i = 0; i < m; i++) {
+        for(let j = 0; j < n; j++) {
+            if(M[i][j] === 0) {
+                queue.push([i, j])
+                res[i][j] = 0
+            }
+        }
+    }
+
+    // 四个方向，上下左右
+    const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+
+    while(queue.length) {
+        const [x, y] = queue.shift()
+
+        for(let [dx, dy] of directions) {
+            dx += x
+            dy += y
+            if(dx >= 0 && dx < m && dy >= 0 && dy < n && res[dx][dy] === -1) {
+                res[dx][dy] = res[x][y] + 1
+                queue.push([dx, dy])
+            }
+        }
+    }
+
+    return res
+}
