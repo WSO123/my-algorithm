@@ -9306,3 +9306,74 @@ function alienOrder(words) {
 
     return res.length === inDegree.size ? res.join('') : '';
 }
+
+// 197、重建序列
+// 长度为n的数组org是数字1-n的一个排列，seqs是若干序列，请判断数组org是否可以由seqs重建唯一序列。
+// 重建的序列是指seqs所有序列的最短公共超序列，即seqs中任意序列都是该序列的子序列
+// 思路： 拓扑排序
+//     如果序列A的元素按照先后顺序都在序列B中出现，那么A就是B的字序列，B就是A的超序列
+//     按照题目要求，seqs的某个序列中数字i出现在数字j前，那么重建序列中的数字i也一定在数字j前，也就是重建序列的数字顺序由seqs的所有序列定义
+//     所以这道题变成和上道题类似的问题，可以采用拓扑排序做
+//     注意点是要在初始化图的时候检查数字范围，并且在排序的时候检查是否始终在queue中只有阳光入度为0的节点以保证序列唯一
+function buildList(org, seqs) {
+    const graph = new Map()
+    const inDegree = new Map()
+
+    // 初始化图和入度
+    for(let seq of seqs) {
+        for(let num of seq) {
+            // 检查数字范围
+            if (num < 1 || num > org.length) {
+                return false;
+            }
+
+            if(!graph.has(num)) {
+                graph.set(num, [])
+                inDegree.set(num, 0)
+            }
+        }
+    }
+
+    // 构建图和入度数组
+    for(let i = 0; i < seqs.length; i++) {
+        for(let j = 0; j < seqs[i].length - 1; j++) {
+            const a = seqs[i][j]
+            const b = seqs[i][j + 1]
+
+            if(!graph.get(a).includes(b)) {
+                graph.get(a).push(b)
+                inDegree.set(b, inDegree.get(b) + 1)
+            }
+        }
+    }
+
+
+    // 构建入度为0的队列
+    const queue = []
+    for(const [num, degree] of inDegree.entries()) {
+        if(degree === 0) {
+            queue.push(num)
+        }
+    }
+
+    const res = []
+    while(queue.length) {
+        // 确保队列中每次只有一个入度为 0 的节点，保证序列唯一
+        if (queue.length > 1) {
+            return false;
+        }
+
+        const num = queue.shift()
+        res.push(num)
+
+        // 与num相连的点点入度都减1
+        for(let neighber of graph.get(num) || []) {
+            inDegree.set(neighber, inDegree.get(neighber) - 1)
+            if(inDegree.get(neighber) === 0) {
+                queue.push(neighber)
+            }
+        }
+    }
+
+    return res.join('') === org.join('') && res.length === org.length
+}
