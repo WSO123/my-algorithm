@@ -8824,9 +8824,14 @@ function isBipartite(graph) {
 //     [0, 0, 0, 0],
 //     [0, 0, 1, 0],
 // ]
-// 思路： 典型多源最短路径问题，可以采用广度优先搜索, 把所有值为0的节点作为起点，从起点开始进行广度优先搜索
+// 思路： 典型多源最短路径问题，应用场景是从多个点同时找到所有节点的最短路径，例如矩阵中每个点到最近的目标点的距离
+//    具体来说：
 //      可以把矩阵的每个格子看作一个节点，那么这个矩阵就可以看作一个无向图，每个格子与相邻的格子之间有一条边
-//      在这个问题中，从某个 0 出发，BFS 遍历过程中，首先访问到的每个 1，距离必然是最近的
+//      可以采用广度优先搜索, 把所有值为0的节点作为起点，从起点开始进行广度优先搜索
+//      在这个问题中，从某个 0 出发，BFS 遍历过程中，首先访问到的每个 1，距离必然是最近的，因为：
+//  	•	假设某个 1 有多个路径可以连接到 0。
+//      •	从所有 0 同时开始 BFS，最近的 0 会最先访问到这个 1，并更新其距离。
+//      •	由于 BFS 是按层级扩展的，其余路径到达这个 1 时，其距离必然不小于已经更新的距离，因此无需更新。
 function distanceMatrix(M) {
     const m = M.length
     const n = M[0].length
@@ -8862,4 +8867,45 @@ function distanceMatrix(M) {
     }
 
     return res
+}
+
+// 190、单词演变
+// 输入两个长度相同但内容不同的单词（beginWord和endWord）和一个单词列表，求从beginWord到endWord到演变序列的最短长度
+// 要求每步演变只能改变一个字母，且演变后的单词必须在单词列表中，如果无法从beginWord到endWord，则返回0，假设所有单词只包含英文小写字母
+// 思路： 广度优先搜索查找最短路径
+//      可以把每个单词看作图中的节点，然后如果两个单词只有一个字母不同，那么他们就可以连成一条边，那么这道题就变成了查找图的最短路径问题
+//      a、从beginword开始，通过修改一个字母，找到所有可能的下一个单词，如果当前可以转换为endword，则返回最短长度
+//      b、使用Set来存储单词列表，快速判断单词是否存在
+//      c、使用队列进行广度优先遍历，同时记录步数
+function wordRoute(beginWord, endWord, list) {
+    const wordSet = new Set(list) // 存储单词列表，方便快速查找
+
+    if(!wordSet.has(endWord)) {
+        return 0
+    }
+
+    const queue = [[beginWord, 1]] // 初始化当前单词和步数
+
+    while(queue.length) {
+        const [word, len] = queue.shift()
+
+        // 遍历当前单词的所有可能的变化
+        for(let i = 0; i < word.length; i++) {
+            for(let c = 0; c < 26; c++) {
+                const newWord = word.slice(0, i) + String.fromCharCode(97 + c) + word.slice(i + 1)
+
+                if(newWord === endWord) {
+                    return len + 1
+                }
+
+                // 如果新单词在单词列表中，加入队列并从列表中移除
+                if(wordSet.has(newWord)) {
+                    queue.push([newWord, len + 1])
+                    wordSet.delete(newWord) // 已经遍历过，删除当前单词
+                }
+            }
+        }
+    }
+
+    return 0
 }
