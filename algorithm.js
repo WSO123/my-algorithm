@@ -9177,3 +9177,56 @@ function longestPath(matrix) {
 
     return res
 }
+
+// 195、课程顺序
+// n门课程的编号为0到n-1，输入一个数组lectures，它的每个元素lectures[i]表示两门课的先修顺序。
+// 如果lectures[i] = [A, B]，表示B应该在A的前面上课，请根据总课程数n和lectures，得出一个可行的修课序列。
+// 如果有多个可行的修课序列，则返回任意一个即可。如果没有可行的修课序列，则返回空数组
+// 思路： 图的拓扑排序
+//       依赖关系通常都可以抽象成图来表示，尤其是当这些依赖关系涉及某种“先后顺序”或“关联性”时
+//       那么问题就转换成求图的拓扑排序
+//       a、构建图和入度数组
+//       b、构建入度为0的队列，并依次弹出
+//       c、弹出后，更新入度数组，并将入度为0的节点加入队列
+//       d、重复b、c步骤，直到队列为空
+function findCourseOrder(n, lectures) {
+    const graph = new Map()
+    const inDegree = new Array(n).fill(0)
+
+    // 构建图和入度数组
+    for(let [a,b] of lectures) {
+        if(!graph.has(b)) {
+            graph.set(b, [])
+        }
+
+        // b -> a
+        graph.get(b).push(a)
+        inDegree[a]++ // 下标为a的入度加1
+    }
+
+    // 构建入度为0的队列
+    const queue = []
+    for(let i = 0; i < n; i++) {
+        if (inDegree[i] === 0) {
+            queue.push(i)
+        }
+    }
+
+    const res = []
+    // 迭代弹出入度为0的节点
+    while(queue.length) {
+        const lecture = queue.shift()
+        res.push(lecture)
+
+        // 和lecture节点相连的节点的入度减1
+        for(let neighber of graph.get(lecture) || []) {
+            inDegree[neighber]--
+            if(inDegree[neighber] === 0) {
+                queue.push(neighber)
+            }
+        }
+    }
+
+    // 检查是否所有课程都能完成，如果不等于n说明有循环依赖
+    return res.length === n ? res : []
+}
