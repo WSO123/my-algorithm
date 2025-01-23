@@ -9128,3 +9128,52 @@ function calcDivision(equations, values, queries) {
 
     return res
 }
+
+// 194、最长递增路径
+// 输入一个整数矩阵，请求最长递增路径的长度。矩阵中的路径沿着上下左右前行
+// 例如，下面的矩阵, 输出4，因为最长递增路径为1->2->6->9
+// [
+//     [9,9,4],
+//     [6,6,8],
+//     [2,1,1]
+// ]
+// 思路： 图的深度优先搜索
+//     可以把矩阵的每个节点都看作图中的一个节点，那么问题就变成求图的最长路径问题
+function longestPath(matrix) {
+    let m = matrix.length
+    let n = matrix[0].length
+
+    // 记录每个节点开始的最长路径
+    let memoMax = new Array(m).fill(0).map(() => new Array(n).fill(0))
+
+    // 四个方向，上下左右
+    const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+
+    const dfs = (i, j) => {
+        if(memoMax[i][j]) { // 记忆化是为了去除重复计算
+            return memoMax[i][j]
+        }
+
+        let maxLen = 1
+
+        for(let [dx, dy] of directions) {
+            let x = i + dx
+            let y = j + dy
+            if(x >= 0 && x < m && y >= 0 && y < n && matrix[x][y] > matrix[i][j]) {
+                maxLen = Math.max(maxLen, dfs(x, y) + 1)
+            }
+        }
+
+        memoMax[i][j] = maxLen
+        return maxLen
+    }
+
+    let res = 0
+    for(let i = 0; i < m; i++) {
+        for(let j = 0; j < n; j++) {
+            res = Math.max(dfs(i, j), res)
+        }
+    }
+
+    return res
+}
