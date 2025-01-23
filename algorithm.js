@@ -9046,3 +9046,85 @@ function allPath(graph) {
 
     return  res
 }
+
+// 193、计算除法
+// 输入两个数组equation和values，其中，数组equation的每个元素包含两个表示变量名的字符串，
+// 数组values的每个元素是一个浮点数值，如果equation[i]的两个变量名分别是Ai和Bi，那么values[i]是Ai/Bi的值
+// 再给定一个数组queries，它的每个元素也包含两个变量名。对于queries[j]的两个变量名分别是Cj和Dj，请计算Cj/Dj的值
+// 假设任意values[i]大于0，如果不能计算，返回-1
+// 思路：图的深度优先搜索
+//      每一对equation[i]的两个变量名Ai和Bi，可以看作两个节点Ai和Bi，它们可以构成一条边，Ai -> Bi，边权为values[i], 反过来，Bi -> Ai，边权为1/values[i]
+//      那么Cj/Dj的值，就等于Cj到Dj的最短路径的权值,值为路径上所有边的权值之积
+//      查找路径比较适合DFS
+function calcDivision(equations, values, queries) {
+    const graph = new Map()
+
+    // 构建图
+    for(let i = 0; i < equations.length; i++) {
+        const [a, b] = equations[i]
+        const value = values[i]
+
+        if(!graph.has(a)) {
+            graph.set(a, [])
+        }
+
+        if(!graph.has(b)) {
+            graph.set(b, [])
+        }
+
+        // Ai -> Bi，边权为values[i]
+        graph.get(a).push([b, value])
+        // Bi -> Ai，边权为1/values[i]
+        graph.get(b).push([a, 1 / value])
+    }
+    const dfs = (node, target, visited) => {
+        if(node === target) {
+            return 1
+        }
+        visited.add(node)
+
+        for(let [neighber, value] of graph.get(node) || []) {
+            if(!visited.has(neighber)) {
+                const res = dfs(neighber, target, visited)
+                if(res !== -1) {
+                    return res * value
+                }
+            }
+        }
+
+        return -1
+    }
+
+    const dfsInteral = (node, target) => {
+        const stack = [[node, 1]]
+        const visited = new Set() // 记录已访问节点
+        while(stack.length) {
+            const [node, value] = stack.pop()
+            if(node === target) {
+                return value
+            }
+            visited.add(node)
+            for(let [neighber, weight] of graph.get(node) || []) {
+                if(!visited.has(neighber)) {
+                    stack.push([neighber, value * weight])
+                }
+            }
+        }
+        return -1
+    }
+
+    const res = []
+    for(let i = 0; i < queries.length; i++) {
+        const [a, b] = queries[i]
+        if(!graph.has(a) || !graph.has(b)) { // 图中没用a或b，表示没有结果
+            res.push(-1)
+        } else if(a === b) {
+            res.push(1)
+        } else { 
+            res.push(dfs(a, b, new Set()))
+            // res.push(dfsInteral(a,b))
+        }
+    }
+
+    return res
+}
