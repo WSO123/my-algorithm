@@ -9639,3 +9639,97 @@ function findRedundantConnection(edges) {
     }
     return res
 }
+
+// 202、最长连续序列
+// 输入一个无序的整数数组，请计算最长的连续数值序列的长度
+// 例如，输入[0,5,9,2,4,3],则最长连续序列是[2,3,4,5],因此输出4
+// 思路1、哈希集合
+function longestConsecutive(nums) {
+    if (nums.length === 0) return 0;
+
+    const numSet = new Set(nums);  // 用集合存储所有数字
+    let longestStreak = 0;
+
+    for (let num of nums) {
+        // 如果num-1已经在集合中，说明它不是序列的起点，跳过
+        if (!numSet.has(num - 1)) {
+            let currentNum = num;
+            let currentStreak = 1;
+
+            // 从num开始，向后查找连续的数字
+            while (numSet.has(currentNum + 1)) {
+                currentNum++;
+                currentStreak++;
+            }
+
+            longestStreak = Math.max(longestStreak, currentStreak);  // 更新最长的连续序列
+        }
+    }
+
+    return longestStreak;
+}
+
+// 思路2、并查集
+//   将连续的相邻数字放在一个集合中，初始化并查集，这样就会有多个集合，最大连续序列的长度问题就转变成了求集合的最大节点个数
+class UnionFind {
+    constructor(n) {
+        this.parent = Array(n).fill(0).map((_, index) => index);
+        this.size = Array(n).fill(1);  // size用于记录每个集合的大小
+    }
+
+    find(x) {
+        if (this.parent[x] !== x) {
+            this.parent[x] = this.find(this.parent[x]);  // 路径压缩
+        }
+        return this.parent[x];
+    }
+
+    union(x, y) {
+        const rootX = this.find(x);
+        const rootY = this.find(y);
+        
+        if (rootX !== rootY) {
+            // 按大小合并，始终将小的集合合并到大的集合上
+            if (this.size[rootX] > this.size[rootY]) {
+                this.parent[rootY] = rootX;
+                this.size[rootX] += this.size[rootY];
+            } else {
+                this.parent[rootX] = rootY;
+                this.size[rootY] += this.size[rootX];
+            }
+        }
+    }
+}
+function longestConsecutive(nums) {
+    if(nums.length === 0) {
+        return 0
+    }
+
+    const numSet = new Set(nums)
+
+    // 将每个数字映射到一个独特的索引，并初始化并查集
+    // 映射这个而不使用nums的每个值直接作为节点，是因为不知道数字范围，无法有效初始化并查集大小
+    const indexMap = new Map()
+    let index = 0
+    for(let num of numSet) {
+        indexMap.set(num, index)
+        index++
+    }
+
+    const uf = new UnionFind(indexMap.size)
+
+    for(let num of numSet) {
+        // 检查相邻的数字
+        if(numSet.has(num + 1)) {
+            uf.union(indexMap.get(num), indexMap.get(num + 1))
+        }
+    }
+
+    let maxLen = 0
+    for(let num of nums) {
+        const root = uf.find(indexMap.get(num))
+        maxLen = Math.max(uf.size[root], maxLen)
+    }
+
+    return maxLen
+}
