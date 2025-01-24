@@ -9733,3 +9733,6 @@ function longestConsecutive(nums) {
 
     return maxLen
 }
+
+// 动态规划 双序列问题
+// 203、最长公共子序列
