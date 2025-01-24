@@ -9377,3 +9377,238 @@ function buildList(org, seqs) {
 
     return res.join('') === org.join('') && res.length === org.length
 }
+
+// 198、实现一个并查集
+class UnionFind {
+    constructor(size) {
+        this.parent = new Array(size).fill(0).map((_, index) => index) // parent[i]表示i的父节点
+        this.rank = new Array(size).fill(1) // rank[i]表示树的深度（秩）
+    }
+
+    // 查找根节点， 也就是查找元素所在的集合
+    find(x) {
+        // x不是根节点  继续递归查x的父节点，直到查到根节点
+        if(this.parent[x] !== x) {
+            this.parent[x] = this.find(this.parent[x])
+        }
+
+        return this.parent[x]
+    }
+
+    // 合并两个集合，在这里才建立两个节点的关系
+    union(x, y) {
+        let rootX = this.find(x)
+        let rootY = this.find(y)
+        if(rootX === rootY) { //具有相同的根节点，代表已经是一个集合里
+            return
+        }
+
+        // 比较树的深度，较小的树挂在较大的树下
+        if(this.rank[rootX] > this.rank[rootY]) {
+            this.parent[rootY] = rootX // rootY的父节点设为rootX
+        } else if(this.rank[rootX] < this.rank[rootY]) {
+            this.parent[rootX] = rootY // rootX的父节点设为rootY
+        } else {
+            // 如果两个树的深度相等，任选一棵树为根
+            this.parent[rootY] = rootX
+            this.rank[rootX]++ // 根的深度加1
+        }
+
+    }
+
+    // 判断是否在同一个集合
+    isConnected(x, y) {
+        return this.find(x) === this.find(y)
+    }
+}
+// 199、朋友圈
+// 假设一个班级有n个学生，学生之间是朋友，有些不是。朋友关系是可以传递的。
+// 例如，A是B的直接朋友，B是C的直接朋友，那么A是C的间接朋友。定义朋友圈就是一组直接朋友或间接朋友的学生。
+// 输入一个n*n的矩阵M表示班上的朋友关系，如果M[i][j]=1,那么学生i是j的直接朋友。请计算班级中朋友圈的数目
+// 思路1：并查集
+//      朋友关系通常是用图来表示的，给定M其实就是图的邻接矩阵
+//      从某个人出发，就可以构建出一个具有关联关系的图，而这些图连接起来就可以构成一个并查集，计算朋友圈的数目，其实就是计算这个并查集中子集的个数
+function findCircleNum(M) {
+    const n = M.length
+    const uf = new UnionFind(n) // 创建一个并查集
+
+    for(let i = 0; i < n; i++) {
+        for(let j = i + 1; j < n; j++) {
+            if(M[i][j]) { // 如果是朋友，合并他们所在的集合
+                uf.union(i, j)
+            }
+        }
+    }
+
+    let count = 0
+    for(let i = 0; i < n; i++) {
+        if(uf.find(i) === i) { // 查找i的根节点，如果i就是根节点，代表发现一个朋友圈
+            count++ 
+        }
+    }
+
+    return count
+}
+// 思路2、每个连通分量代表一个朋友圈  
+//      连通分量是指图中一部分顶点，任意两点之间都有路径相连，而图中其它部分的顶点不能通过路径到达这些顶点。也就是说，连通分量是一组连通的顶点
+//      我们通过 DFS 或 BFS 来遍历这个图。每当我们从一个未访问过的节点开始遍历时，意味着我们找到了一组新的连接的节点（即一个新的朋友圈）。
+//      遍历过程中，我们会标记每个学生为已访问
+//      每次发现一个未访问的学生，执行一次DFS或BFS，统计朋友圈的数量
+function findCircleNum(M) {
+    const n = M.length
+    const visited = new Array(n).fill(0)
+
+    // 深度优先搜索
+    const dfs = (i) => {
+        for(let j = 0; j < n; j++) {
+            // 如果学生i和学生j是朋友且j没有被访问过，则递归访问
+            if(M[i][j] === 1 && !visited[j]) {
+                visited[j] = 1
+                dfs(j) // 继续访问j的朋友
+            }
+        }
+    }
+
+    // 广度优先搜索
+    const bfs = (i) => {
+        const quene = [i]
+        visited[i] = 1
+        while(quene.length) {
+            const st = quene.shift()
+            for(let j = 0; j < n; j++) {
+                if(M[st][j] === 1 && !visited[j]) {
+                    visited[j] = 1
+                    quene.push(j)
+                }
+            }
+        }
+    }
+
+    let count = 0
+
+    // 遍历每个学生，找出未被访问的学生，开始DFS或者BFS
+    for(let i = 0; i < n; i++) {
+        if(!visited[i]) { // 如果学生i没有被访问过，说明它是一个新朋友圈的起始点
+            dfs(i) // 访问这个朋友圈
+            // bfs(i) 
+            count++
+        }
+    }
+
+    return count
+}
+
+// 200、相似的字符串
+// 如果交换字符串X中的两个字符就能得到字符串Y，那么这两个字符串相似。 例如，tars和rats相似，但star和tars不相似
+// 输入一个字符串数组，根据字符串的相似性分组，请问能把输入的数组分成几组？
+// 如果一个字符串至少和一组字符串中的一个相似，那么它就可以放到该数组里
+// 假设输入数组中的所有字符串的长度相同并且两两互为变位词
+// 例如[tars, rats, arts, star]可以分成[tars, rats, arts]和[star]
+// 思路1、每个连通分量代表一个分组， 与上题类似
+//      如果把每个字符串看成图中的一个点，如果两个字符串就连成一条边，把相似的字符串进行连接分组
+//      那么每个分组就是一个图，求几个分组就变成求有连通分量个数的问题了
+function numSimilarGroups(A) {
+    const n = A.length
+    const visited = new Array(n).fill(0)
+
+     // 判断两个字符串是否相似
+    const isSimilar = (a, b) => {
+        let diffCount = 0
+        let diffPairs = []
+        for(let i = 0; i < a.length; i++) {
+            if(a[i] !== b[i]) {
+                diffCount++
+                diffPairs.push([a[i], b[i]])
+                if(diffCount > 2) {
+                    return false
+                }
+            }
+        }
+
+        // 如果不同字符对数为 2 且互换后相等，那么就是相似的
+        if(diffCount === 2) {
+            return diffPairs[0][0] === diffPairs[1][1] && diffPairs[0][1] === diffPairs[1][0]
+        }
+
+        return diffCount === 0 // 如果没有不同的字符，则表示完全相同，也是相似的
+    }
+
+    const dfs = (i) => {
+        for(let j = 0; j < n; j++) {
+            if(!visited[j] && isSimilar(A[i],A[j])) {
+                visited[j] = 1
+                dfs(j)
+            }
+        }
+    }
+
+    const bfs = (i) => {
+        const queue = [i]
+        visited[i] = 1
+        while(queue.length) {
+            const s = queue.shift()
+            for(let j = 0; j < n; j++) {
+                if(isSimilar(A[s], A[j]) && !visited[j]) {
+                    visited[j] = 1
+                    queue.push(j)
+                }
+            }
+        }
+    }
+
+    let count = 0
+    for(let i = 0; i < n; i++) {
+        if(!visited[i]) { // 如果字符串A[i]没有被访问过，说明它是一个新相似组的起始点
+            dfs(i)
+            // bfs(i)
+            count++
+        }
+    }
+
+    return count
+}
+
+// 思路2、并查集
+//      跟上题一样，这道题是计算连通分量，自然也可以用并查集做
+function numSimilarGroups(A) {
+     // 判断两个字符串是否相似
+    const isSimilar = (a, b) => {
+        let diffCount = 0
+        let diffPairs = []
+        for(let i = 0; i < a.length; i++) {
+            if(a[i] !== b[i]) {
+                diffCount++
+                diffPairs.push([a[i], b[i]])
+                if(diffCount > 2) {
+                    return false
+                }
+            }
+        }
+
+        // 如果不同字符对数为 2 且互换后相等，那么就是相似的
+        if(diffCount === 2) {
+            return diffPairs[0][0] === diffPairs[1][1] && diffPairs[0][1] === diffPairs[1][0]
+        }
+
+        return diffCount === 0 // 如果没有不同的字符，则表示完全相同，也是相似的
+    }
+    const n = A.length
+    const uf = new UnionFind(n)
+
+    for(let i = 0; i < n; i++) {
+        for(let j = i + 1; j < n; j++) {
+            if(isSimilar(A[i], A[j])) { // 如果相似，合并集合
+                uf.union(i, j)
+            }
+        }
+    }
+
+    let count = 0
+    for(let i = 0; i < n; i++) {
+        if(uf.find(i) === i) { // 查找i的根节点，如果i就是根节点，代表发现一个分组
+            count++
+        }
+    }
+
+    return count
+}
