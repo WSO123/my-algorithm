@@ -10010,25 +10010,53 @@ function uniquePaths(m, n) {
     const fn = Array.from({ length: m }, () => new Array(n).fill(0))
     // 起点路径数目为1
     fn[0][0] = 1
-    for(let i = 0; i < m; i++) {
-        for(let j = 0; j < n; j++) {
-            if(i > 0) {
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (i > 0) {
                 fn[i][j] += fn[i - 1][j]
             }
-            if(j > 0) {
+            if (j > 0) {
                 fn[i][j] += fn[i][j - 1]
             }
         }
     }
 
-    return fn[m - 1][n -1]
+    return fn[m - 1][n - 1]
 }
 
 // 207、最小路径之和
 // 在一个m*n的格子中，每个位置都有一个数字。一个机器人从左上角出发，它每步要么向下，要么向右，直到走到右下角。
 // 机器人每经过一个位置，就把该位置的数字相加。请计算从左上角到右下角的最小路径之和 
+// 思路：动态规划
+//     假设f[i][j]表示从左上角走到(i,j)的最小路径之和
+//     则f[i][j] = grid[i][j] + min(f[i-1][j], f[i][j-1])
 function minPathSum(grid) {
+    const m = grid.length;       // 行数
+    const n = grid[0].length;    // 列数
+    // 初始化状态数组
+    let fn = Array.from({ length: m }, () => new Array(n).fill(0));
 
+    // 左上角路径的和为grid[0][0]
+    fn[0][0] = grid[0][0];
+    
+    // 初始化第一行
+    for (let j = 1; j < n; j++) {
+        fn[0][j] = grid[0][j] + fn[0][j - 1];
+    }
+
+    // 初始化第一列
+    for (let i = 1; i < m; i++) {
+        fn[i][0] = grid[i][0] + fn[i - 1][0];
+    }
+
+    // 填充剩余的状态
+    for (let i = 1; i < m; i++) {
+        for (let j = 1; j < n; j++) {
+            fn[i][j] = grid[i][j] + Math.min(fn[i][j - 1], fn[i - 1][j]);
+        }
+    }
+    
+    return fn[m - 1][n - 1];
 }
 
 // 208、三角形中的最小路径和
