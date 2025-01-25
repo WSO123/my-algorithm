@@ -10167,9 +10167,9 @@ function findTargetSumWays(nums, s) {
 }
 
 // 211、最少的硬币数目
-// 给定正整数数组coins和一个目标值amount，请计算最少的硬币数目，使得这些硬币的和等于s
-// 每种硬币可以使用多次，如果不能计算出s，返回-1
-// 例如，输入coins=[1,2,5]和s=11，那么最少的硬币数目是3，即5+5+1
+// 给定正整数数组coins和一个目标值amount，请计算最少的硬币数目，使得这些硬币的和等于amount
+// 每种硬币可以使用多次，如果不能计算出amount，返回-1
+// 例如，输入coins=[1,2,5]和amount=11，那么最少的硬币数目是3，即5+5+1
 // 思路： 动态规划
 //      假设f(i)表示金额i所需的最小硬币数
 //      f(i) = min(f(i - coins[j]) + 1)，其中j是coins数组的下标
@@ -10193,9 +10193,24 @@ function coinChange(coins, amount) {
 }
 
 // 212、排列的数目
-// 给定一个非空的正整数数组numss和一个目标值s，数组中每个值都是唯一的，请计算有多少种不同的排列可以得到目标值s
+// 给定一个非空的正整数数组nums和一个目标值s，数组中每个值都是唯一的，请计算有多少种不同的排列可以得到目标值s
 // 数组中的数字可以在排列中使用多次
 // 例如，输入nums=[1,2,3]和s=3，那么有4种不同的排列：[1,1,1]、[1,2]、[2,1]、[3]，因此返回4
+// 思路：动态规划 完全背包
+//      假设f(i)表示目标值为i的排列数目
+//      f(i) = sum(f(i - nums[j]))，其中j是nums数组的下标
 function combinationSum(nums, target) {
+    const fn = new Array(target + 1).fill(0)
 
+    // 初始化状态, 目标为0时，只有一种排列方式
+    fn[0] = 1
+
+    for(let i = 1; i <= target; i++) {
+        for(let j = 0; j < nums.length; j++) {
+            if(i >= nums[j]) {
+                fn[i] += fn[i - nums[j]]
+            }
+        }
+    }
+    return fn[target]
 }
