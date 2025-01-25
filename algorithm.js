@@ -9831,12 +9831,104 @@ function longestCommonSubsequence(s1, s2) {
 
     return fn[m][n]
 }
+// 优化空间复杂度，把fn数组分成两组，交替更新
+function longestCommonSubsequence(s1, s2) {
+    let m = s1.length
+    let n = s2.length
+
+    // 初始化状态数组
+    // prev 表示上一行的状态，cur 表示当前行的状态
+    const prev = new Array(n + 1).fill(0)
+    const cur = new Array(n + 1).fill(0)
+
+    for(let i = 1; i <= m; i++) {
+        for(let j = 1; j <= n; j++) {
+            if(s1[i - 1] === s2[j - 1]) {
+                // 如果字符相等，当前字符属于LCS，长度增加1
+                cur[i] = prev[j - 1] + 1
+            } else {
+                // 如果字符不相等，取前两种情况的最大值
+                cur[j] = Math.max(prev[j], cur[j - 1])
+            }
+        }
+
+        // 更新prev为cur，为下一轮迭代做准备
+        [prev, cur] = [cur, prev]
+    }
+
+    // 返回最终的LCS长度，保存在prev中
+    return prev[n]
+}
 
 // 204、字符串交织
 //  输入3个字符串s1、s2、s3，判断s3是否由s1和s2交织而成，即s3中所有字符都是s1或s2中的字符，字符串s1和s2的字符都将出现在s3中，且s1和s2的字符顺序与s3中一致
 // 例如，aadbbcbcac可以由aabcc和dbbca交织而成
+// 思路： 动态规划
+//      设f[i][j]表示s1[0: i-1]和s2[0: j-1]能否交织成s3[0: i+j-1]
+//      如果s1[i - 1] === s3[i + j - 1],且f[i-1][j]为true，那么f[i][j]为true
+//      如果s2[j - 1] === s3[i + j - 1],且f[i][j-1]为true，那么f[i][j]为true
 function isInterleave(s1, s2, s3) {
+    const m = s1.length
+    const n = s2.length
 
+    if(m + n !== s3.length) {
+        return false
+    }
+
+    // 状态方程
+    const fn = Array.from({length: m + 1}, () => new Array(n + 1).fill(false))
+
+    // 初始化状态,空字符串可以交织成空字符串
+    fn[0][0] = true
+
+    for(let i = 0; i <= m; i++) {
+        for(let j = 0; j <=n; j++) {
+            // 如果s1[i - 1] === s3[i + j - 1],且f[i-1][j]为true，那么f[i][j]为true
+            if(i > 0 && s1[i - 1] === s3[i + j - 1]) {
+                fn[i][j] = fn[i][j] || fn[i - 1][j]
+            }
+
+            // 如果s2[j - 1] === s3[i + j - 1],且f[i][j-1]为true，那么f[i][j]为true
+            if(j > 0 && s2[j - 1] === s3[i + j - 1]) {
+                fn[i][j] = fn[i][j] || fn[i][j - 1]
+            }
+        }
+    }
+
+    return fn[m][n]
+}
+
+// 优化空间复杂度，把fn数组分成两组，交替更新
+function isInterleave(s1, s2, s3) {
+    const m = s1.length
+    const n = s2.length
+
+    if(m + n !== s3.length) {
+        return false
+    }
+
+    // 状态方程
+    const prev = new Array(n + 1).fill(false)
+    const cur = new Array(n + 1).fill(false)
+
+    // 初始化状态,空字符串可以交织成空字符串
+    prev[0] = true
+
+    for(let i = 0; i <= m; i++) {
+        for(let j = 0; j <=n; j++) {
+            // 如果s1[i - 1] === s3[i + j - 1],且f[i-1][j]为true，那么f[i][j]为true
+            if(i > 0 && s1[i - 1] === s3[i + j - 1]) {
+                cur[j] = cur[j] || prev[j]
+            }
+
+            // 如果s2[j - 1] === s3[i + j - 1],且f[i][j-1]为true，那么f[i][j]为true
+            if(j > 0 && s2[j - 1] === s3[i + j - 1]) {
+                cur[j] = cur[j] || cur[j - 1]
+            }
+        }
+    }
+
+    return prev[n]
 }
 
 // 205、 子序列的数目
