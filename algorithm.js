@@ -10024,6 +10024,34 @@ function uniquePaths(m, n) {
     return fn[m - 1][n - 1]
 }
 
+// 优化空间效率
+function uniquePaths(m, n) {
+    // 初始化上一行和当前行
+    let prev = new Array(n).fill(0);
+    let cur = new Array(n).fill(0);
+
+    // 起点路径数目为1
+    prev[0] = 1;
+
+    // 从第一行开始
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (i > 0) {
+                cur[j] += prev[j];
+            }
+            if (j > 0) {
+                cur[j] += cur[j - 1];
+            }
+        }
+        // 更新上一行
+        [prev, cur] = [cur, prev];
+        // 清空当前行
+        cur.fill(0);
+    }
+
+    return prev[n - 1];
+}
+
 // 207、最小路径之和
 // 在一个m*n的格子中，每个位置都有一个数字。一个机器人从左上角出发，它每步要么向下，要么向右，直到走到右下角。
 // 机器人每经过一个位置，就把该位置的数字相加。请计算从左上角到右下角的最小路径之和 
@@ -10038,7 +10066,7 @@ function minPathSum(grid) {
 
     // 左上角路径的和为grid[0][0]
     fn[0][0] = grid[0][0];
-    
+
     // 初始化第一行
     for (let j = 1; j < n; j++) {
         fn[0][j] = grid[0][j] + fn[0][j - 1];
@@ -10055,10 +10083,41 @@ function minPathSum(grid) {
             fn[i][j] = grid[i][j] + Math.min(fn[i][j - 1], fn[i - 1][j]);
         }
     }
-    
+
     return fn[m - 1][n - 1];
 }
 
+// 优化空间效率
+function minPathSum(grid) {
+    const m = grid.length;       // 行数
+    const n = grid[0].length;    // 列数
+    
+    // 初始化prev和cur数组
+    let prev = new Array(n).fill(0);
+    let cur = new Array(n).fill(0);
+
+    // 初始化第一行
+    prev[0] = grid[0][0];
+    for (let j = 1; j < n; j++) {
+        prev[j] = grid[0][j] + prev[j - 1];
+    }
+
+    // 从第二行开始更新状态
+    for (let i = 1; i < m; i++) {
+        // 更新第一列
+        cur[0] = grid[i][0] + prev[0];
+
+        // 更新其他列
+        for (let j = 1; j < n; j++) {
+            cur[j] = grid[i][j] + Math.min(cur[j - 1], prev[j]);
+        }
+
+        // 更新prev和cur
+        [prev, cur] = [cur, prev];
+    }
+
+    return prev[n - 1];
+}
 // 208、三角形中的最小路径和
 // 在一个有数字组成的三角形中，第1行有1个数字，第2行有2个数字，以此类推，第n行有n个数字。
 //       2
@@ -10067,8 +10126,26 @@ function minPathSum(grid) {
 // 4 | 1 | 8 | 3
 // 如上，如果每一步之内前往下一行中相邻的数字，请计算从三角形的顶部到底部的最小路径之和
 // 例如，例子中，从顶部到底部的最小路径之和为11（2+3+5+1）
-function minimumTotal(triangle) {
+// 思路： 动态规划 典型的自底向上
+//      我们寻找路径的时候可以自上而下，也可以自底向上，本题自底向上寻找会收敛到一个值，所以比较合适
+//      假设f[i][j]表示从底部部到(i,j)的最小路径之和
+//      那么f[i][j] = triangle[i][j] + min(f[i+1][j], f[i+1][j+1])
 
+function minimumTotal(triangle) {
+    const n = triangle.length
+    // fn[i][j] 表示从底部到(i,j)的最小路径和
+    // 初始化最低行的值
+    let fn = [...triangle[n - 1]]
+
+    // 从倒数第二行向上更新
+    for(let i = n - 2; i >= 0; i--) {
+        for(let j = 0; j <= i; j++) {
+            // 更新当前数字的最小路径和
+            // fn本来已经存了前一轮的路径值，所以可以直接取fn[j]和fn[j + 1]
+            fn[j] = triangle[i][j] + Math.min(fn[j], fn[j + 1])
+        }
+    }
+    return fn[0]
 }
 
 // 动态规划 背包问题
