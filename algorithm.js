@@ -9815,11 +9815,11 @@ function longestCommonSubsequence(s1, s2) {
     let n = s2.length
 
     // 初始化状态数组，fn[i][j]表示s1[0: i-1]和s2[0: j-1]的最长公共子序列的长度
-    const fn = Array.from({length: m + 1}, () => new Array(n + 1).fill(0))
+    const fn = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0))
 
-    for(let i = 1; i <= m; i++) {
-        for(let j = 1; j <= n; j++) {
-            if(s1[i - 1] === s2[j - 1]) {
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            if (s1[i - 1] === s2[j - 1]) {
                 // 如果字符相等，当前字符属于LCS，长度增加1
                 fn[i][j] = fn[i - 1][j - 1] + 1
             } else {
@@ -9838,14 +9838,14 @@ function longestCommonSubsequence(s1, s2) {
 
     // 初始化状态数组
     // prev 表示上一行的状态，cur 表示当前行的状态
-    const prev = new Array(n + 1).fill(0)
-    const cur = new Array(n + 1).fill(0)
+    let prev = new Array(n + 1).fill(0)
+    let cur = new Array(n + 1).fill(0)
 
-    for(let i = 1; i <= m; i++) {
-        for(let j = 1; j <= n; j++) {
-            if(s1[i - 1] === s2[j - 1]) {
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            if (s1[i - 1] === s2[j - 1]) {
                 // 如果字符相等，当前字符属于LCS，长度增加1
-                cur[i] = prev[j - 1] + 1
+                cur[j] = prev[j - 1] + 1
             } else {
                 // 如果字符不相等，取前两种情况的最大值
                 cur[j] = Math.max(prev[j], cur[j - 1])
@@ -9871,25 +9871,25 @@ function isInterleave(s1, s2, s3) {
     const m = s1.length
     const n = s2.length
 
-    if(m + n !== s3.length) {
+    if (m + n !== s3.length) {
         return false
     }
 
     // 状态方程
-    const fn = Array.from({length: m + 1}, () => new Array(n + 1).fill(false))
+    const fn = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(false))
 
     // 初始化状态,空字符串可以交织成空字符串
     fn[0][0] = true
 
-    for(let i = 0; i <= m; i++) {
-        for(let j = 0; j <=n; j++) {
+    for (let i = 0; i <= m; i++) {
+        for (let j = 0; j <= n; j++) {
             // 如果s1[i - 1] === s3[i + j - 1],且f[i-1][j]为true，那么f[i][j]为true
-            if(i > 0 && s1[i - 1] === s3[i + j - 1]) {
+            if (i > 0 && s1[i - 1] === s3[i + j - 1]) {
                 fn[i][j] = fn[i][j] || fn[i - 1][j]
             }
 
             // 如果s2[j - 1] === s3[i + j - 1],且f[i][j-1]为true，那么f[i][j]为true
-            if(j > 0 && s2[j - 1] === s3[i + j - 1]) {
+            if (j > 0 && s2[j - 1] === s3[i + j - 1]) {
                 fn[i][j] = fn[i][j] || fn[i][j - 1]
             }
         }
@@ -9903,29 +9903,31 @@ function isInterleave(s1, s2, s3) {
     const m = s1.length
     const n = s2.length
 
-    if(m + n !== s3.length) {
+    if (m + n !== s3.length) {
         return false
     }
 
     // 状态方程
-    const prev = new Array(n + 1).fill(false)
-    const cur = new Array(n + 1).fill(false)
+    let prev = new Array(n + 1).fill(false)
+    let cur = new Array(n + 1).fill(false)
 
     // 初始化状态,空字符串可以交织成空字符串
     prev[0] = true
 
-    for(let i = 0; i <= m; i++) {
-        for(let j = 0; j <=n; j++) {
+    for (let i = 0; i <= m; i++) {
+        for (let j = 0; j <= n; j++) {
             // 如果s1[i - 1] === s3[i + j - 1],且f[i-1][j]为true，那么f[i][j]为true
-            if(i > 0 && s1[i - 1] === s3[i + j - 1]) {
+            if (i > 0 && s1[i - 1] === s3[i + j - 1]) {
                 cur[j] = cur[j] || prev[j]
             }
 
             // 如果s2[j - 1] === s3[i + j - 1],且f[i][j-1]为true，那么f[i][j]为true
-            if(j > 0 && s2[j - 1] === s3[i + j - 1]) {
+            if (j > 0 && s2[j - 1] === s3[i + j - 1]) {
                 cur[j] = cur[j] || cur[j - 1]
             }
         }
+        // 更新 prev 和 cur
+        [prev, cur] = [cur, prev]
     }
 
     return prev[n]
@@ -9934,14 +9936,74 @@ function isInterleave(s1, s2, s3) {
 // 205、 子序列的数目
 // 输入字符串s1和s2，请计算s1中有多少个子序列等于s2
 // 例如在字符串appplep中，有3个子序列等于字符串apple
+// 思路： 动态规划
+//      设f[i][j]表示s1[0: i-1]中包含s2[0: j-1]的子序列数目
+//      a、如果s1[i - 1] === s2[j - 1],那么f[i][j] = f[i-1][j-1] + f[i-1][j]
+//         解释：
+//            1.选择 s1[i-1] 和 s2[j-1] 匹配：也就是说，我们在 s1[0..i-2] 中找到一个子序列等于 s2[0..j-2]，然后加上 s1[i-1] 和 s2[j-1] 这两个字符。
+//              所以这个情况贡献的数量是 dp[i-1][j-1]，表示在前面的子序列中找到匹配的部分。
+//            2.不选择 s1[i-1]：我们可以忽略 s1[i-1]，继续在 s1[0..i-2] 中找到 s2[0..j-1]。
+//              这个情况贡献的数量是 dp[i-1][j]，表示在前面的子序列中没有选择 s1[i-1]，而继续匹配 s2[j-1]。
+//      b、如果s1[i - 1]!== s2[j - 1],那么f[i][j] = f[i-1][j]
 function numDistinct(s1, s2) {
+    const m = s1.length
+    const n = s2.length
 
+    // 状态数组
+    const fn = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0))
+
+    // 初始化状态，s2是空串，那么s1中任何位置都可以匹配到
+    for (let i = 0; i <= m; i++) {
+        fn[i][0] = 1
+    }
+
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            if (s1[i - 1] === s2[j - 1]) {
+                fn[i][j] = fn[i - 1][j - 1] + fn[i - 1][j]
+            } else {
+                fn[i][j] = fn[i - 1][j]
+            }
+        }
+    }
+
+    return fn[m][n]
+}
+// 优化空间复杂度，把fn数组分成两组，交替更新
+function numDistinct(s1, s2) {
+    const m = s1.length
+    const n = s2.length
+
+    // 状态方程
+    // prev 表示上一行的状态，cur 表示当前行的状态
+    let prev = new Array(n + 1).fill(0)
+    let cur = new Array(n + 1).fill(0)
+
+    // 初始化状态，s2是空串，那么s1中任何位置都可以匹配到
+    prev[0] = 1
+
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            if (s1[i - 1] === s2[j - 1]) {
+                cur[j] = prev[j - 1] + prev[j]
+            } else {
+                cur[j] = prev[j]
+            }
+        }
+
+        // 更新 prev 和 cur
+        [prev, cur] = [cur, prev]
+    }
+
+    return prev[n]
 }
 
 // 动态规划 矩阵路径问题
 // 206、路径数目
 // 一个机器人从m*n的格子左上角出发，它每步要么向下，要么向右，直到走到右下角。计算从左上角到右下角的路径数目
 // 例如，如果各子大小是3*3，那么机器人有6条路径
+// 思路： 动态规划
+//      假设f[i][j]表示从左上角走到(i, j)的路径数目
 function uniquePaths(m, n) {
 
 }
