@@ -10004,8 +10004,24 @@ function numDistinct(s1, s2) {
 // 例如，如果各子大小是3*3，那么机器人有6条路径
 // 思路： 动态规划
 //      假设f[i][j]表示从左上角走到(i, j)的路径数目
+//      由于机器人只能向下或向右走，那么f[i][j] = f[i-1][j] + f[i][j-1]
 function uniquePaths(m, n) {
+    // 初始化状态数组
+    const fn = Array.from({ length: m }, () => new Array(n).fill(0))
+    // 起点路径数目为1
+    fn[0][0] = 1
+    for(let i = 0; i < m; i++) {
+        for(let j = 0; j < n; j++) {
+            if(i > 0) {
+                fn[i][j] += fn[i - 1][j]
+            }
+            if(j > 0) {
+                fn[i][j] += fn[i][j - 1]
+            }
+        }
+    }
 
+    return fn[m - 1][n -1]
 }
 
 // 207、最小路径之和
