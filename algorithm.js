@@ -10152,6 +10152,9 @@ function minimumTotal(triangle) {
 // 209、分割等和子集
 // 给定一个非空的正整数数组，请判断能否将这些数字分成相等的两个子集
 // 如，[1,5,11,5]可以分成[1,5,5]和[11]，因此返回true
+// 思路： 动态规划 典型的背包问题
+//      想要分成相等的子集，那么总和必须是偶数
+//      假设f(i)表示是否存在一个子集，使得其和为i
 function canPartition(nums) {
 
 }
@@ -10164,11 +10167,29 @@ function findTargetSumWays(nums, s) {
 }
 
 // 211、最少的硬币数目
-// 给定正整数数组coins和一个目标值s，请计算最少的硬币数目，使得这些硬币的和等于s
+// 给定正整数数组coins和一个目标值amount，请计算最少的硬币数目，使得这些硬币的和等于s
 // 每种硬币可以使用多次，如果不能计算出s，返回-1
 // 例如，输入coins=[1,2,5]和s=11，那么最少的硬币数目是3，即5+5+1
+// 思路： 动态规划
+//      假设f(i)表示金额i所需的最小硬币数
+//      f(i) = min(f(i - coins[j]) + 1)，其中j是coins数组的下标
 function coinChange(coins, amount) {
+    // 初始化状态数组， f(i)表示金额i所需的最小硬币数
+    const fn = new Array(amount + 1).fill(Infinity)
 
+    // 金额为 0 时，所需的硬币数为 0
+    fn[0] = 0
+
+    for(let i = 1; i <= amount; i++) {
+        for(let j = 0; j < coins.length; j++) {
+            // 确保当前金额大于等于硬币面值
+            if(i >= coins[j]) {
+                fn[i] = Math.min(fn[i], fn[i - coins[j]] + 1)
+            }
+        }
+    }
+
+    return fn[amount] === Infinity ? -1 : fn[amount]
 }
 
 // 212、排列的数目
