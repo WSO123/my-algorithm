@@ -522,7 +522,6 @@ function hasPath(matrix, str) {
             }
         }
     }
-
     return false;
 }
 
@@ -8340,6 +8339,7 @@ function minCostClimbingStairs(cost) {
     return cur
 }
 
+// 动态规划 单序列问题
 // 181、房屋偷盗
 // 输入一个数组表示某条街道上的一排房屋内的财产数量。如果这条街相邻的房屋被盗会触发自动报警系统。
 // 请计算小偷最多可以在这条街上偷多少财产。
@@ -8663,7 +8663,7 @@ function maxArea(grid) {
     // 深度优先迭代版本
     const dfsInteral = (grid, i, j) => {
         // 检查起始点是否越界或不为陆地
-        if(grid[i][j] === 0) {
+        if (grid[i][j] === 0) {
             return 0
         }
 
@@ -8672,7 +8672,7 @@ function maxArea(grid) {
         let area = 1
         // 四个方向,上下左右
         const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // 上下左右
-        while(stack.length) {
+        while (stack.length) {
             const [x, y] = stack.pop()
             for (let [dx, dy] of directions) {
                 dx += x
@@ -8690,7 +8690,7 @@ function maxArea(grid) {
     // 广度优先搜索求图的节点个数
     const bfs = (grid, i, j) => {
         // 检查起始点是否越界或不为陆地
-        if(grid[i][j] === 0) {
+        if (grid[i][j] === 0) {
             return 0
         }
         const queue = [[i, j]]
@@ -8738,17 +8738,17 @@ function maxArea(grid) {
 //       c、重复b，直到所有节点都被染色，如果所有节点都被染色，且颜色不冲突，则是一个二分图
 function isBipartite(graph) {
     // 深度优先染色
-    const dfsInteral = (graph,i) => {
+    const dfsInteral = (graph, i) => {
         const stack = [i]
         colors[i] = 0 // 初始节点染色为0
 
-        while(stack.length) {
+        while (stack.length) {
             const node = stack.pop()
 
-            for(let neighber of graph[node]) {
-                if(colors[neighber] === colors[node]) {
+            for (let neighber of graph[node]) {
+                if (colors[neighber] === colors[node]) {
                     return false
-                } else if(colors[neighber] === -1) {
+                } else if (colors[neighber] === -1) {
                     colors[neighber] = 1 - colors[node] // 染色为相反的颜色
                     stack.push(neighber)
                 }
@@ -8760,15 +8760,15 @@ function isBipartite(graph) {
     // 深度优先搜索递归版本
     const dfs = (graph, i, color) => {
         // 如果当前节点已经染色，则判断颜色是否和当前节点相同
-        if(colors[i] !== -1) {
+        if (colors[i] !== -1) {
             return colors[i] === color
         }
 
         // 给当前节点染色
         colors[i] = color
 
-        for(let neighber of graph[i]) {
-            if(!dfs(graph, neighber, 1 - color)) {
+        for (let neighber of graph[i]) {
+            if (!dfs(graph, neighber, 1 - color)) {
                 return false
             }
         }
@@ -8777,17 +8777,17 @@ function isBipartite(graph) {
     }
 
     // 广度优先染色
-    const bfs = (graph,i) => {
+    const bfs = (graph, i) => {
         const queue = [i]
         colors[i] = 0 // 初始节点染色为0
-        while(queue.length) {
+        while (queue.length) {
             let node = queue.shift()
             // 相邻节点染色
-            for(let neighber of graph[node]) {
+            for (let neighber of graph[node]) {
                 // 如果相邻节点已经染色，且颜色和当前节点相同，则不是二分图
-                if(colors[neighber] === colors[node]) {
+                if (colors[neighber] === colors[node]) {
                     return false
-                } else if(colors[neighber] === -1) { // 如果相邻节点未被染色
+                } else if (colors[neighber] === -1) { // 如果相邻节点未被染色
                     colors[neighber] = 1 - colors[node] // 染色为相反的颜色
                     queue.push(neighber)
                 }
@@ -8800,13 +8800,13 @@ function isBipartite(graph) {
     // 使用一个colors数组表示节点的染色状态, -1表示未染色
     const colors = new Array(n).fill(-1)
 
-    for(let i = 0; i < n; i++) {
-        if(colors[i] === -1) {
-            const setRes = dfs(graph,i, 0) // 深度优先搜索递归版本
+    for (let i = 0; i < n; i++) {
+        if (colors[i] === -1) {
+            const setRes = dfs(graph, i, 0) // 深度优先搜索递归版本
             // const setRes = bfs(graph,i) // 广度优先染色
             // const setRes = dfsInteral(graph,i) // 深度优先染色
 
-            if(!setRes) {
+            if (!setRes) {
                 return false
             }
         }
@@ -8841,9 +8841,9 @@ function distanceMatrix(M) {
     const queue = []
 
     // 将所有0格子加入队列，且初始化结果矩阵
-    for(let i = 0; i < m; i++) {
-        for(let j = 0; j < n; j++) {
-            if(M[i][j] === 0) {
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (M[i][j] === 0) {
                 queue.push([i, j])
                 res[i][j] = 0
             }
@@ -8853,13 +8853,13 @@ function distanceMatrix(M) {
     // 四个方向，上下左右
     const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
 
-    while(queue.length) {
+    while (queue.length) {
         const [x, y] = queue.shift()
 
-        for(let [dx, dy] of directions) {
+        for (let [dx, dy] of directions) {
             dx += x
             dy += y
-            if(dx >= 0 && dx < m && dy >= 0 && dy < n && res[dx][dy] === -1) {
+            if (dx >= 0 && dx < m && dy >= 0 && dy < n && res[dx][dy] === -1) {
                 res[dx][dy] = res[x][y] + 1
                 queue.push([dx, dy])
             }
@@ -8880,26 +8880,26 @@ function distanceMatrix(M) {
 function wordRoute(beginWord, endWord, list) {
     const wordSet = new Set(list) // 存储单词列表，方便快速查找
 
-    if(!wordSet.has(endWord)) {
+    if (!wordSet.has(endWord)) {
         return 0
     }
 
     const queue = [[beginWord, 1]] // 初始化当前单词和步数
 
-    while(queue.length) {
+    while (queue.length) {
         const [word, len] = queue.shift()
 
         // 遍历当前单词的所有可能的变化
-        for(let i = 0; i < word.length; i++) {
-            for(let c = 0; c < 26; c++) {
+        for (let i = 0; i < word.length; i++) {
+            for (let c = 0; c < 26; c++) {
                 const newWord = word.slice(0, i) + String.fromCharCode(97 + c) + word.slice(i + 1)
 
-                if(newWord === endWord) {
+                if (newWord === endWord) {
                     return len + 1
                 }
 
                 // 如果新单词在单词列表中，加入队列并从列表中移除
-                if(wordSet.has(newWord)) {
+                if (wordSet.has(newWord)) {
                     queue.push([newWord, len + 1])
                     wordSet.delete(newWord) // 已经遍历过，删除当前单词
                 }
@@ -8919,7 +8919,7 @@ function wordRoute(beginWord, endWord, list) {
 //      把密码锁的每个状态看作图中的每个节点，这些所有节点构成了一个图，那么求最少几次打开，就转换成了求图中的最短路径的问题
 const getNeighbers = (status) => {
     const res = []
-    for(let i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
         const digit = parseInt(status[i])
 
         // 向上拨动
@@ -8933,21 +8933,21 @@ const getNeighbers = (status) => {
 }
 function unLock(lockList, password) {
     const lockSet = new Set(lockList) // 存储死锁状态方便快速查找
-    if(lockSet.has(password)) {
+    if (lockSet.has(password)) {
         return -1
     }
 
     const queue = [['0000', 1]]
     const visited = new Set(['0000']) // 记录已访问过的状态
 
-    while(queue.length) {
+    while (queue.length) {
         const [status, len] = queue.shift()
         const neighbers = getNeighbers(status) // 获取当前状态的所有相邻节点
-        for(let nextStatus of neighbers) {
-            if(nextStatus === password) {
+        for (let nextStatus of neighbers) {
+            if (nextStatus === password) {
                 return len + 1
             }
-            if(!lockSet.has(nextStatus) && !visited.has(nextStatus)) {
+            if (!lockSet.has(nextStatus) && !visited.has(nextStatus)) {
                 queue.push([nextStatus, len + 1])
                 visited.add(nextStatus) // 标记已访问
             }
@@ -8958,7 +8958,7 @@ function unLock(lockList, password) {
 // 优化，采用双向广度优先搜索,分别从起始到目标开始向对方遍历
 function unLock(lockList, password) {
     const lockSet = new Set(lockList) // 存储死锁状态方便快速查找
-    if(lockSet.has(password)) {
+    if (lockSet.has(password)) {
         return -1
     }
 
@@ -9004,7 +9004,7 @@ function unLock(lockList, password) {
 // 思路： 图的搜索所有路径，一般用深度优先遍历
 function allPath(graph) {
     const n = graph.length
-    if(n <= 0) {
+    if (n <= 0) {
         return []
     }
 
@@ -9012,15 +9012,15 @@ function allPath(graph) {
     // 迭代版本
     const dfsInteral = () => {
         const stack = [0, [0]] // 初始化，第一个节点和路径
-        while(stack.length) {
+        while (stack.length) {
             let [node, path] = stack.pop()
-    
+
             // 如果到达终点
-            if(node === n - 1) {
+            if (node === n - 1) {
                 res.push(path)
             }
             // 遍历所有邻居
-            for(let neighber of graph[node]) {
+            for (let neighber of graph[node]) {
                 stack.push([neighber, [...path, neighber]])
             }
         }
@@ -9028,12 +9028,12 @@ function allPath(graph) {
 
     // 递归版本
     const dfs = (node, path) => {
-        if(node === n - 1) {
+        if (node === n - 1) {
             res.push([...path])
             return
         }
 
-        for(let neighber of graph[node]) {
+        for (let neighber of graph[node]) {
             path.push(neighber)
             dfs(neighber, path)
             path.pop()
@@ -9044,7 +9044,7 @@ function allPath(graph) {
     dfs(0, [0])
     // dfsInteral()
 
-    return  res
+    return res
 }
 
 // 193、计算除法
@@ -9060,15 +9060,15 @@ function calcDivision(equations, values, queries) {
     const graph = new Map()
 
     // 构建图
-    for(let i = 0; i < equations.length; i++) {
+    for (let i = 0; i < equations.length; i++) {
         const [a, b] = equations[i]
         const value = values[i]
 
-        if(!graph.has(a)) {
+        if (!graph.has(a)) {
             graph.set(a, [])
         }
 
-        if(!graph.has(b)) {
+        if (!graph.has(b)) {
             graph.set(b, [])
         }
 
@@ -9078,15 +9078,15 @@ function calcDivision(equations, values, queries) {
         graph.get(b).push([a, 1 / value])
     }
     const dfs = (node, target, visited) => {
-        if(node === target) {
+        if (node === target) {
             return 1
         }
         visited.add(node)
 
-        for(let [neighber, value] of graph.get(node) || []) {
-            if(!visited.has(neighber)) {
+        for (let [neighber, value] of graph.get(node) || []) {
+            if (!visited.has(neighber)) {
                 const res = dfs(neighber, target, visited)
-                if(res !== -1) {
+                if (res !== -1) {
                     return res * value
                 }
             }
@@ -9098,14 +9098,14 @@ function calcDivision(equations, values, queries) {
     const dfsInteral = (node, target) => {
         const stack = [[node, 1]]
         const visited = new Set() // 记录已访问节点
-        while(stack.length) {
+        while (stack.length) {
             const [node, value] = stack.pop()
-            if(node === target) {
+            if (node === target) {
                 return value
             }
             visited.add(node)
-            for(let [neighber, weight] of graph.get(node) || []) {
-                if(!visited.has(neighber)) {
+            for (let [neighber, weight] of graph.get(node) || []) {
+                if (!visited.has(neighber)) {
                     stack.push([neighber, value * weight])
                 }
             }
@@ -9114,13 +9114,13 @@ function calcDivision(equations, values, queries) {
     }
 
     const res = []
-    for(let i = 0; i < queries.length; i++) {
+    for (let i = 0; i < queries.length; i++) {
         const [a, b] = queries[i]
-        if(!graph.has(a) || !graph.has(b)) { // 图中没用a或b，表示没有结果
+        if (!graph.has(a) || !graph.has(b)) { // 图中没用a或b，表示没有结果
             res.push(-1)
-        } else if(a === b) {
+        } else if (a === b) {
             res.push(1)
-        } else { 
+        } else {
             res.push(dfs(a, b, new Set()))
             // res.push(dfsInteral(a,b))
         }
@@ -9150,16 +9150,16 @@ function longestPath(matrix) {
     const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
 
     const dfs = (i, j) => {
-        if(memoMax[i][j]) { // 记忆化是为了去除重复计算
+        if (memoMax[i][j]) { // 记忆化是为了去除重复计算
             return memoMax[i][j]
         }
 
         let maxLen = 1
 
-        for(let [dx, dy] of directions) {
+        for (let [dx, dy] of directions) {
             let x = i + dx
             let y = j + dy
-            if(x >= 0 && x < m && y >= 0 && y < n && matrix[x][y] > matrix[i][j]) {
+            if (x >= 0 && x < m && y >= 0 && y < n && matrix[x][y] > matrix[i][j]) {
                 maxLen = Math.max(maxLen, dfs(x, y) + 1)
             }
         }
@@ -9169,8 +9169,8 @@ function longestPath(matrix) {
     }
 
     let res = 0
-    for(let i = 0; i < m; i++) {
-        for(let j = 0; j < n; j++) {
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
             res = Math.max(dfs(i, j), res)
         }
     }
@@ -9194,8 +9194,8 @@ function findCourseOrder(n, lectures) {
     const inDegree = new Array(n).fill(0)
 
     // 构建图和入度数组
-    for(let [a,b] of lectures) {
-        if(!graph.has(b)) {
+    for (let [a, b] of lectures) {
+        if (!graph.has(b)) {
             graph.set(b, [])
         }
 
@@ -9206,7 +9206,7 @@ function findCourseOrder(n, lectures) {
 
     // 构建入度为0的队列
     const queue = []
-    for(let i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
         if (inDegree[i] === 0) {
             queue.push(i)
         }
@@ -9214,14 +9214,14 @@ function findCourseOrder(n, lectures) {
 
     const res = []
     // 迭代弹出入度为0的节点
-    while(queue.length) {
+    while (queue.length) {
         const lecture = queue.shift()
         res.push(lecture)
 
         // 和lecture节点相连的节点的入度减1
-        for(let neighber of graph.get(lecture) || []) {
+        for (let neighber of graph.get(lecture) || []) {
             inDegree[neighber]--
-            if(inDegree[neighber] === 0) {
+            if (inDegree[neighber] === 0) {
                 queue.push(neighber)
             }
         }
@@ -9320,14 +9320,14 @@ function buildList(org, seqs) {
     const inDegree = new Map()
 
     // 初始化图和入度
-    for(let seq of seqs) {
-        for(let num of seq) {
+    for (let seq of seqs) {
+        for (let num of seq) {
             // 检查数字范围
             if (num < 1 || num > org.length) {
                 return false;
             }
 
-            if(!graph.has(num)) {
+            if (!graph.has(num)) {
                 graph.set(num, [])
                 inDegree.set(num, 0)
             }
@@ -9335,12 +9335,12 @@ function buildList(org, seqs) {
     }
 
     // 构建图和入度数组
-    for(let i = 0; i < seqs.length; i++) {
-        for(let j = 0; j < seqs[i].length - 1; j++) {
+    for (let i = 0; i < seqs.length; i++) {
+        for (let j = 0; j < seqs[i].length - 1; j++) {
             const a = seqs[i][j]
             const b = seqs[i][j + 1]
 
-            if(!graph.get(a).includes(b)) {
+            if (!graph.get(a).includes(b)) {
                 graph.get(a).push(b)
                 inDegree.set(b, inDegree.get(b) + 1)
             }
@@ -9350,14 +9350,14 @@ function buildList(org, seqs) {
 
     // 构建入度为0的队列
     const queue = []
-    for(const [num, degree] of inDegree.entries()) {
-        if(degree === 0) {
+    for (const [num, degree] of inDegree.entries()) {
+        if (degree === 0) {
             queue.push(num)
         }
     }
 
     const res = []
-    while(queue.length) {
+    while (queue.length) {
         // 确保队列中每次只有一个入度为 0 的节点，保证序列唯一
         if (queue.length > 1) {
             return false;
@@ -9367,9 +9367,9 @@ function buildList(org, seqs) {
         res.push(num)
 
         // 与num相连的点点入度都减1
-        for(let neighber of graph.get(num) || []) {
+        for (let neighber of graph.get(num) || []) {
             inDegree.set(neighber, inDegree.get(neighber) - 1)
-            if(inDegree.get(neighber) === 0) {
+            if (inDegree.get(neighber) === 0) {
                 queue.push(neighber)
             }
         }
@@ -9388,7 +9388,7 @@ class UnionFind {
     // 查找根节点， 也就是查找元素所在的集合
     find(x) {
         // x不是根节点  继续递归查x的父节点，直到查到根节点
-        if(this.parent[x] !== x) {
+        if (this.parent[x] !== x) {
             this.parent[x] = this.find(this.parent[x])
         }
 
@@ -9399,14 +9399,14 @@ class UnionFind {
     union(x, y) {
         let rootX = this.find(x)
         let rootY = this.find(y)
-        if(rootX === rootY) { //具有相同的根节点，代表已经是一个集合里
+        if (rootX === rootY) { //具有相同的根节点，代表已经是一个集合里
             return
         }
 
         // 比较树的深度，较小的树挂在较大的树下
-        if(this.rank[rootX] > this.rank[rootY]) {
+        if (this.rank[rootX] > this.rank[rootY]) {
             this.parent[rootY] = rootX // rootY的父节点设为rootX
-        } else if(this.rank[rootX] < this.rank[rootY]) {
+        } else if (this.rank[rootX] < this.rank[rootY]) {
             this.parent[rootX] = rootY // rootX的父节点设为rootY
         } else {
             // 如果两个树的深度相等，任选一棵树为根
@@ -9432,18 +9432,18 @@ function findCircleNum(M) {
     const n = M.length
     const uf = new UnionFind(n) // 创建一个并查集
 
-    for(let i = 0; i < n; i++) {
-        for(let j = i + 1; j < n; j++) {
-            if(M[i][j]) { // 如果是朋友，合并他们所在的集合
+    for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+            if (M[i][j]) { // 如果是朋友，合并他们所在的集合
                 uf.union(i, j)
             }
         }
     }
 
     let count = 0
-    for(let i = 0; i < n; i++) {
-        if(uf.find(i) === i) { // 查找i的根节点，如果i就是根节点，代表发现一个朋友圈
-            count++ 
+    for (let i = 0; i < n; i++) {
+        if (uf.find(i) === i) { // 查找i的根节点，如果i就是根节点，代表发现一个朋友圈
+            count++
         }
     }
 
@@ -9460,9 +9460,9 @@ function findCircleNum(M) {
 
     // 深度优先搜索
     const dfs = (i) => {
-        for(let j = 0; j < n; j++) {
+        for (let j = 0; j < n; j++) {
             // 如果学生i和学生j是朋友且j没有被访问过，则递归访问
-            if(M[i][j] === 1 && !visited[j]) {
+            if (M[i][j] === 1 && !visited[j]) {
                 visited[j] = 1
                 dfs(j) // 继续访问j的朋友
             }
@@ -9473,10 +9473,10 @@ function findCircleNum(M) {
     const bfs = (i) => {
         const quene = [i]
         visited[i] = 1
-        while(quene.length) {
+        while (quene.length) {
             const st = quene.shift()
-            for(let j = 0; j < n; j++) {
-                if(M[st][j] === 1 && !visited[j]) {
+            for (let j = 0; j < n; j++) {
+                if (M[st][j] === 1 && !visited[j]) {
                     visited[j] = 1
                     quene.push(j)
                 }
@@ -9487,8 +9487,8 @@ function findCircleNum(M) {
     let count = 0
 
     // 遍历每个学生，找出未被访问的学生，开始DFS或者BFS
-    for(let i = 0; i < n; i++) {
-        if(!visited[i]) { // 如果学生i没有被访问过，说明它是一个新朋友圈的起始点
+    for (let i = 0; i < n; i++) {
+        if (!visited[i]) { // 如果学生i没有被访问过，说明它是一个新朋友圈的起始点
             dfs(i) // 访问这个朋友圈
             // bfs(i) 
             count++
@@ -9511,22 +9511,22 @@ function numSimilarGroups(A) {
     const n = A.length
     const visited = new Array(n).fill(0)
 
-     // 判断两个字符串是否相似
+    // 判断两个字符串是否相似
     const isSimilar = (a, b) => {
         let diffCount = 0
         let diffPairs = []
-        for(let i = 0; i < a.length; i++) {
-            if(a[i] !== b[i]) {
+        for (let i = 0; i < a.length; i++) {
+            if (a[i] !== b[i]) {
                 diffCount++
                 diffPairs.push([a[i], b[i]])
-                if(diffCount > 2) {
+                if (diffCount > 2) {
                     return false
                 }
             }
         }
 
         // 如果不同字符对数为 2 且互换后相等，那么就是相似的
-        if(diffCount === 2) {
+        if (diffCount === 2) {
             return diffPairs[0][0] === diffPairs[1][1] && diffPairs[0][1] === diffPairs[1][0]
         }
 
@@ -9534,8 +9534,8 @@ function numSimilarGroups(A) {
     }
 
     const dfs = (i) => {
-        for(let j = 0; j < n; j++) {
-            if(!visited[j] && isSimilar(A[i],A[j])) {
+        for (let j = 0; j < n; j++) {
+            if (!visited[j] && isSimilar(A[i], A[j])) {
                 visited[j] = 1
                 dfs(j)
             }
@@ -9545,10 +9545,10 @@ function numSimilarGroups(A) {
     const bfs = (i) => {
         const queue = [i]
         visited[i] = 1
-        while(queue.length) {
+        while (queue.length) {
             const s = queue.shift()
-            for(let j = 0; j < n; j++) {
-                if(isSimilar(A[s], A[j]) && !visited[j]) {
+            for (let j = 0; j < n; j++) {
+                if (isSimilar(A[s], A[j]) && !visited[j]) {
                     visited[j] = 1
                     queue.push(j)
                 }
@@ -9557,8 +9557,8 @@ function numSimilarGroups(A) {
     }
 
     let count = 0
-    for(let i = 0; i < n; i++) {
-        if(!visited[i]) { // 如果字符串A[i]没有被访问过，说明它是一个新相似组的起始点
+    for (let i = 0; i < n; i++) {
+        if (!visited[i]) { // 如果字符串A[i]没有被访问过，说明它是一个新相似组的起始点
             dfs(i)
             // bfs(i)
             count++
@@ -9571,22 +9571,22 @@ function numSimilarGroups(A) {
 // 思路2、并查集
 //      跟上题一样，这道题是计算连通分量，自然也可以用并查集做
 function numSimilarGroups(A) {
-     // 判断两个字符串是否相似
+    // 判断两个字符串是否相似
     const isSimilar = (a, b) => {
         let diffCount = 0
         let diffPairs = []
-        for(let i = 0; i < a.length; i++) {
-            if(a[i] !== b[i]) {
+        for (let i = 0; i < a.length; i++) {
+            if (a[i] !== b[i]) {
                 diffCount++
                 diffPairs.push([a[i], b[i]])
-                if(diffCount > 2) {
+                if (diffCount > 2) {
                     return false
                 }
             }
         }
 
         // 如果不同字符对数为 2 且互换后相等，那么就是相似的
-        if(diffCount === 2) {
+        if (diffCount === 2) {
             return diffPairs[0][0] === diffPairs[1][1] && diffPairs[0][1] === diffPairs[1][0]
         }
 
@@ -9595,17 +9595,17 @@ function numSimilarGroups(A) {
     const n = A.length
     const uf = new UnionFind(n)
 
-    for(let i = 0; i < n; i++) {
-        for(let j = i + 1; j < n; j++) {
-            if(isSimilar(A[i], A[j])) { // 如果相似，合并集合
+    for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+            if (isSimilar(A[i], A[j])) { // 如果相似，合并集合
                 uf.union(i, j)
             }
         }
     }
 
     let count = 0
-    for(let i = 0; i < n; i++) {
-        if(uf.find(i) === i) { // 查找i的根节点，如果i就是根节点，代表发现一个分组
+    for (let i = 0; i < n; i++) {
+        if (uf.find(i) === i) { // 查找i的根节点，如果i就是根节点，代表发现一个分组
             count++
         }
     }
@@ -9629,9 +9629,9 @@ function findRedundantConnection(edges) {
     const uf = new UnionFind(n + 1) // 节点标号是从1开始的，所以需要n+1大小
 
     let res = null
-    for(let [u, v] of edges) {
+    for (let [u, v] of edges) {
         // 如果u、v在应该集合里，多余
-        if(uf.isConnected(u, v)) {
+        if (uf.isConnected(u, v)) {
             res = [u, v]
         } else {
             uf.union(u, v)
@@ -9687,7 +9687,7 @@ class UnionFind {
     union(x, y) {
         const rootX = this.find(x);
         const rootY = this.find(y);
-        
+
         if (rootX !== rootY) {
             // 按大小合并，始终将小的集合合并到大的集合上
             if (this.size[rootX] > this.size[rootY]) {
@@ -9701,7 +9701,7 @@ class UnionFind {
     }
 }
 function longestConsecutive(nums) {
-    if(nums.length === 0) {
+    if (nums.length === 0) {
         return 0
     }
 
@@ -9711,22 +9711,22 @@ function longestConsecutive(nums) {
     // 映射这个而不使用nums的每个值直接作为节点，是因为不知道数字范围，无法有效初始化并查集大小
     const indexMap = new Map()
     let index = 0
-    for(let num of numSet) {
+    for (let num of numSet) {
         indexMap.set(num, index)
         index++
     }
 
     const uf = new UnionFind(indexMap.size)
 
-    for(let num of numSet) {
+    for (let num of numSet) {
         // 检查相邻的数字
-        if(numSet.has(num + 1)) {
+        if (numSet.has(num + 1)) {
             uf.union(indexMap.get(num), indexMap.get(num + 1))
         }
     }
 
     let maxLen = 0
-    for(let num of nums) {
+    for (let num of nums) {
         const root = uf.find(indexMap.get(num))
         maxLen = Math.max(uf.size[root], maxLen)
     }
@@ -9734,5 +9734,172 @@ function longestConsecutive(nums) {
     return maxLen
 }
 
+
+// 动态规划常见问题的状态方程模版
+//a、 0/1背包
+//给定一个背包，容量为 W，有 n 个物品，每个物品的重量为 w[i]，价值为 v[i]，求在不超过背包容量的情况下，最大化背包的总价值
+// dp[i][w] = max(dp[i-1][w], dp[i-1][w - w[i]] + v[i])
+// •	dp[i][w]：表示前 i 个物品中，容量为 w 的背包能达到的最大价值。
+// •	初始化：dp[0][w] = 0（没有物品时，背包的价值为 0）。
+// •	状态转移：要么不选第 i 个物品（dp[i-1][w]），要么选择第 i 个物品（dp[i-1][w - w[i]] + v[i]）。
+
+// b、完全背包
+// 给定一个背包，容量为 W，有 n 个物品，每个物品的重量为 w[i]，价值为 v[i]，每种物品可以选择多次，求最大价值。
+// dp[w] = max(dp[w], dp[w - w[i]] + v[i])
+// •	dp[w]：表示容量为 w 的背包能达到的最大价值。
+// •	初始化：dp[0] = 0（背包容量为 0 时，价值为 0）。
+// •	状态转移：选择第 i 个物品，可以从已有的 dp[w - w[i]] 来更新。
+
+// c、最长递增子序列（LIS）
+// 给定一个整数序列，求其中最长递增子序列的长度。
+// dp[i] = max(dp[j] + 1) for all j < i, arr[j] < arr[i]
+// •	dp[i]：表示以 arr[i] 结尾的最长递增子序列的长度。
+// •	初始化：dp[i] = 1（每个元素至少可以是一个递增子序列）。
+// •	状态转移：遍历所有前面的元素 arr[j]，如果 arr[j] < arr[i]，则 dp[i] 更新为 dp[j] + 1。
+
+// d、最长公共子序列（LCS）
+// 给定两个字符串，求它们的最长公共子序列的长度。
+// dp[i][j] = dp[i-1][j-1] + 1 if s1[i] === s2[j]
+// dp[i][j] = max(dp[i-1][j], dp[i][j-1]) if str1[i-1] != str2[j-1]
+// •	dp[i][j]：表示 str1[0..i-1] 和 str2[0..j-1] 的最长公共子序列的长度。
+// •	初始化：dp[0][j] = 0 和 dp[i][0] = 0（空字符串的公共子序列长度为 0）。
+// •	状态转移：若当前字符相等，则公共子序列加长；否则，取前一个子问题的解。
+
+// e、 编辑距离（Levenshtein 距离）
+// 给定两个字符串 word1 和 word2，求它们的编辑距离，允许的操作有插入、删除、替换。
+// dp[i][j] = min(dp[i-1][j-1] + cost, dp[i-1][j] + 1, dp[i][j-1] + 1)
+// •	dp[i][j]：表示 word1[0..i-1] 到 word2[0..j-1] 的编辑距离。
+// •	初始化：dp[0][j] = j，dp[i][0] = i（空字符串到另一个字符串的编辑距离为字符串的长度）。
+// •	状态转移：根据插入、删除、替换的操作，选择最小的编辑距离。
+
+// f、最小路径和（Minimum Path Sum）
+// 给定一个 m x n 的网格，每个格子中有一个数字，从左上角走到右下角，且每次只能向下或向右走，求最小路径和。
+// dp[i][j] = grid[i][j] + min(dp[i-1][j], dp[i][j-1])
+// •	dp[i][j]：表示到达 (i, j) 的最小路径和。
+// •	初始化：dp[0][0] = grid[0][0]，并依次填充第一行和第一列。
+// •	状态转移：从左或上来的路径，选择最小值。
+
+// g、分割回文串
+// 给定一个字符串，将其分割成若干回文子串，求最少分割次数。
+// dp[i] = min(dp[j] + 1) if s[j..i] is palindrome
+// •	dp[i]：表示 s[0..i] 的最少分割次数。
+// •	初始化：dp[0] = 0，表示没有分割。
+// •	状态转移：遍历每个可能的分割点，判断子串是否为回文。
+
+// h、最大子序和（Maximum Subarray）
+// 给定一个整数数组，求其中连续子数组的最大和。
+// dp[i] = max(dp[i-1] + nums[i], nums[i])
+// •	dp[i]：表示以 nums[i] 结尾的最大子序和。
+// •	初始化：dp[0] = nums[0]。
+// •	状态转移：当前元素要么加入前面的最大和，要么自己作为新的子序列的起点。
+
+// i、 硬币问题（最小硬币数）
+// 给定不同面额的硬币和一个总金额 amount，求组成 amount 所需的最少硬币个数。如果没有任何一种硬币组合能组成该金额，返回 -1。
+// dp[i] = min(dp[i - coin] + 1) for each coin
+// •	dp[i]：表示金额 i 所需的最小硬币数。
+// •	初始化：dp[0] = 0，表示金额为 0 时，所需的硬币数为 0。
+// •	状态转移：遍历所有硬币，更新当前金额所需的最小硬币数。
+
+
 // 动态规划 双序列问题
 // 203、最长公共子序列
+// 输入两个字符串，求出它们的最长公共子序列的长度。如果从字符串s1中删除若干字符后能得到字符串s2，那么s2就是s1的子序列.
+// 例如，从字符串abcde删除两个字符后可以得到ace，因此ace是abcde的子序列。
+// 如果输入abcde和badfe，他们的最长公共子序列是bde，因此输出3
+// 思路： 动态规划
+//      设f[i][j]表示s1[0: i-1]和s2[0: j-1]的最长公共子序列的长度
+//      a、如果s1[i - 1] === s2[j - 1]，那么f[i][j] = f[i-1][j-1] + 1
+//      b、如果s1[i - 1] !== s2[j - 1]，那么f[i][j] = max(f[i-1][j], f[i][j-1])
+function longestCommonSubsequence(s1, s2) {
+    let m = s1.length
+    let n = s2.length
+
+    // 初始化状态数组，fn[i][j]表示s1[0: i-1]和s2[0: j-1]的最长公共子序列的长度
+    const fn = Array.from({length: m + 1}, () => new Array(n + 1).fill(0))
+
+    for(let i = 1; i <= m; i++) {
+        for(let j = 1; j <= n; j++) {
+            if(s1[i - 1] === s2[j - 1]) {
+                // 如果字符相等，当前字符属于LCS，长度增加1
+                fn[i][j] = fn[i - 1][j - 1] + 1
+            } else {
+                // 如果字符不相等，取前两种情况的最大值
+                fn[i][j] = Math.max(fn[i - 1][j], fn[i][j - 1])
+            }
+        }
+    }
+
+    return fn[m][n]
+}
+
+// 204、字符串交织
+//  输入3个字符串s1、s2、s3，判断s3是否由s1和s2交织而成，即s3中所有字符都是s1或s2中的字符，字符串s1和s2的字符都将出现在s3中，且s1和s2的字符顺序与s3中一致
+// 例如，aadbbcbcac可以由aabcc和dbbca交织而成
+function isInterleave(s1, s2, s3) {
+
+}
+
+// 205、 子序列的数目
+// 输入字符串s1和s2，请计算s1中有多少个子序列等于s2
+// 例如在字符串appplep中，有3个子序列等于字符串apple
+function numDistinct(s1, s2) {
+
+}
+
+// 动态规划 矩阵路径问题
+// 206、路径数目
+// 一个机器人从m*n的格子左上角出发，它每步要么向下，要么向右，直到走到右下角。计算从左上角到右下角的路径数目
+// 例如，如果各子大小是3*3，那么机器人有6条路径
+function uniquePaths(m, n) {
+
+}
+
+// 207、最小路径之和
+// 在一个m*n的格子中，每个位置都有一个数字。一个机器人从左上角出发，它每步要么向下，要么向右，直到走到右下角。
+// 机器人每经过一个位置，就把该位置的数字相加。请计算从左上角到右下角的最小路径之和 
+function minPathSum(grid) {
+
+}
+
+// 208、三角形中的最小路径和
+// 在一个有数字组成的三角形中，第1行有1个数字，第2行有2个数字，以此类推，第n行有n个数字。
+//       2
+//     3 | 4
+//   6 | 5 | 7
+// 4 | 1 | 8 | 3
+// 如上，如果每一步之内前往下一行中相邻的数字，请计算从三角形的顶部到底部的最小路径之和
+// 例如，例子中，从顶部到底部的最小路径之和为11（2+3+5+1）
+function minimumTotal(triangle) {
+
+}
+
+// 动态规划 背包问题
+// 209、分割等和子集
+// 给定一个非空的正整数数组，请判断能否将这些数字分成相等的两个子集
+// 如，[1,5,11,5]可以分成[1,5,5]和[11]，因此返回true
+function canPartition(nums) {
+
+}
+
+// 210、加减的目标值
+// 给定一个非空的正整数数组和一个目标值s，如果为每个数字添加+或-，请计算有多少种不同的表达式可以得到目标值s
+// 例如，如果输入[2,2,2]和s=2，那么有3种不同的表达式：2-2+2和2+2-2,以及-2+2+2，因此返回3
+function findTargetSumWays(nums, s) {
+
+}
+
+// 211、最少的硬币数目
+// 给定正整数数组coins和一个目标值s，请计算最少的硬币数目，使得这些硬币的和等于s
+// 每种硬币可以使用多次，如果不能计算出s，返回-1
+// 例如，输入coins=[1,2,5]和s=11，那么最少的硬币数目是3，即5+5+1
+function coinChange(coins, amount) {
+
+}
+
+// 212、排列的数目
+// 给定一个非空的正整数数组numss和一个目标值s，数组中每个值都是唯一的，请计算有多少种不同的排列可以得到目标值s
+// 数组中的数字可以在排列中使用多次
+// 例如，输入nums=[1,2,3]和s=3，那么有4种不同的排列：[1,1,1]、[1,2]、[2,1]、[3]，因此返回4
+function combinationSum(nums, target) {
+
+}
