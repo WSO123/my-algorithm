@@ -10091,7 +10091,7 @@ function minPathSum(grid) {
 function minPathSum(grid) {
     const m = grid.length;       // 行数
     const n = grid[0].length;    // 列数
-    
+
     // 初始化prev和cur数组
     let prev = new Array(n).fill(0);
     let cur = new Array(n).fill(0);
@@ -10138,8 +10138,8 @@ function minimumTotal(triangle) {
     let fn = [...triangle[n - 1]]
 
     // 从倒数第二行向上更新
-    for(let i = n - 2; i >= 0; i--) {
-        for(let j = 0; j <= i; j++) {
+    for (let i = n - 2; i >= 0; i--) {
+        for (let j = 0; j <= i; j++) {
             // 更新当前数字的最小路径和
             // fn本来已经存了前一轮的路径值，所以可以直接取fn[j]和fn[j + 1]
             fn[j] = triangle[i][j] + Math.min(fn[j], fn[j + 1])
@@ -10155,8 +10155,32 @@ function minimumTotal(triangle) {
 // 思路： 动态规划 典型的背包问题
 //      想要分成相等的子集，那么总和必须是偶数
 //      假设f(i)表示是否存在一个子集，使得其和为i
+//      f(i) = f(i - nums[j]) || f(i)， j = 0, 1, 2, ..., n - 1
+//      解释：f(i - nums[j]) = true表示存在一个子集，使得其和为i - nums[j]，那么再加上nums[j]，就可以得到和为i
+//           也就是f(i - nums[j]) = true，等价于f(i) = true
 function canPartition(nums) {
+    const sum = nums.reduce((a, b) => a + b, 0)
 
+    // 如果总和为奇数，那么无法分成相等的子集
+    if (sum % 2 !== 0) {
+        return false
+    }
+
+    // 目标和
+    const target = sum / 2
+
+    // fn[i]表示是否存在一个子集，使得其和为i
+    const fn = new Array(target + 1).fill(false)
+    fn[0] = true // 和为0的子集存在
+
+    for (let i = 0; i < nums.length; i++) {
+        // 从目标和开始倒序遍历，避免重复计算
+        for (let j = target; j >= nums[i]; j--) {
+            fn[j] =  fn[j - nums[i]] || fn[j] 
+        }
+    }
+
+    return fn[target]
 }
 
 // 210、加减的目标值
@@ -10180,10 +10204,10 @@ function coinChange(coins, amount) {
     // 金额为 0 时，所需的硬币数为 0
     fn[0] = 0
 
-    for(let i = 1; i <= amount; i++) {
-        for(let j = 0; j < coins.length; j++) {
+    for (let i = 1; i <= amount; i++) {
+        for (let j = 0; j < coins.length; j++) {
             // 确保当前金额大于等于硬币面值
-            if(i >= coins[j]) {
+            if (i >= coins[j]) {
                 fn[i] = Math.min(fn[i], fn[i - coins[j]] + 1)
             }
         }
@@ -10205,9 +10229,9 @@ function combinationSum(nums, target) {
     // 初始化状态, 目标为0时，只有一种排列方式
     fn[0] = 1
 
-    for(let i = 1; i <= target; i++) {
-        for(let j = 0; j < nums.length; j++) {
-            if(i >= nums[j]) {
+    for (let i = 1; i <= target; i++) {
+        for (let j = 0; j < nums.length; j++) {
+            if (i >= nums[j]) {
                 fn[i] += fn[i - nums[j]]
             }
         }
