@@ -10155,7 +10155,7 @@ function minimumTotal(triangle) {
 // 思路： 动态规划 典型的背包问题
 //      想要分成相等的子集，那么总和必须是偶数
 //      假设f(i)表示是否存在一个子集，使得其和为i
-//      f(i) = f(i - nums[j]) || f(i)， j = 0, 1, 2, ..., n - 1
+//      f(i) = f(i - nums[j]) || f(i)， j是数组的下标
 //      解释：f(i - nums[j]) = true表示存在一个子集，使得其和为i - nums[j]，那么再加上nums[j]，就可以得到和为i
 //           也就是f(i - nums[j]) = true，等价于f(i) = true
 function canPartition(nums) {
@@ -10186,8 +10186,37 @@ function canPartition(nums) {
 // 210、加减的目标值
 // 给定一个非空的正整数数组和一个目标值s，如果为每个数字添加+或-，请计算有多少种不同的表达式可以得到目标值s
 // 例如，如果输入[2,2,2]和s=2，那么有3种不同的表达式：2-2+2和2+2-2,以及-2+2+2，因此返回3
+// 思路： 动态规划 背包问题
+//     这道题的突破点是题中只有加减，所以可以把数组分成两个相加的部分，进行减法
+//     如果我们把数组分为两部分，其中一部分的加法结果是sum1，另一部分是sum2，
+//     那么sum1 - sum2 = s， sum1 + sum2 = sum,则sum1 = (s + sum) / 2
+//     那么问题就转换成找一个子集，使得其和为target = (s + sum) / 2
+//     假设f(i)表示和为i的子集的个数
+//     状态方程为f(i) = sum(f(i - nums[j])),j是数组的下标
+//     
 function findTargetSumWays(nums, s) {
+    const sum = nums.reduce((a, b) => a + b, 0)
 
+    // 如果目标值超出范围，直接返回 0
+    if (s > sum || s < -sum) {
+        return 0
+    }
+
+    // 计算目标值
+    const target = (s + sum) / 2
+
+    // fn[i]表示和为i的子集的个数
+    const fn = new Array(target + 1).fill(0)
+    fn[0] = 1 // 和为 0 的子集有 1 种
+
+    // 更新 dp 数组
+    for (let i = 0; i < nums.length; i++) {
+        for (let j = target; j >= nums[i]; j--) {
+            fn[j] += fn[j - nums[i]] // 加上当前数字 nums[i]
+        }
+    }
+
+    return fn[target] // 返回目标值对应的组合数
 }
 
 // 211、最少的硬币数目
