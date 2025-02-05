@@ -8865,7 +8865,7 @@ function isBipartite(graph) {
 //     [0, 0, 0, 0],
 //     [0, 0, 1, 0],
 // ]
-// 思路： 典型多源最短路径问题，应用场景是从多个点同时找到所有节点的最短路径，例如矩阵中每个点到最近的目标点的距离
+// 思路： 典型多源点最短路径问题，应用场景是从多个点同时找到所有节点的最短路径，例如矩阵中每个点到最近的目标点的距离
 //    具体来说：
 //      可以把矩阵的每个格子看作一个节点，那么这个矩阵就可以看作一个无向图，每个格子与相邻的格子之间有一条边
 //      可以采用广度优先搜索, 把所有值为0的节点作为起点，从起点开始进行广度优先搜索
@@ -10341,7 +10341,9 @@ function lengthOfLongestSubstring(s) {
 // 给你链表的头节点 head ，每 k 个节点一组进行翻转，请你返回修改后的链表。
 // k 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
 // 你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换
-
+function reverseKGroup(head, k) {
+    
+}
 // 215、二叉树的锯齿形层次遍历 之字形打印二叉树
 // 思路： 和34题c是同一题
 
@@ -10423,6 +10425,111 @@ function search(nums, target) {
 }
 
 // 219、岛屿数量
+// 给你一个由 '1'（陆地）和 '0'（水）组成的的二维网格，请你计算网格中岛屿的数量。
+// 岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。
+// 此外，你可以假设该网格的四条边均被水包围。
+// 示例 1：
+// 输入：grid = [
+//   ["1","1","1","1","0"],
+//   ["1","1","0","1","0"],
+//   ["1","1","0","0","0"],
+//   ["0","0","0","0","0"]
+// ]
+// 输出：1
+// 示例 2：
+// 输入：grid = [
+//   ["1","1","0","0","0"],
+//   ["1","1","0","0","0"],
+//   ["0","0","1","0","0"],
+//   ["0","0","0","1","1"]
+// ]
+// 输出：3
+// 思路1： 看起来挺典型的并查集
+function numsIslands(grid) {
+    const m = grid.length
+    const n = grid[0].length
+
+    let uf = new UnionFind(m * n)
+
+    const getIndex = (i, j) => i * n + j
+
+    // 把所有相邻的1都合并到一个集合里
+    for(let i = 0; i < m; i++) {
+        for(let j = 0; j < n; j++) {
+            if(grid[i][j] === '1') {
+                // 上下左右
+                if(i + 1 < m && grid[i + 1][j] === '1') {
+                    uf.union(getIndex(i, j), getIndex(i + 1, j))
+                }
+
+                if(i - 1 >= 0 && grid[i - 1][j] === '1') {
+                    uf.union(getIndex(i, j), getIndex(i - 1, j))
+                }
+
+                if(j - 1 >= 0 && grid[i][j - 1] === '1') {
+                    uf.union(getIndex(i, j), getIndex(i, j - 1))
+                }
+
+                if(j + 1 < n && grid[i][j + 1] === '1') {
+                    uf.union(getIndex(i, j), getIndex(i, j + 1))
+                }
+            }
+        }
+    }
+
+    let count = 0
+    for(let i = 0; i < m; i++) {
+        for(let j = 0; j < n; j++) {
+            if (grid[i][j] === '1') {
+                const index = getIndex(i, j);
+                const root = uf.find(index);
+                // 只有当当前节点是它自己所在集合的根节点时，才算作一个新的岛屿
+                if (root === index) {
+                    count++;
+                }
+            }
+        }
+    }
+
+    return count
+}
+
+// 思路2、图的搜索
+//  DFS 多源点问题
+//    遍历整个二维网格，如果一个位置为 1，则以其为起始节点开始进行深度优先搜索。
+//    在深度优先搜索的过程中，每个搜索到的 1 都会被重新标记为 0。
+//    最终岛屿的数量就是我们进行深度优先搜索的次数。
+function numsIslands(grid) {
+    const m = grid.length
+    const n = grid[0].length
+
+    const dfs = (i, j) => {
+        // 如果越界或当前格子是水（'0'），返回
+        if(i < 0 || i >= m || j < 0 || j >= n || grid[i][j] === '0') {
+            return
+        }
+
+        // 标记已访问过
+        grid[i][j] = 0
+
+        // 上下左右访问
+        dfs(i + 1, j)
+        dfs(i - 1, j)
+        dfs(i, j + 1)
+        dfs(i, j - 1)
+    }
+
+    let count = 0
+    for(let i = 0; i < m; i++) {
+        for(let j = 0; j < n; j++) {
+            if(grid[i][j] === '1') {
+                count++
+                dfs(i, j)
+            }
+        }
+    }
+    return count
+}
 
 // 220、螺旋矩阵
 
