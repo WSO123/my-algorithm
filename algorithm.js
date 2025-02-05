@@ -1553,6 +1553,47 @@ function printTreeInZigzag(root) {
     }
 }
 
+// 优化版本
+// 思路：
+//  	方向控制：为了保证每层的遍历顺序是交替的，我们使用一个布尔变量 cur 来控制当前层的遍历顺序。cur = true 表示当前层是奇数层，从左到右；cur = false 表示偶数层，从右到左。
+//      子节点的入队：对于每个节点，我们将其左右子节点加入队列以便进行下一层的处理。
+//  	层与层之间的切换：每一层的遍历完成后，切换 cur 的值，控制下一层的遍历方向
+function printTreeInZigzag(root) {
+    if (root === null) {
+        return;
+    }
+
+    let queue = [root];  // 使用队列进行层序遍历
+    let cur = true;      // true 表示当前是奇数层，false 表示偶数层
+
+    while (queue.length > 0) {
+        let levelNodes = [];
+        let nodeCount = queue.length; // 当前层的节点数
+
+        // 遍历当前层节点
+        for (let i = 0; i < nodeCount; i++) {
+            let node = queue.shift();  // 从队列中取出节点
+
+            // 根据层的方向决定添加顺序
+            if (cur) {
+                levelNodes.push(node.value); // 奇数层，左到右
+            } else {
+                levelNodes.unshift(node.value); // 偶数层，右到左
+            }
+
+            // 将当前节点的左右子节点加入队列
+            if (node.left) queue.push(node.left);
+            if (node.right) queue.push(node.right);
+        }
+
+        // 打印当前层的节点
+        console.log(levelNodes.join(' '));
+
+        // 切换层级，改变打印顺序
+        cur = !cur;
+    }
+}
+
 // 35、二叉搜索树的后续遍历序列
 // 输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历结果。假设输入的数组的任意两个数字都互不相同。
 //        8
@@ -10296,9 +10337,13 @@ function lengthOfLongestSubstring(s) {
     return maxLen;
 }
 
-// 214、K 个一组翻转链表
+// 214、K 个一组翻转链表 难度：困难
+// 给你链表的头节点 head ，每 k 个节点一组进行翻转，请你返回修改后的链表。
+// k 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
+// 你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换
 
-// 215、二叉树的锯齿形层次遍历
+// 215、二叉树的锯齿形层次遍历 之字形打印二叉树
+// 思路： 和34题c是同一题
 
 // 216、最大子序和
 
