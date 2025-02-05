@@ -10176,7 +10176,7 @@ function canPartition(nums) {
     for (let i = 0; i < nums.length; i++) {
         // 从目标和开始倒序遍历，避免重复计算
         for (let j = target; j >= nums[i]; j--) {
-            fn[j] =  fn[j - nums[i]] || fn[j] 
+            fn[j] = fn[j - nums[i]] || fn[j]
         }
     }
 
@@ -10269,7 +10269,32 @@ function combinationSum(nums, target) {
 }
 
 // 字节和腾讯常考的
-// 213、无重复字符的最长子串 106
+// 213、无重复字符的最长子串
+// 给定一个字符串 s ，请你找出其中不含有重复字符的最长子串的长度
+// 思路：滑动窗口
+//      使用set来记录当前窗口字符
+function lengthOfLongestSubstring(s) {
+    const charSet = new Set();
+    let left = 0;
+    let maxLen = 0;
+
+    // 遍历字符串中的每个字符，right 表示右边界
+    for (let right = 0; right < s.length; right++) {
+        // 如果当前字符已经在窗口中存在，移动左边界 left，直到没有重复字符
+        while (charSet.has(s[right])) {
+            charSet.delete(s[left]);  // 删除左边界字符
+            left++;
+        }
+
+        // 将当前字符加入到 Set 中
+        charSet.add(s[right]);
+
+        // 更新最大长度
+        maxLen = Math.max(maxLen, right - left + 1);
+    }
+
+    return maxLen;
+}
 
 // 214、K 个一组翻转链表
 
