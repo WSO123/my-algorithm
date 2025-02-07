@@ -10713,7 +10713,79 @@ function nextPermutation(nums) {
 
 // 224、重排链表
 
+
 // 225、最长回文子串
+// 给你一个字符串 s，找到 s 中最长的回文子串，返回
+// 思路1： 中心扩展法
+function longestPalindrome(s) {
+    if (!s || s.length === 0) return ""
+    const expandCenterLen = (s, left, right) => {
+        while(left >= 0 && right < s.length && s[left] === s[right]) {
+            left--
+            right++
+        }
+
+        return [left + 1, right - 1] // 返回回文子串的起止索引
+    }
+
+    let start = 0
+    let maxLen = 0
+    for(let i = 0; i < s.length; i++) {
+        // 单个字符为中心扩展
+        let [left1, right1] = expandCenterLen(s, i, i)
+        // 两个字符为中心扩展
+        let [left2, right2] = expandCenterLen(s, i, i + 1)
+        if(right1 - left1 + 1 > maxLen) {
+            start = left1
+            maxLen = right1 - left1 + 1
+        }
+
+        if(right2 - left2 + 1 > maxLen) {
+            start = left2
+            maxLen = right2 - left2 + 1
+        }
+    }
+    return s.substring(start, start + maxLen)
+}
+// 思路2: Manacher算法, 有点困难，需要记忆练习
+//      1、预处理字符串，在每个字符之间插入特殊字符（比如'#'），使得处理后的字符串长度始终是奇数，方便后续处理
+//      2、使用一个数组p来记录以每个字符为中心的最长回文子串的半径
+function longestPalindrome(s) {
+    if (!s || s.length === 0) return "";
+
+    // 预处理字符串，在每个字符之间插入 '#'，并在首尾加上特殊字符
+    let processStr = "^#" + s.split("").join("#") + "#$";
+    let p = new Array(processStr.length).fill(0); // 记录回文半径
+    let center = 0, right = 0; // 回文中心和右边界
+    let maxLen = 0, start = 0; // 记录最长回文子串的长度和起始位置
+
+    for (let i = 1; i < processStr.length - 1; i++) {
+        // 1. 利用对称性初始化 p[i]
+        let mirror = 2 * center - i;
+        if (i < right) {
+            p[i] = Math.min(right - i, p[mirror]);
+        }
+
+        // 2. 尝试扩展回文
+        while (processStr[i + p[i] + 1] === processStr[i - p[i] - 1]) {
+            p[i]++;
+        }
+
+        // 3. 更新回文中心和右边界
+        if (i + p[i] > right) {
+            center = i;
+            right = i + p[i];
+        }
+
+        // 4. 记录最长回文子串
+        if (p[i] > maxLen) {
+            maxLen = p[i];
+            start = (i - maxLen) / 2; // 计算原字符串的起始索引
+        }
+    }
+
+    return s.substring(start, start + maxLen);
+}
 
 // 226、路径总和 II
 
