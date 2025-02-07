@@ -10532,6 +10532,47 @@ function numsIslands(grid) {
 }
 
 // 220、螺旋矩阵
+// 给你一个 m 行 n 列的矩阵 matrix ，请按照 顺时针螺旋顺序 ，返回矩阵中的所有元素。
+// 例如，输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+// 输出：[1,2,3,6,9,8,7,4,5]
+// 输入：matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+// 输出：[1,2,3,4,8,12,11,10,9,5,6,7]
+// 思路： 使用四个变量代表上下左右的边界，然后按照顺时针的方向遍历矩阵
+function spiralOrder(matrix) {
+    if (!matrix.length || !matrix[0].length) return []
+
+    const m = matrix.length, n = matrix[0].length
+    const res = []
+    let top = 0, bottom = m - 1, left = 0, right = n - 1
+    let d = 0 // 方向索引
+
+    while (top <= bottom && left <= right) {
+        if (d === 0) { // 向右
+            for (let i = left; i <= right; i++) {
+                res.push(matrix[top][i])
+            }
+            top++
+        } else if (d === 1) { // 向下
+            for (let i = top; i <= bottom; i++) {
+                res.push(matrix[i][right])
+            }
+            right--
+        } else if (d === 2) { // 向左
+            for (let i = right; i >= left; i--) {
+                res.push(matrix[bottom][i])
+            }
+            bottom--
+        } else { // 向上
+            for (let i = bottom; i >= top; i--) {
+                res.push(matrix[i][left])
+            }
+            left++
+        }
+        d = (d + 1) % 4 // 循环方向
+    }
+
+    return res
+}
 
 // 221、最长递增子序列
 
