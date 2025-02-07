@@ -10576,7 +10576,7 @@ function spiralOrder(matrix) {
 
 // 221、最长递增子序列
 // 给定一个整数序列，求其中最长递增子序列的长度
-// 思路：动态规划 单序列问题
+// 思路1：动态规划 单序列问题
 //      假设f(i)表示以第i个元素结尾的最长递增子序列的长度
 //      那么f(i) = max(f(j) + 1),其中j是0到i-1的下标，j < i, 并且nums[j] < nums[i]
 //      状态转移：遍历所有前面的元素 arr[j]，如果 arr[j] < arr[i]，则 f(i) 更新为 f(j) + 1。
@@ -10593,6 +10593,37 @@ function longestSubList(nums) {
 
     return Math.max(...fn) // 找到最长递增子序列
 }
+// 思路2：贪心 + 二分查找
+//    tails数组记录当前递增子序列最小结尾元素，tails[i] 表示长度为 i + 1 的递增子序列的最小结尾元素
+//    二分查找确定当前元素应该插入的位置，
+//       若 nums[i] 比 tails 的最大元素大，则 nums[i] 直接添加到 tails，扩展序列长度
+//       若 nums[i] 可以替换 tails 内某个元素，找到最左侧 >= nums[i] 的位置进行替换，确保 tails 递增且最小
+//      这样操作可以确保 tails 数组的长度始终表示当前找到的最长递增子序列的长度，且 tails 数组中的元素是递增的
+function longestSubList(nums) {
+    const len = nums.length
+    let tails = []
+    for(let i = 0; i < len; i++) {
+        let left = 0
+        let right = tails.length - 1
+        // 二分查找, 找到最左侧 >= nums[i] 的位置
+        while(left <= right) {
+            let mid = (left + right) >> 1
+            if(tails[mid] < nums[i]) {
+                left = mid + 1
+            } else {
+                right = mid - 1
+            }
+        }
+        if(left === tails.length) {
+            tails.push(nums[i])
+        } else {
+            tails[left] = nums[i]
+        }
+    }
+
+    return tails.length
+}
+
 
 // 222、有效括号
 
