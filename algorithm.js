@@ -10627,8 +10627,35 @@ function longestSubList(nums) {
     return tails.length
 }
 
-
 // 222、有效括号
+// 给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
+// 有效字符串需满足：
+//      左括号必须用相同类型的右括号闭合。
+//      左括号必须以正确的顺序闭合。
+//      每个右括号都有一个对应的相同类型的左括号。
+// 思路： 栈
+//       遍历字符串，遇到左括号就入栈，遇到右括号就出栈，判断是否匹配
+function isValid(s) {
+    const len = s.length
+    const stack = []
+    const pairs = {
+        ')': '(',
+        '}': '{',
+        ']': '['
+    }
+    for(let i = 0; i < len; i++) {
+        if(pairs[s[i]]) {
+            // 如果当前字符是右括号，检查栈顶元素是否匹配
+            if(stack.length === 0 || stack.pop() !== pairs[s[i]]) {
+                return false
+            }
+        } else {
+            // 如果当前字符是左括号，入栈
+            stack.push(s[i])
+        }
+    }
+    return stack.length === 0
+}
 
 // 223、下一个排列
 
