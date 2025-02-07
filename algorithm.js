@@ -10598,7 +10598,10 @@ function longestSubList(nums) {
 //    二分查找确定当前元素应该插入的位置，
 //       若 nums[i] 比 tails 的最大元素大，则 nums[i] 直接添加到 tails，扩展序列长度
 //       若 nums[i] 可以替换 tails 内某个元素，找到最左侧 >= nums[i] 的位置进行替换，确保 tails 递增且最小
-//      这样操作可以确保 tails 数组的长度始终表示当前找到的最长递增子序列的长度，且 tails 数组中的元素是递增的
+//      这样操作可以确保 tails 数组的长度始终表示当前找到的最长递增子序列的长度
+//      原因是：tails 始终是 递增数组，它不会破坏 LIS 的结构
+//         贪心选择最小的结尾：
+//            降低后续 nums[i] 进入 tails 的难度，保证 LIS 能增长得更长。
 function longestSubList(nums) {
     const len = nums.length
     let tails = []
