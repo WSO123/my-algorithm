@@ -10575,6 +10575,24 @@ function spiralOrder(matrix) {
 }
 
 // 221、最长递增子序列
+// 给定一个整数序列，求其中最长递增子序列的长度
+// 思路：动态规划 单序列问题
+//      假设f(i)表示以第i个元素结尾的最长递增子序列的长度
+//      那么f(i) = max(f(j) + 1),其中j是0到i-1的下标，j < i, 并且nums[j] < nums[i]
+//      状态转移：遍历所有前面的元素 arr[j]，如果 arr[j] < arr[i]，则 f(i) 更新为 f(j) + 1。
+function longestSubList(nums) {
+    const len = nums.length
+    const fn = new Array(len).fill(1)
+    for(let i = 1; i < len; i++) {
+        for(let j = 0; j < i; j++) {
+            if(nums[j] < nums[i]) {
+                fn[i] = Math.max(fn[i], fn[j] + 1)
+            }
+        }
+    }
+
+    return Math.max(...fn) // 找到最长递增子序列
+}
 
 // 222、有效括号
 
