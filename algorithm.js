@@ -10798,8 +10798,51 @@ function longestPalindrome(s) {
 // 227、反转链表 II
 
 // 228、二叉树的完全性检验 
+// 给你一棵二叉树的根节点 root ，请你判断这棵树是否是一棵 完全二叉树 。
+// 在一棵 完全二叉树 中，除了最后一层外，所有层都被完全填满，并且最后一层中的所有节点都尽可能靠左。最后一层（第 h 层）中可以包含 1 到 2h 个节点。
+// 思路：层序遍历，如果之中一个节点是空，它后面还有节点，则不是完全二叉树
+function isCompleteTree(root) {
+    if(!root) {
+        return true
+    }
+
+    let queue = [root]
+    let foundNull = false
+    while(queue.length) {
+        let node = queue.shift()
+        if(!node) {
+            foundNull = true 
+        } else {
+            if(foundNull) {
+                return false
+            }
+            queue.push(node.left)
+            queue.push(node.right)
+        }
+    }
+    return true
+}
 
 // 229、验证二叉搜索树
+// 给你一个二叉树的根节点 root ，判断其是否是一个有效的二叉搜索树。
+// 有效 二叉搜索树定义如下：
+// 节点的左子树只包含 小于 当前节点的数。节点的右子树只包含 大于 当前节点的数。所有左子树和右子树自身必须也是二叉搜索树
+function isVaildBST(root) {
+    const isVaild = (min, max, node) => {
+        if(!node) {
+            return true
+        }
+
+        // 当前节点的值必须在 (min, max) 范围内
+        if(node.value <= min || node.value >= max) {
+            return false
+        }
+
+        return isVaild(min, node.value, node.left) && isVaild(node.value, max, node.right)
+    }
+
+    return isVaild(-Infinity, Infinity, root)
+}
 
 // 230、买卖股票的最佳时机 II
 
