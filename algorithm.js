@@ -10849,6 +10849,31 @@ function isVaildBST(root) {
 // 231、用 Rand7() 实现 Rand10() 
 
 // 232、比较版本号
+// 给你两个 版本号字符串 version1 和 version2 ，请你比较它们。版本号由被点 '.' 分开的修订号组成。修订号的值 是它 转换为整数 并忽略前导零。
+// 比较版本号时，请按 从左到右的顺序 依次比较它们的修订号。如果其中一个版本字符串的修订号较少，则将缺失的修订号视为 0。
+// 返回规则如下：
+//      如果 version1 < version2 返回 -1，
+//      如果 version1 > version2 返回 1，
+//      除此之外返回 0。
+// 思路： 两个字符串分割成数组，取最小的长度，for循环依次比较每一位
+function compareVersion(version1, version2) {
+    const v1 = version1.split('.')
+    const v2 = version2.split('.')
+    const len = Math.min(v1.length, v2.length)
+    for(let i = 0; i < len; i++) {
+       // 如果某个版本号的修订号不存在，视为 0
+       let num1 = i < v1.length ? parseInt(v1[i]) : 0;
+       let num2 = i < v2.length ? parseInt(v2[i]) : 0;
+
+       // 比较整数值
+       if (num1 > num2) {
+           return 1;
+       } else if (num1 < num2) {
+           return -1;
+       }
+    }
+    return 0
+}
 
 // 233、二叉树的直径 
 
