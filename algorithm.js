@@ -10875,7 +10875,31 @@ function compareVersion(version1, version2) {
     return 0
 }
 
-// 233、二叉树的直径 
+// 233、二叉树的直径
+// 给你一棵二叉树的根节点，返回该树的 直径 。
+// 二叉树的 直径 是指树中任意两个节点之间最长路径的 长度 。这条路径可能经过也可能不经过根节点 root 。
+// 两节点之间路径的 长度 由它们之间边数表示
+// 思路： 深度优先遍历
+function bstDiameter(root) {
+    let maxDiameter = 0
+    const dfs = (node) => {
+        if(!node) {
+            return 0
+        }
+
+        // 递归计算左右子树的高度
+        let left  = dfs(node.left)
+        let right = dfs(node.right)
+
+        // 更新树的最大直径
+        maxDiameter = Math.max(maxDiameter, left + right)
+
+        // 返回当前节点的高度
+        return Math.max(left, right) + 1
+    }
+    dfs(root)
+    return maxDiameter
+}
 
 // 234、寻找峰值
 
@@ -10907,6 +10931,46 @@ function compareVersion(version1, version2) {
 // 247、基本计算器
 
 // 248、单词搜索 
+// 给定一个 m x n 二维字符网格 board 和一个字符串单词 word 。如果 word 存在于网格中，返回 true ；否则，返回 false 。
+// 单词必须按照字母顺序，通过相邻的单元格内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。同一个单元格内的字母不允许被重复使用。
+// 思路： 回溯法 深度优先搜索
+function exsitWord(board, word) {
+    const m = board.length
+    const n = board[0].length
+
+    const dfs = (board, word, index, i, j) => {
+        if(index === word.length) {
+            return true
+        }
+
+        // 越界或不匹配返回false
+        if(i < 0 || i >= m || j < 0 || j >=n || board[i][j] !== word[index]) {
+            return false
+        }
+
+        let temp = board[i][j]
+        board[i][j] = '#' // 标记已访问
+        // 遍历方向
+        const directions = [[0, 1], [0, -1], [1, 0], [-1, 0]]
+        for(let [dx, dy] of directions) {
+            let newI = i + dx
+            let newJ = j + dy
+            if(dfs(board, word, index + 1, newI, newJ)) {
+                return true
+            }
+        }
+        board[i][j] = temp // 恢复状态
+    }
+
+    for(let i = 0; i < m; i++) {
+        for(let j = 0; j < n; j++) {
+            if(board[i][j] === word[0] && dfs(board, word, 0, i, j)) {
+                return true
+            }
+        }
+    }
+    return false
+}
 
 // 249、最大正方形
 
