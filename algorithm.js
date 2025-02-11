@@ -11035,6 +11035,28 @@ function maxSquare(matrix) {
 // 252、格雷编码
 
 // 253、二叉树的最近公共祖先
+// 给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+// 思路： 递归
+//      递归遍历左右子树
+//      left 和 right 分别表示 root 的左右子树中是否包含 p 或 q。
+//      如果 p 和 q 分别出现在 root 左右子树，说明 root 是最近公共祖先。
+//      否则，返回非空的那一侧
+function lowestCommonAncestor(root, p, q) {
+    if(!root || root === p || root === q) {
+        return root
+    }
+
+    let left = longestCommonSubsequence(root.left, p, q)
+    let right = longestCommonSubsequence(root.right, p, q)
+
+    // 如果p和q分别在root的左右子树中，那么最近公共祖先就是root
+    if(left && right) {
+        return root
+    }
+
+    // 如果一边为空，则说明祖先在另一边
+    return left || right
+}
 
 // 254、寻找两个正序数组的中位数
 
