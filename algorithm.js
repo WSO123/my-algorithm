@@ -10995,6 +10995,38 @@ function exsitWord(board, word) {
 }
 
 // 249、最大正方形
+// 在一个由 '0' 和 '1' 组成的二维矩阵内，找到只包含 '1' 的最大正方形，并返回其面积。这个是岛屿面积的变种吧
+// 思路：动态规划
+//      假设f(i,j)表示以(i,j)为右下角的正方形的最大边长
+//      (i,j)位置的元素为1时
+//      f(i,j) = min(f(i-1,j), f(i,j-1),f(i-1, j-1)) + 1
+function maxSquare(matrix) {
+    if (!matrix || matrix.length === 0 || matrix[0].length === 0) return 0
+    let m = matrix.length
+    let n = matrix[0].length
+
+    let fn = new Array(m).fill(0).map(() => new Array(n).fill(0))
+    let maxLen = 0
+
+    for(let i = 0; i < m; i++) {
+        for(let j = 0; j < n; j++) {
+            if(matrix[i][j] === '1') {
+                // 第一行第一列
+                if(i === 0 || j === 0) {
+                    fn[i][j] = 1
+                } else {
+                    fn[i][j] = Math.min(fn[i-1][j], fn[i][j-1], fn[i-1][j-1]) + 1
+                }
+
+                // 更新最大边长
+                maxLen = Math.max(maxLen, fn[i][j])
+            }
+        }
+    }
+
+    return maxLen * maxLen
+}
+
 
 // 250、螺旋矩阵 II
 
