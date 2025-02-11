@@ -10939,8 +10939,46 @@ function findPeakElement(nums) {
 // 240、最长重复子数组
 
 // 241、零钱兑换 II
+// 给你一个整数数组 coins 表示不同面额的硬币，另给一个整数 amount 表示总金额。
+// 请你计算并返回可以凑成总金额的硬币组合数。如果任何硬币组合都无法凑出总金额，返回 0 。
+// 假设每一种面额的硬币有无限个。 
+// 思路：动态规划 完全背包
+//      假设f(i)表示目标值为i的组合数
+//      则f(i) = sum(f(i - coin))  其中coin表示硬币的面额
+function coinsChange2(coins, amount) {
+   let fn = new Array(amount + 1).fill(0)
 
+   fn[0] = 1
+
+   for(let coin of coins) {
+      for(let i = coin; i <= amount; i++) {
+        fn[i] += fn[i - coin]
+      }
+   }
+   return fn[amount]
+}
 // 242、零钱兑换
+// 给你一个整数数组 coins ，表示不同面额的硬币；以及一个整数 amount ，表示总金额。
+// 计算并返回可以凑成总金额所需的 最少的硬币个数 。如果没有任何一种硬币组合能组成总金额，返回 -1 
+//  思路：动态规划 背包问题 完全背包
+//      假设f(i)表示凑成总金额为i所需的最少硬币个数
+//      则f(i) = min(f(i), f(i - coin) + 1)  其中coin表示硬币的面额
+//  状态转移方程： dp[i] = min(dp[i], dp[i - coin] + 1)
+function coinsChange(coins, amount) {
+    const fn = new Array(amount + 1).fill(Infinity)
+    fn[0] = 0
+
+    // 遍历每种硬币
+    for(let coin of coins) {
+        // 遍历每种金额,从coin开始，提高效率
+        for(let i = coin; i <= amount; i++) {
+            if(i - coin >= 0) {
+                fn[i] = Math.min(fn[i], fn[i - coin] + 1)
+            }
+        }
+    }
+    return fn[amount] === Infinity ? -1 : fn[amount]
+}
 
 // 243、圆环回原点问题
 
@@ -11058,7 +11096,7 @@ function lowestCommonAncestor(root, p, q) {
     return left || right
 }
 
-// 254、寻找两个正序数组的中位数
+// 254、寻找两个正序数组的中位数 难度：困难
 
 // 255、环形链表 II
 
