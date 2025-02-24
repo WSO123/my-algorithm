@@ -10823,6 +10823,39 @@ function pathSum(root, targetSum) {
 
 
 // 227、反转链表 II
+// 给你单链表的头指针 head 和两个整数 left 和 right ，其中 left <= right 。请你反转从位置 left 到位置 right 的链表节点，返回 反转后的链表 。
+// 思路：
+//  	定位左边界：首先找到链表的 left - 1 位置，因为需要反转的是从 left 到 right，所以我们需要先找到 left - 1 位置的节点，并记住它。该节点的下一个节点将成为反转后的链表的起点。
+// 	    反转链表部分：从 left 位置开始，反转链表中的节点。通过常规的链表反转操作来反转节点，直到 right 位置。
+// 	  	连接链表：在反转完成后，连接反转部分的头和尾，并将 left - 1 节点的 next 指向反转后的子链表的头节点。最后将 right 节点的 next 指向原来 right + 1 位置的节点。
+// 		特殊情况：如果 left == right，说明不需要进行任何操作，直接返回链表即可。
+function reverseList(head, left, right) {
+    if (head === null || left === right) {
+        return head;
+    }
+
+    let dum = new ListNode(0);  // 创建一个虚拟节点
+    dum.next = head;
+    let pre = dum;
+
+    // 找到 left - 1 位置的节点
+    for (let i = 0; i < left - 1; i++) {
+        pre = pre.next;
+    }
+
+    let curr = pre.next;  // curr 指向 left 位置的节点
+    let next = null;
+
+    // 反转 [left, right] 区间的节点
+    for (let i = left; i <= right; i++) {
+        next = curr.next;         // 保存 curr 的下一个节点
+        curr.next = next.next;    // 将 curr 的 next 指向 next 的下一个节点
+        next.next = pre.next;     // 将 next 的 next 指向 pre.next，即反转后的头节点
+        pre.next = next;          // 将 pre.next 更新为 next，保持链表连接
+    }
+
+    return dum.next;  // 返回新的链表头
+}
 
 // 228、二叉树的完全性检验 
 // 给你一棵二叉树的根节点 root ，请你判断这棵树是否是一棵 完全二叉树 。
