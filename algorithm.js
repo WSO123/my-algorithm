@@ -11094,6 +11094,42 @@ function countWaysToReturn(n) {
 // 245、两两交换链表中的节点
 
 // 246、36进制加法
+// 36进制由0-9，a-z，共36个字符表示。
+// 要求按照加法规则计算出任意两个36进制正整数的和，如1b + 2x = 48 （解释：47+105=152）
+// 要求：不允许使用先将36进制数字整体转为10进制，相加后再转回为36进制的做法
+function addBase36(a, b) {
+    // 36进制字符表，字符 '0'-'9' 和 'a'-'z' 对应数字 0-35
+    const base36 = '0123456789abcdefghijklmnopqrstuvwxyz';
+    
+    // 将字符转换为对应的数字值
+    const charToNum = (ch) => base36.indexOf(ch);
+    // 将数字值转换为字符
+    const numToChar = (num) => base36[num];
+
+    let carry = 0; // 进位
+    let result = []; // 存储结果的数组
+
+    // 保证两个字符串的长度一样，不足的前面补零
+    let maxLength = Math.max(a.length, b.length);
+    a = a.padStart(maxLength, '0');
+    b = b.padStart(maxLength, '0');
+    
+    // 从右往左逐位加法
+    for (let i = maxLength - 1; i >= 0; i--) {
+        const sum = charToNum(a[i]) + charToNum(b[i]) + carry;
+        carry = Math.floor(sum / 36); // 计算进位
+        result.push(numToChar(sum % 36)); // 当前位的结果
+    }
+
+    // 如果有进位，添加到结果中
+    if (carry > 0) {
+        result.push(numToChar(carry));
+    }
+
+    // 结果是反向存储的，需要反转返回
+    return result.reverse().join('');
+}
+
 
 // 247、基本计算器
 
