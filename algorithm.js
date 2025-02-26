@@ -11130,6 +11130,40 @@ function addBase36(a, b) {
     return result.reverse().join('');
 }
 
+// 可以扩展成任意进制相加
+function addBaseN(a, b, base) {
+    // 生成字符表：0-9, a-z, 依此类推，可以支持任意进制
+    const baseChars = '0123456789abcdefghijklmnopqrstuvwxyz'.slice(0, base);
+    
+    // 将字符转换为对应的数字值
+    const charToNum = (ch) => baseChars.indexOf(ch);
+    // 将数字值转换为字符
+    const numToChar = (num) => baseChars[num];
+
+    let carry = 0; // 进位
+    let result = []; // 存储结果的数组
+
+    // 保证两个字符串的长度一样，不足的前面补零
+    let maxLength = Math.max(a.length, b.length);
+    a = a.padStart(maxLength, '0');
+    b = b.padStart(maxLength, '0');
+    
+    // 从右往左逐位加法
+    for (let i = maxLength - 1; i >= 0; i--) {
+        const sum = charToNum(a[i]) + charToNum(b[i]) + carry;
+        carry = Math.floor(sum / base); // 计算进位
+        result.push(numToChar(sum % base)); // 当前位的结果
+    }
+
+    // 如果有进位，添加到结果中
+    if (carry > 0) {
+        result.push(numToChar(carry));
+    }
+
+    // 结果是反向存储的，需要反转返回
+    return result.reverse().join('');
+}
+
 
 // 247、基本计算器
 
