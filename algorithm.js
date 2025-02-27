@@ -11090,6 +11090,42 @@ function countWaysToReturn(n) {
 }   
 
 // 244、字符串解码 
+// 给定一个经过编码的字符串，返回它解码后的字符串。编码规则为: k[encoded_string]，表示其中方括号内部的 encoded_string 正好重复 k 次。注意 k 保证为正整数。
+  // 你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。
+  // 此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 k ，例如不会出现像 3a 或 2[4] 的输入。
+  // 思路：使用栈来存储字符串和出现的次数
+  //    遇到数字时，累积数字直到遇到 [, 代表一个新的重复次数
+  //    遇到 [ 时，开始处理新的子串，将当前子串和重复次数压入栈中。
+  //    遇到 ] 时，从栈中弹出之前存储的字符串和重复次数，将当前处理的子串重复对应次数并拼接回结果中
+function decodeString(s) {
+    const stack = []
+    let curNum = 0
+    let curStr = ''
+    for (let i = 0; i < s.length; i++) {
+    const curChar = s[i]
+    if (curChar === '[') {
+        // 将当前数字和当前字符串压入栈
+        stack.push(curStr)
+        stack.push(curNum)
+        curStr = ''
+        curNum = 0
+    } else if (curChar === ']') {
+        // 栈中弹出重复次数和之前的字符串
+        const prevNum = stack.pop()
+        const prevStr = stack.pop()
+        // 当前字符串重复 prevNum 次后拼接到之前的字符串
+        curStr = prevStr + curStr.repeat(prevNum)
+    } else if (curChar > '0' && curChar < '9') {
+        // 如果是数字计算次数
+        curNum = curNum * 10 + Number(curChar)
+    } else {
+        // 如果是字母，直接加入当前字符串
+        curStr += curChar;
+    }
+    }
+
+    return curStr
+}
 
 // 245、两两交换链表中的节点
 
