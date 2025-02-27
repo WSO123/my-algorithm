@@ -10342,7 +10342,7 @@ function lengthOfLongestSubstring(s) {
 // k 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
 // 你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换
 function reverseKGroup(head, k) {
-    
+
 }
 // 215、二叉树的锯齿形层次遍历 之字形打印二叉树
 // 思路： 和34题c是同一题
@@ -10359,7 +10359,7 @@ function maxListSum(nums) {
     // 初始化状态数组
     const fn = new Array(len).fill(0)
     fn[0] = nums[0] // 初始化为第一个元素
-    for(let i = 1; i < len; i++) {
+    for (let i = 1; i < len; i++) {
         fn[i] = Math.max(fn[i - 1] + nums[i], nums[i])
     }
 
@@ -10371,7 +10371,7 @@ function maxListSum(nums) {
 
     let prev = nums[0] // 初始化为第一个元素
     let cur = nums[0]
-    for(let i = 1; i < len; i++) {
+    for (let i = 1; i < len; i++) {
         prev = Math.max(prev + nums[i], nums[i])
         cur = Math.max(cur, prev)
     }
@@ -10395,25 +10395,25 @@ function trap(height) {
 function search(nums, target) {
     let left = 0
     let right = nums.length - 1
-    while(left <= right) {
+    while (left <= right) {
         let mid = (left + right) >> 1
 
         // 如果找到目标，直接返回
-        if(nums[mid] === target) {
+        if (nums[mid] === target) {
             return mid
         }
 
         // 左半边有序
-        if(nums[left] <= nums[mid]) {
+        if (nums[left] <= nums[mid]) {
             // 如果目标在左半部分
-            if(nums[left] <= target && target < nums[mid]) {
+            if (nums[left] <= target && target < nums[mid]) {
                 right = mid - 1
             } else {
                 left = mid + 1
             }
         } else {
             // 如果目标在右半部分
-            if(nums[mid] < target && target <= nums[right]) {
+            if (nums[mid] < target && target <= nums[right]) {
                 left = mid + 1
             } else {
                 right = mid - 1
@@ -10454,23 +10454,23 @@ function numsIslands(grid) {
     const getIndex = (i, j) => i * n + j
 
     // 把所有相邻的1都合并到一个集合里
-    for(let i = 0; i < m; i++) {
-        for(let j = 0; j < n; j++) {
-            if(grid[i][j] === '1') {
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (grid[i][j] === '1') {
                 // 上下左右
-                if(i + 1 < m && grid[i + 1][j] === '1') {
+                if (i + 1 < m && grid[i + 1][j] === '1') {
                     uf.union(getIndex(i, j), getIndex(i + 1, j))
                 }
 
-                if(i - 1 >= 0 && grid[i - 1][j] === '1') {
+                if (i - 1 >= 0 && grid[i - 1][j] === '1') {
                     uf.union(getIndex(i, j), getIndex(i - 1, j))
                 }
 
-                if(j - 1 >= 0 && grid[i][j - 1] === '1') {
+                if (j - 1 >= 0 && grid[i][j - 1] === '1') {
                     uf.union(getIndex(i, j), getIndex(i, j - 1))
                 }
 
-                if(j + 1 < n && grid[i][j + 1] === '1') {
+                if (j + 1 < n && grid[i][j + 1] === '1') {
                     uf.union(getIndex(i, j), getIndex(i, j + 1))
                 }
             }
@@ -10478,8 +10478,8 @@ function numsIslands(grid) {
     }
 
     let count = 0
-    for(let i = 0; i < m; i++) {
-        for(let j = 0; j < n; j++) {
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
             if (grid[i][j] === '1') {
                 const index = getIndex(i, j);
                 const root = uf.find(index);
@@ -10505,7 +10505,7 @@ function numsIslands(grid) {
 
     const dfs = (i, j) => {
         // 如果越界或当前格子是水（'0'），返回
-        if(i < 0 || i >= m || j < 0 || j >= n || grid[i][j] === '0') {
+        if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] === '0') {
             return
         }
 
@@ -10520,9 +10520,9 @@ function numsIslands(grid) {
     }
 
     let count = 0
-    for(let i = 0; i < m; i++) {
-        for(let j = 0; j < n; j++) {
-            if(grid[i][j] === '1') {
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (grid[i][j] === '1') {
                 count++
                 dfs(i, j)
             }
@@ -10583,9 +10583,9 @@ function spiralOrder(matrix) {
 function longestSubList(nums) {
     const len = nums.length
     const fn = new Array(len).fill(1)
-    for(let i = 1; i < len; i++) {
-        for(let j = 0; j < i; j++) {
-            if(nums[j] < nums[i]) {
+    for (let i = 1; i < len; i++) {
+        for (let j = 0; j < i; j++) {
+            if (nums[j] < nums[i]) {
                 fn[i] = Math.max(fn[i], fn[j] + 1)
             }
         }
@@ -10605,19 +10605,19 @@ function longestSubList(nums) {
 function longestSubList(nums) {
     const len = nums.length
     let tails = []
-    for(let i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
         let left = 0
         let right = tails.length - 1
         // 二分查找, 找到最左侧 >= nums[i] 的位置
-        while(left <= right) {
+        while (left <= right) {
             let mid = (left + right) >> 1
-            if(tails[mid] < nums[i]) {
+            if (tails[mid] < nums[i]) {
                 left = mid + 1
             } else {
                 right = mid - 1
             }
         }
-        if(left === tails.length) {
+        if (left === tails.length) {
             tails.push(nums[i])
         } else {
             tails[left] = nums[i]
@@ -10643,10 +10643,10 @@ function isValid(s) {
         '}': '{',
         ']': '['
     }
-    for(let i = 0; i < len; i++) {
-        if(pairs[s[i]]) {
+    for (let i = 0; i < len; i++) {
+        if (pairs[s[i]]) {
             // 如果当前字符是右括号，检查栈顶元素是否匹配
-            if(stack.length === 0 || stack.pop() !== pairs[s[i]]) {
+            if (stack.length === 0 || stack.pop() !== pairs[s[i]]) {
                 return false
             }
         } else {
@@ -10684,15 +10684,15 @@ function nextPermutation(nums) {
     let i = n - 2
 
     // 从后往前找到第一个升序的位置i, 即nums[i] < nums[i + 1]
-    while(i >= 0 && nums[i] >= nums[i + 1]) {
+    while (i >= 0 && nums[i] >= nums[i + 1]) {
         i--
     }
 
     // 如果i存在，说明找到了一个可以变大的位置
-    if(i >=0) {
+    if (i >= 0) {
         // 找到从右侧起，第一个比 nums[i] 大的元素
-        for(let j = n - 1; j > i; j--) {
-            if(nums[j] > nums[i]) {
+        for (let j = n - 1; j > i; j--) {
+            if (nums[j] > nums[i]) {
                 // 交换nums[i]和nums[j]
                 [nums[i], nums[j]] = [nums[j], nums[i]]
                 break
@@ -10703,7 +10703,7 @@ function nextPermutation(nums) {
     // 经过上面的交换后，i右侧的部分仍然是降序排列的，我们需要将其变为升序排列
     // 反转i右侧的部分，使其变为升序排列
     let left = i + 1, right = n - 1
-    while(left < right) {
+    while (left < right) {
         [nums[left], nums[right]] = [nums[right], nums[left]]
         left++
         right--
@@ -10726,7 +10726,7 @@ function nextPermutation(nums) {
 function longestPalindrome(s) {
     if (!s || s.length === 0) return ""
     const expandCenterLen = (s, left, right) => {
-        while(left >= 0 && right < s.length && s[left] === s[right]) {
+        while (left >= 0 && right < s.length && s[left] === s[right]) {
             left--
             right++
         }
@@ -10736,17 +10736,17 @@ function longestPalindrome(s) {
 
     let start = 0
     let maxLen = 0
-    for(let i = 0; i < s.length; i++) {
+    for (let i = 0; i < s.length; i++) {
         // 单个字符为中心扩展
         let [left1, right1] = expandCenterLen(s, i, i)
         // 两个字符为中心扩展
         let [left2, right2] = expandCenterLen(s, i, i + 1)
-        if(right1 - left1 + 1 > maxLen) {
+        if (right1 - left1 + 1 > maxLen) {
             start = left1
             maxLen = right1 - left1 + 1
         }
 
-        if(right2 - left2 + 1 > maxLen) {
+        if (right2 - left2 + 1 > maxLen) {
             start = left2
             maxLen = right2 - left2 + 1
         }
@@ -10800,13 +10800,13 @@ function longestPalindrome(s) {
 function pathSum(root, targetSum) {
     const res = []
     const dfs = (node, target, path) => {
-        if(!node) {
+        if (!node) {
             return
         }
 
         // 当前节点加入path
         path.push(node.val)
-        if(!node.left && !node.right && target === node.val) {
+        if (!node.left && !node.right && target === node.val) {
             res.push([...path])
         } else {
             dfs(node.left, target - node.val, path)
@@ -10862,18 +10862,18 @@ function reverseList(head, left, right) {
 // 在一棵 完全二叉树 中，除了最后一层外，所有层都被完全填满，并且最后一层中的所有节点都尽可能靠左。最后一层（第 h 层）中可以包含 1 到 2h 个节点。
 // 思路：层序遍历，如果之中一个节点是空，它后面还有节点，则不是完全二叉树
 function isCompleteTree(root) {
-    if(!root) {
+    if (!root) {
         return true
     }
 
     let queue = [root]
     let foundNull = false
-    while(queue.length) {
+    while (queue.length) {
         let node = queue.shift()
-        if(!node) {
-            foundNull = true 
+        if (!node) {
+            foundNull = true
         } else {
-            if(foundNull) {
+            if (foundNull) {
                 return false
             }
             queue.push(node.left)
@@ -10889,12 +10889,12 @@ function isCompleteTree(root) {
 // 节点的左子树只包含 小于 当前节点的数。节点的右子树只包含 大于 当前节点的数。所有左子树和右子树自身必须也是二叉搜索树
 function isVaildBST(root) {
     const isVaild = (min, max, node) => {
-        if(!node) {
+        if (!node) {
             return true
         }
 
         // 当前节点的值必须在 (min, max) 范围内
-        if(node.value <= min || node.value >= max) {
+        if (node.value <= min || node.value >= max) {
             return false
         }
 
@@ -10922,7 +10922,7 @@ function rand10() {
     while (true) {
         // 使用 (rand7() - 1) * 7 + rand7() 生成一个 [1, 49] 范围的数
         const num = (rand7() - 1) * 7 + rand7();
-        
+
         // 丢弃大于 40 的数，保持均匀分布
         if (num <= 40) {
             // 将 num 映射到 [1, 10] 范围内
@@ -10945,17 +10945,17 @@ function compareVersion(version1, version2) {
     const v1 = version1.split('.')
     const v2 = version2.split('.')
     const len = Math.min(v1.length, v2.length)
-    for(let i = 0; i < len; i++) {
-       // 如果某个版本号的修订号不存在，视为 0
-       let num1 = i < v1.length ? parseInt(v1[i]) : 0;
-       let num2 = i < v2.length ? parseInt(v2[i]) : 0;
+    for (let i = 0; i < len; i++) {
+        // 如果某个版本号的修订号不存在，视为 0
+        let num1 = i < v1.length ? parseInt(v1[i]) : 0;
+        let num2 = i < v2.length ? parseInt(v2[i]) : 0;
 
-       // 比较整数值
-       if (num1 > num2) {
-           return 1;
-       } else if (num1 < num2) {
-           return -1;
-       }
+        // 比较整数值
+        if (num1 > num2) {
+            return 1;
+        } else if (num1 < num2) {
+            return -1;
+        }
     }
     return 0
 }
@@ -10968,12 +10968,12 @@ function compareVersion(version1, version2) {
 function bstDiameter(root) {
     let maxDiameter = 0
     const dfs = (node) => {
-        if(!node) {
+        if (!node) {
             return 0
         }
 
         // 递归计算左右子树的高度
-        let left  = dfs(node.left)
+        let left = dfs(node.left)
         let right = dfs(node.right)
 
         // 更新树的最大直径
@@ -10996,9 +10996,9 @@ function bstDiameter(root) {
 
 function findPeakElement(nums) {
     let left = 0, right = nums.length - 1
-    while(left < right) {
+    while (left < right) {
         let mid = (left + right) >> 1
-        if(nums[mid] > nums[mid + 1]) {
+        if (nums[mid] > nums[mid + 1]) {
             // 如果 nums[mid] > nums[mid + 1]，则峰值在左半部分
             right = mid
         } else {
@@ -11031,16 +11031,16 @@ function findPeakElement(nums) {
 //      假设f(i)表示目标值为i的组合数
 //      则f(i) = sum(f(i - coin))  其中coin表示硬币的面额
 function coinsChange2(coins, amount) {
-   let fn = new Array(amount + 1).fill(0)
+    let fn = new Array(amount + 1).fill(0)
 
-   fn[0] = 1
+    fn[0] = 1
 
-   for(let coin of coins) {
-      for(let i = coin; i <= amount; i++) {
-        fn[i] += fn[i - coin]
-      }
-   }
-   return fn[amount]
+    for (let coin of coins) {
+        for (let i = coin; i <= amount; i++) {
+            fn[i] += fn[i - coin]
+        }
+    }
+    return fn[amount]
 }
 // 242、零钱兑换
 // 给你一个整数数组 coins ，表示不同面额的硬币；以及一个整数 amount ，表示总金额。
@@ -11054,10 +11054,10 @@ function coinsChange(coins, amount) {
     fn[0] = 0
 
     // 遍历每种硬币
-    for(let coin of coins) {
+    for (let coin of coins) {
         // 遍历每种金额,从coin开始，提高效率
-        for(let i = coin; i <= amount; i++) {
-            if(i - coin >= 0) {
+        for (let i = coin; i <= amount; i++) {
+            if (i - coin >= 0) {
                 fn[i] = Math.min(fn[i], fn[i - coin] + 1)
             }
         }
@@ -11074,7 +11074,7 @@ function coinsChange(coins, amount) {
 function countWaysToReturn(n) {
     const mod = 10; // 圆环上有 10 个点
     let fn = Array.from({ length: mod }, () => Array(n + 1).fill(0));
-    
+
     fn[0][0] = 1; // 初始化：在 0 步时从点 0 回到 0 有 1 种方法
 
     // 计算每一步的走法
@@ -11087,41 +11087,41 @@ function countWaysToReturn(n) {
 
     // 返回走 n 步后回到 0 点的走法数
     return fn[0][n];
-}   
+}
 
 // 244、字符串解码 
 // 给定一个经过编码的字符串，返回它解码后的字符串。编码规则为: k[encoded_string]，表示其中方括号内部的 encoded_string 正好重复 k 次。注意 k 保证为正整数。
-  // 你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。
-  // 此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 k ，例如不会出现像 3a 或 2[4] 的输入。
-  // 思路：使用栈来存储字符串和出现的次数
-  //    遇到数字时，累积数字直到遇到 [, 代表一个新的重复次数
-  //    遇到 [ 时，开始处理新的子串，将当前子串和重复次数压入栈中。
-  //    遇到 ] 时，从栈中弹出之前存储的字符串和重复次数，将当前处理的子串重复对应次数并拼接回结果中
+// 你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。
+// 此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 k ，例如不会出现像 3a 或 2[4] 的输入。
+// 思路：使用栈来存储字符串和出现的次数
+//    遇到数字时，累积数字直到遇到 [, 代表一个新的重复次数
+//    遇到 [ 时，开始处理新的子串，将当前子串和重复次数压入栈中。
+//    遇到 ] 时，从栈中弹出之前存储的字符串和重复次数，将当前处理的子串重复对应次数并拼接回结果中
 function decodeString(s) {
     const stack = []
     let curNum = 0
     let curStr = ''
     for (let i = 0; i < s.length; i++) {
-    const curChar = s[i]
-    if (curChar === '[') {
-        // 将当前数字和当前字符串压入栈
-        stack.push(curStr)
-        stack.push(curNum)
-        curStr = ''
-        curNum = 0
-    } else if (curChar === ']') {
-        // 栈中弹出重复次数和之前的字符串
-        const prevNum = stack.pop()
-        const prevStr = stack.pop()
-        // 当前字符串重复 prevNum 次后拼接到之前的字符串
-        curStr = prevStr + curStr.repeat(prevNum)
-    } else if (curChar > '0' && curChar < '9') {
-        // 如果是数字计算次数
-        curNum = curNum * 10 + Number(curChar)
-    } else {
-        // 如果是字母，直接加入当前字符串
-        curStr += curChar;
-    }
+        const curChar = s[i]
+        if (curChar === '[') {
+            // 将当前数字和当前字符串压入栈
+            stack.push(curStr)
+            stack.push(curNum)
+            curStr = ''
+            curNum = 0
+        } else if (curChar === ']') {
+            // 栈中弹出重复次数和之前的字符串
+            const prevNum = stack.pop()
+            const prevStr = stack.pop()
+            // 当前字符串重复 prevNum 次后拼接到之前的字符串
+            curStr = prevStr + curStr.repeat(prevNum)
+        } else if (curChar > '0' && curChar < '9') {
+            // 如果是数字计算次数
+            curNum = curNum * 10 + Number(curChar)
+        } else {
+            // 如果是字母，直接加入当前字符串
+            curStr += curChar;
+        }
     }
 
     return curStr
@@ -11136,7 +11136,7 @@ function decodeString(s) {
 function addBase36(a, b) {
     // 36进制字符表，字符 '0'-'9' 和 'a'-'z' 对应数字 0-35
     const base36 = '0123456789abcdefghijklmnopqrstuvwxyz';
-    
+
     // 将字符转换为对应的数字值
     const charToNum = (ch) => base36.indexOf(ch);
     // 将数字值转换为字符
@@ -11149,7 +11149,7 @@ function addBase36(a, b) {
     let maxLength = Math.max(a.length, b.length);
     a = a.padStart(maxLength, '0');
     b = b.padStart(maxLength, '0');
-    
+
     // 从右往左逐位加法
     for (let i = maxLength - 1; i >= 0; i--) {
         const sum = charToNum(a[i]) + charToNum(b[i]) + carry;
@@ -11170,7 +11170,7 @@ function addBase36(a, b) {
 function addBaseN(a, b, base) {
     // 生成字符表：0-9, a-z, 依此类推，可以支持任意进制
     const baseChars = '0123456789abcdefghijklmnopqrstuvwxyz'.slice(0, base);
-    
+
     // 将字符转换为对应的数字值
     const charToNum = (ch) => baseChars.indexOf(ch);
     // 将数字值转换为字符
@@ -11183,7 +11183,7 @@ function addBaseN(a, b, base) {
     let maxLength = Math.max(a.length, b.length);
     a = a.padStart(maxLength, '0');
     b = b.padStart(maxLength, '0');
-    
+
     // 从右往左逐位加法
     for (let i = maxLength - 1; i >= 0; i--) {
         const sum = charToNum(a[i]) + charToNum(b[i]) + carry;
@@ -11212,12 +11212,12 @@ function exsitWord(board, word) {
     const n = board[0].length
 
     const dfs = (board, word, index, i, j) => {
-        if(index === word.length) {
+        if (index === word.length) {
             return true
         }
 
         // 越界或不匹配返回false
-        if(i < 0 || i >= m || j < 0 || j >=n || board[i][j] !== word[index]) {
+        if (i < 0 || i >= m || j < 0 || j >= n || board[i][j] !== word[index]) {
             return false
         }
 
@@ -11225,19 +11225,19 @@ function exsitWord(board, word) {
         board[i][j] = '#' // 标记已访问
         // 遍历方向
         const directions = [[0, 1], [0, -1], [1, 0], [-1, 0]]
-        for(let [dx, dy] of directions) {
+        for (let [dx, dy] of directions) {
             let newI = i + dx
             let newJ = j + dy
-            if(dfs(board, word, index + 1, newI, newJ)) {
+            if (dfs(board, word, index + 1, newI, newJ)) {
                 return true
             }
         }
         board[i][j] = temp // 恢复状态
     }
 
-    for(let i = 0; i < m; i++) {
-        for(let j = 0; j < n; j++) {
-            if(board[i][j] === word[0] && dfs(board, word, 0, i, j)) {
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (board[i][j] === word[0] && dfs(board, word, 0, i, j)) {
                 return true
             }
         }
@@ -11259,14 +11259,14 @@ function maxSquare(matrix) {
     let fn = new Array(m).fill(0).map(() => new Array(n).fill(0))
     let maxLen = 0
 
-    for(let i = 0; i < m; i++) {
-        for(let j = 0; j < n; j++) {
-            if(matrix[i][j] === '1') {
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (matrix[i][j] === '1') {
                 // 第一行第一列
-                if(i === 0 || j === 0) {
+                if (i === 0 || j === 0) {
                     fn[i][j] = 1
                 } else {
-                    fn[i][j] = Math.min(fn[i-1][j], fn[i][j-1], fn[i-1][j-1]) + 1
+                    fn[i][j] = Math.min(fn[i - 1][j], fn[i][j - 1], fn[i - 1][j - 1]) + 1
                 }
 
                 // 更新最大边长
@@ -11280,6 +11280,43 @@ function maxSquare(matrix) {
 
 
 // 250、螺旋矩阵 II
+// 给定一个正整数 n，生成一个包含 1 到n^2的矩阵 
+// 所有元素，且元素按顺时针顺序螺旋排列的正方形矩阵。
+function generateMatrix(n) {
+    const matrix = new Array(n).fill(0).map(() => new Array(n).fill(0));
+
+    let num = 1;
+    let top = 0, bottom = n - 1, left = 0, right = n - 1;
+
+    while (num <= n * n) {
+        // 从左到右填充
+        for (let i = left; i <= right; i++) {
+            matrix[top][i] = num++;
+        }
+        top++;
+
+        // 从上到下填充
+        for (let i = top; i <= bottom; i++) {
+            matrix[i][right] = num++;
+        }
+        right--;
+
+        // 从右到左填充
+        for (let i = right; i >= left; i--) {
+            matrix[bottom][i] = num++;
+        }
+        bottom--;
+
+        // 从下到上填充
+        for (let i = bottom; i >= top; i--) {
+            matrix[i][left] = num++;
+        }
+        left++;
+    }
+
+    return matrix;
+}
+
 
 // 251、旋转链表
 
@@ -11292,15 +11329,15 @@ function maxSquare(matrix) {
 // 第一个 和 最后一个 整数的二进制表示 恰好一位不同
 // 给你一个整数 n ，返回任一有效的 n 位格雷码序列 。
 // 思路： 生成可以使用递归的方式。我们知道：
-  // 1.	n = 1 时，格雷码序列为 [0, 1]。
-  // 2.	n > 1 时，我们可以通过已有的 n-1 位格雷码序列生成 n 位格雷码序列。具体做法是：
-  // •	先生成 n-1 位格雷码。
-  // •	然后将原有序列中的每个数字加上一个前缀 0，得到新的序列。
-  // •	再将原有序列的每个数字加上一个前缀 1，并倒序添加到结果中
+// 1.	n = 1 时，格雷码序列为 [0, 1]。
+// 2.	n > 1 时，我们可以通过已有的 n-1 位格雷码序列生成 n 位格雷码序列。具体做法是：
+// •	先生成 n-1 位格雷码。
+// •	然后将原有序列中的每个数字加上一个前缀 0，得到新的序列。
+// •	再将原有序列的每个数字加上一个前缀 1，并倒序添加到结果中
 function grayCode(n) {
     // 基本情况：n == 0 时格雷码是 [0]
     if (n === 0) {
-    return [0];
+        return [0];
     }
 
     // 递归获取 n-1 位的格雷码序列
@@ -11312,7 +11349,7 @@ function grayCode(n) {
     // 将上一位的格雷码加前缀 1，且顺序反转
     const prefix = 1 << (n - 1); // 计算 2^(n-1)
     for (let i = previousGrayCode.length - 1; i >= 0; i--) {
-    result.push(previousGrayCode[i] + prefix);
+        result.push(previousGrayCode[i] + prefix);
     }
 
     return result;
@@ -11326,7 +11363,7 @@ function grayCode(n) {
 //      如果 p 和 q 分别出现在 root 左右子树，说明 root 是最近公共祖先。
 //      否则，返回非空的那一侧
 function lowestCommonAncestor(root, p, q) {
-    if(!root || root === p || root === q) {
+    if (!root || root === p || root === q) {
         return root
     }
 
@@ -11334,7 +11371,7 @@ function lowestCommonAncestor(root, p, q) {
     let right = longestCommonSubsequence(root.right, p, q)
 
     // 如果p和q分别在root的左右子树中，那么最近公共祖先就是root
-    if(left && right) {
+    if (left && right) {
         return root
     }
 
