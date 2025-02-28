@@ -11319,6 +11319,48 @@ function generateMatrix(n) {
 
 
 // 251、旋转链表
+// 给定一个链表，旋转链表，将链表每个节点向右移动 k 个位置，其中 k 是非负数。
+// 思路：
+//  1.	首先，判断链表为空或者只有一个节点的情况，直接返回。
+// 	2.	计算链表的长度 n，并且找到链表的尾节点。
+// 	3.	将尾节点的 next 指向头节点，形成环形链表。
+// 	4.	通过 k % n 来确保旋转次数不超过链表的长度。
+// 	5.	找到新的头节点，将尾节点的 next 设置为 null。
+//  重点是怎么找到新的尾节点
+function changeNode(head, k) {
+    // 链表为空或只有一个节点，返回
+    if (!head || !head.next) {
+        return head
+    }
+
+    // 计算链表长度
+    let len = 1 // 初始化1，因为头节点算一个
+    let tailNode = head
+    while (tailNode.next) {
+        len++
+        tailNode = tailNode.next
+    }
+
+    k = k % len // 计算移动步数
+    if (k === 0) return head;
+    tailNode.next = head // 将链表成环，方便移动
+
+    // 1->2->3->4->5->6
+    // 找到新的尾节点
+    let newTail = head;
+    // 链表旋转k次后，新的头节点会变为原链表的第len - k个节点
+    // 新的尾节点在len - k - 1处
+    for (let i = 0; i < len - k - 1; i++) {
+        newTail = newTail.next;
+    }
+
+    // 因为是目前是环，所以新的头节点是 newTail.next
+    const newHead = newTail.next;
+    // 断开环
+    newTail.next = null;
+
+    return newHead;
+}
 
 // 252、格雷编码
 // n 位格雷码序列 是一个由 2n 个整数组成的序列，其中：
