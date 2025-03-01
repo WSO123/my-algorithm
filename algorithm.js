@@ -11057,6 +11057,33 @@ function longestValidParentheses(s) {
 }
 
 // 236、搜索二维矩阵 II 
+// 给定一个 m x n 的矩阵，其中每行和每列的元素都是 升序 排列的。请编写一个高效的算法来判断一个元素是否在该矩阵中。
+// 	•	你可以假设该矩阵的行和列是按升序排列的。
+// 	•	我们需要在二维矩阵中搜索某个元素，返回 true 如果找到，false 如果未找到。
+// 思路： 从右上角开始搜索
+// 1.	当前元素大于目标时：意味着目标在当前元素的 左侧，因为当前元素右边的所有元素都更大。
+// 2.	当前元素小于目标时：意味着目标在当前元素的 下方，因为当前元素下方的所有元素都更小。
+function searchMatrix(matrix, target) {
+    // 如果矩阵为空，直接返回 false
+    if (matrix.length === 0 || matrix[0].length === 0) {
+        return false;
+    }
+
+    // 右上角开始查找
+    let row = 0
+    let col = matrix[0].length - 1
+    while(col >= 0 && row < matrix.length) {
+        if(matrix[row][col] === target) {
+            return true
+        } else if(matrix[row][col] > target) { // 当前元素大于目标，目标在左侧
+            col--
+        } else { // 当前元素小于目标，目标在下方
+            row++
+        }
+    }
+
+    return false
+}
 
 // 237、长度最小的子数组
 
