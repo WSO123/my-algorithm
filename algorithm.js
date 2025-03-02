@@ -11091,6 +11091,36 @@ function searchMatrix(matrix, target) {
 // 思路：与29题是同一题
 
 // 239、旋转图像
+// 给定一个 n x n 的二维矩阵，原地 旋转矩阵，使得矩阵按顺时针方向旋转 90 度。
+// 思路： 
+// 顺时针旋转 90 度后，矩阵中的元素会发生如下变化：
+// •	第一行变成最后一列。
+// •	第二行变成倒数第二列。
+// •	第三行变成倒数第三列。
+// 1.	矩阵的转置：将矩阵的行和列交换，即 matrix[i][j] 和 matrix[j][i] 交换。
+// 2.	反转每一行：将每一行反转，从而实现顺时针旋转 90 度。
+function rotateImg(matrix) {
+    const n = matrix.length
+
+    // 转置
+    for(let i = 0; i < n; i++) {
+        for(let j = i + 1; j < n; j++) { // 交换上三角的部分，避免重复交换
+            [matrix[i][j], matrix[j][i]] = [matrix[j][i],matrix[i][j] ]
+        }
+    }
+
+    // 每行反转
+    for(let i = 0; i < n; i++) {
+        let left = 0
+        let right = n - 1
+        while(left < right) {
+            [matrix[i][left], matrix[i][right]] =  [matrix[i][right],matrix[i][left]]
+            left++
+            right--
+        }
+    }
+    return matrix
+}
 
 // 240、最长重复子数组
 
