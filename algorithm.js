@@ -11123,6 +11123,32 @@ function rotateImg(matrix) {
 }
 
 // 240、最长重复子数组
+// 给定两个整数数组 A 和 B，返回两个数组中最长的公共子数组的长度。“子数组”要求是连续的
+// 思路： 动态规划
+//      假设f(i,j)表示以A[i - 1]结尾和B[j - 1]为结尾的两个数组的最长公共子数组的长度
+//      如果A[i -1] === B[j-1],则f(i,j) = f(i-1,j-1) + 1,（即延续前一个公共子数组）。
+//      如果A[i -1] !== B[j-1],则f(i,j) = 0,表示不连续的子数组
+//      边界条件：
+// 	  	dp[i][0] = 0：如果数组 B 没有元素（即 j=0），那么与 A[i-1] 无论什么值，公共子数组长度都是 0。
+// 	  	dp[0][j] = 0：如果数组 A 没有元素（即 i=0），那么与 B[j-1] 无论什么值，公共子数组长度也是 0。
+function maxSubArr(A, B) {
+    let m = A.length
+    let n = B.length
+    let fn = Array.from({length: m + 1}, () => Array(n + 1).fill(0))
+    let maxLen = 0
+    // i 和 j从1开始，跳过边界条件
+    for(let i = 1; i <= m; i++) {
+        for(let j = 1; j <= n; j++) {
+            if(A[i -1] === B[j-1]) {
+                fn[i][j] = fn[i-1][j-1] + 1
+                maxLen = Math.max(maxLen, fn[i][j])
+            } else {
+                fn[i][j] = 0
+            }
+        }
+    }
+    return maxLen
+}
 
 // 241、零钱兑换 II
 // 给你一个整数数组 coins 表示不同面额的硬币，另给一个整数 amount 表示总金额。
