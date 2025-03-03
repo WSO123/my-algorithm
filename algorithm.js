@@ -10917,9 +10917,9 @@ function isVaildBST(root) {
 // 3.	继续遍历，直到结束。
 function maxProfit2(prices) {
     let profit = 0
-    for(let i = 1; i <  prices.length; i++) {
+    for (let i = 1; i < prices.length; i++) {
         // 如果今天的价格比昨天的价格高，则买入卖出
-        if(prices[i] > prices[i - 1]) {
+        if (prices[i] > prices[i - 1]) {
             profit += prices[i] - prices[i - 1]
         }
     }
@@ -11039,12 +11039,12 @@ function findPeakElement(nums) {
 function longestValidParentheses(s) {
     let stack = [-1] // 初始化栈，-1 是为了处理边界情况， 特别记住
     let maxLen = 0
-    for(let i = 0; i < s.length; i++) {
-        if(s[i] === '(') {
+    for (let i = 0; i < s.length; i++) {
+        if (s[i] === '(') {
             stack.push(i) // ‘（‘的索引入栈
         } else { // 匹配到一个’）‘
             stack.pop() // 弹出栈顶元素
-            if(stack.length === 0) {
+            if (stack.length === 0) {
                 // 如果栈为空，表示没有匹配的 '('，需要重新开始计算新的有效括号序列，所以我们将当前索引压入栈中，作为新的起始边界
                 stack.push(i)
             } else {
@@ -11072,10 +11072,10 @@ function searchMatrix(matrix, target) {
     // 右上角开始查找
     let row = 0
     let col = matrix[0].length - 1
-    while(col >= 0 && row < matrix.length) {
-        if(matrix[row][col] === target) {
+    while (col >= 0 && row < matrix.length) {
+        if (matrix[row][col] === target) {
             return true
-        } else if(matrix[row][col] > target) { // 当前元素大于目标，目标在左侧
+        } else if (matrix[row][col] > target) { // 当前元素大于目标，目标在左侧
             col--
         } else { // 当前元素小于目标，目标在下方
             row++
@@ -11103,18 +11103,18 @@ function rotateImg(matrix) {
     const n = matrix.length
 
     // 转置
-    for(let i = 0; i < n; i++) {
-        for(let j = i + 1; j < n; j++) { // 交换上三角的部分，避免重复交换
-            [matrix[i][j], matrix[j][i]] = [matrix[j][i],matrix[i][j] ]
+    for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) { // 交换上三角的部分，避免重复交换
+            [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]]
         }
     }
 
     // 每行反转
-    for(let i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
         let left = 0
         let right = n - 1
-        while(left < right) {
-            [matrix[i][left], matrix[i][right]] =  [matrix[i][right],matrix[i][left]]
+        while (left < right) {
+            [matrix[i][left], matrix[i][right]] = [matrix[i][right], matrix[i][left]]
             left++
             right--
         }
@@ -11134,13 +11134,13 @@ function rotateImg(matrix) {
 function maxSubArr(A, B) {
     let m = A.length
     let n = B.length
-    let fn = Array.from({length: m + 1}, () => Array(n + 1).fill(0))
+    let fn = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0))
     let maxLen = 0
     // i 和 j从1开始，跳过边界条件
-    for(let i = 1; i <= m; i++) {
-        for(let j = 1; j <= n; j++) {
-            if(A[i -1] === B[j-1]) {
-                fn[i][j] = fn[i-1][j-1] + 1
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            if (A[i - 1] === B[j - 1]) {
+                fn[i][j] = fn[i - 1][j - 1] + 1
                 maxLen = Math.max(maxLen, fn[i][j])
             } else {
                 fn[i][j] = 0
@@ -11255,6 +11255,30 @@ function decodeString(s) {
 }
 
 // 245、两两交换链表中的节点
+// 给定一个链表，两两交换其中相邻的节点，并返回交换后的链表
+function swapPairs(head) {
+    // 创建虚拟头节点，指向链表的头节点
+    let dum = new ListNode(0)
+    dum.next = head
+    let cur = dum
+
+    while (cur.next && cur.next.next) {
+        // first 和 second 分别是当前待交换的两个节点
+        let first = cur.next
+        let second = cur.next.next
+        // 通过改变指针来交换这两个节点
+        first.next = second.next
+        second.next = first
+
+        // 将 cur 节点的 next 指向 second，保持链表的连通性
+        cur.next = second
+
+        // 移动cur到下一个待交换的节点（即原 first 节点）
+        cur = first
+    }
+
+    return dum.next
+}
 
 // 246、36进制加法
 // 36进制由0-9，a-z，共36个字符表示。
@@ -11567,7 +11591,7 @@ function canWin(nums) {
     let nimSum = 0
 
     // 计算所有堆的 Nim-Sum
-    for(let num of nums) {
+    for (let num of nums) {
         nimSum ^= num
     }
 
