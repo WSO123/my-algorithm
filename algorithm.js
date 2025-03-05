@@ -11353,6 +11353,56 @@ function addBaseN(a, b, base) {
 
 
 // 247、基本计算器
+// 给定一个字符串 s，表示一个数学表达式，其中可能包含非负整数、加法 (+)、减法 (-)、乘法 (*)、除法 (/) 运算符以及括号。
+// 请你实现一个函数来计算这个表达式的值，并返回结果
+// 思路： 栈
+// 3+2*2-5/5
+function calculate(s) {
+    // 移除空格
+    s = s.replace(' ', '')
+
+    let stack = [];
+    let num = 0; // 当前数字
+    let sign = 1; // 当前符号，1表示加，-1表示减
+    let result = 0; // 结果
+
+    for (let i = 0; i < s.length; i++) {
+        const char = s[i];
+
+        if (char === '+' || char === '-') {
+            result += sign * num; // 将当前数字加到结果中
+            sign = char === '+' ? 1 : -1; // 更新符号
+            num = 0; // 重置数字
+        } else if (char === '*' || char === '/') {
+            let nextNum = 0;
+            i++; // 跳过当前的运算符
+            // 构建下一个数字
+            while (i < s.length && s[i] >= '0' && s[i] <= '9') {
+                nextNum = nextNum * 10 + (s[i] - '0');
+                i++;
+            }
+            i--; // 回退一步，因为外层循环会递增 i
+            if (char === '*') {
+                num *= nextNum; // 乘法
+            } else {
+                num = Math.floor(num / nextNum); // 除法，取整
+            }
+        } else if (char === '(') {
+            stack.push(result); // 保存当前结果
+            stack.push(sign); // 保存当前符号
+            result = 0; // 重置结果
+            sign = 1; // 重置符号为加
+        } else if (char === ')') {
+            result += sign * num; // 加上当前的数字
+            num = 0;
+            result = stack.pop() + stack.pop() * result; // 恢复先前的结果和符号
+        } else if (char >= '0' && char <= '9') {
+            num = num * 10 + (char - '0'); // 构建数字
+        }
+    }
+    result += sign * num; // 加上最后一个数字
+    return result;
+}
 
 // 248、单词搜索 
 // 给定一个 m x n 二维字符网格 board 和一个字符串单词 word 。如果 word 存在于网格中，返回 true ；否则，返回 false 。
