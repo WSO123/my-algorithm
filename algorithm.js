@@ -11672,3 +11672,32 @@ function canWin(nums) {
 
 
 // 257、字符串相乘
+// 给定两个字符串形式的非负整数 num1 和 num2，计算它们的乘积，并返回乘积的字符串形式。要求不使用任何内建的数字转换函数，也不直接使用大数库
+// 思路：将两个数的乘法逐步分解为单个位数的乘法，之后将结果按位相加
+function multiply(num1, num2) {
+    if (num1 === "0" || num2 === "0") return "0";
+    let m = num1.length
+    let n = num2.length
+    // 结果数组，相乘最大结果长度是两个数长度之和
+    let resArr = new Array(m + n).fill(0)
+    // 反向变量两个字符串
+    for (let i = m - 1; i >= 0; i--) {
+        for (let j = n - 1; j >= 0; j--) {
+            let mul = (num1[i] - '0') * (num2[j] - '0')
+            let sum = mul + resArr[i + j + 1] // 加上当前结果
+
+            resArr[i + j + 1] = sum % 10 // 当前位结果
+
+            resArr[i + j] += Math.floor(sum / 10) // 前一位进位
+        }
+    }
+
+    let res = ''
+    for (let num of resArr) {
+        if (!(res === '' && num === 0)) { // 跳过最前面的0
+            res += num
+        }
+    }
+
+    return res
+}
