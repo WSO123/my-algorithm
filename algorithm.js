@@ -11086,6 +11086,27 @@ function searchMatrix(matrix, target) {
 }
 
 // 237、长度最小的子数组
+// 给定一个含有正整数的数组 nums 和一个正整数 S，找出 nums 中和大于或等于 S 的最小长度的连续子数组。如果没有符合条件的子数组，返回 0
+// 思路： 滑动窗口
+function minSubArrayLen(nums, s) {
+    let len = nums.length;
+    let minLen = Infinity;
+    let curSum = 0;
+    let left = 0;
+
+    for (let right = 0; right < len; right++) {
+        curSum += nums[right];
+
+        // 当大于s时，缩小窗口
+        while (curSum >= s) {
+            minLen = Math.min(minLen, right - left + 1);
+            curSum -= nums[left];
+            left++;
+        }
+    }
+
+    return minLen === Infinity ? 0 : minLen;
+}
 
 // 238、翻转二叉树
 // 思路：与29题是同一题
