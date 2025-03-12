@@ -11702,8 +11702,19 @@ function multiply(num1, num2) {
     return res
 }
 
-// 面试金典
 // 258、判定字符是否唯一
+// 给定一个字符串 s，你需要判断字符串中的所有字符是否都是唯一的。如果是，返回 true；否则返回 false。
+// 思路： 哈希
+function hasUniqueChars(s) {
+    let set = new Set()
+    for (let char of s) {
+        if (set.has(char)) {
+            return false
+        }
+        set.add(char)
+    }
+    return true
+}
 
 // 259、回文排列
 
