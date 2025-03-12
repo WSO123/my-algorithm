@@ -11717,6 +11717,27 @@ function hasUniqueChars(s) {
 }
 
 // 259、回文排列
+// 给定一个字符串 s，你需要判断它是否可以通过重新排列字符形成一个回文字符串。
+// 思路：哈希
+//    如果可以排成回文，则最多只能有一个字符的个数是奇数，其他都是偶数
+function canPermutePalindrome(s) {
+    const countMap = new Map()
+
+    // 统计字符个数
+    for (const char of s) {
+        countMap.set(char, (countMap.get(char) || 0) + 1)
+    }
+
+    let oddCount = 0
+
+    for (const count of countMap.values()) {
+        if (count % 2 !== 0) {
+            oddCount++
+        }
+    }
+
+    return oddCount <= 1
+}
 
 // 260、一次编辑
 
