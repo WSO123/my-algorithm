@@ -11744,6 +11744,69 @@ function canPermutePalindrome(s) {
 // 261、字符串压缩
 
 // 262、零矩阵
+// 编写一种算法，若M × N矩阵中某个元素为0，则将其所在的行与列清零
+//  思路：
+//   •	第一步：为了避免修改时影响到其他行和列，我们可以使用矩阵的 第一行 和 第一列 来记录哪些行和列需要清零。
+// •	  遍历矩阵的第一行和第一列，如果某个位置是 0，则标记其对应的行和列需要清零。
+// •	第二步：使用两个变量 row0 和 col0 来标记第一行和第一列是否需要清零，因为第一行和第一列本身也会作为标记。这样就避免了特殊处理。
+// •	第三步：遍历整个矩阵，从第二行第二列开始，对于每个元素，如果其所在行和列需要清零，则将该元素置为 0。
+// •	第四步：最后，再处理第一行和第一列。
+function zeroMartix(martix) {
+    let m = martix.length
+    let n = martix[0].length
+
+    // 标记第一行第一列是否需要清零
+    let row0 = false
+    let col0 = false
+
+    for (let i = 0; i < m; i++) {
+        if (martix[i][0] === 0) {
+            col0 = true
+            break
+        }
+    }
+
+    for (let j = 0; j < n; j++) {
+        if (martix[0][j] === 0) {
+            row0 = true
+            break
+        }
+    }
+
+    // 用第一行第一列的值标记这一行这一列是否需要清零
+    for (let i = 1; i < m; i++) {
+        for (let j = 1; j < n; j++) {
+            if (martix[i][j] === 0) {
+                martix[i][0] = 0
+                martix[0][j] = 0
+            }
+        }
+    }
+
+    // 清除
+    for (let i = 1; i < m; i++) {
+        for (let j = 1; j < n; j++) {
+            if (martix[i][0] === 0 || martix[0][j] === 0) {
+                martix[i][j] = 0
+            }
+        }
+    }
+
+    // 请除第一行第一列
+    if (row0) {
+        for (let i = 0; i < n; i++) {
+            martix[0][i] = 0
+        }
+    }
+
+    if (col0) {
+        for (let j = 0; j < m; j++) {
+            martix[j][0] = 0
+        }
+    }
+
+    return martix
+}
 
 // 263、字符串轮转
 
