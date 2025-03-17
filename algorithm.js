@@ -11811,6 +11811,28 @@ function zeroMartix(martix) {
 // 263、字符串轮转
 
 // 264、移除重复节点
+// 给定一个 已排序 的链表，删除所有含有重复数字的节点，只保留没有重复的数字，返回 修改后的链表
+// 思路：
+// 遇到重复的，就一直移动直到不重复为止，然后前一个不重复的点与当前不重复的点相连
+// 不重复的，就正常next
+function deleteDuplicates(head) {
+    let dum = new ListNode(0)
+    dum.next = head
+    let pre = dum // 记录最后一个不重复的节点
+    while (head) {
+        if (head.next && head.val === head.next.val) {
+            while (head.next && head.val === head.next.val) {
+                head = head.next
+            }
+            pre.next = head.next // pre 连接到下一个不同的节点
+        } else {
+            pre = pre.next // 没有重复，正常移动
+        }
+        head = head.next
+    }
+
+    return dum.next
+}
 
 // 265、删除中间节点
 
