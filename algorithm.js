@@ -11835,7 +11835,22 @@ function deleteDuplicates(head) {
 }
 
 // 265、删除中间节点
+// 给你一个单链表的头节点 head，请删除 链表的中间节点，并返回 修改后的链表。
+// 思路：快慢指针，快指针走到最后，慢指针就到了中间
+function deleteCenterNode(head) {
+    if (!head || !head.next) return null; // 只有一个节点，返回 null
 
+    let slow = head, fast = head, prev = null;
+
+    while (fast && fast.next) {
+        prev = slow;
+        slow = slow.next;
+        fast = fast.next.next;
+    }
+
+    prev.next = slow.next; // 跳过中间节点
+    return head;
+}
 // 266、分割链表
 
 // 267、链表求和
