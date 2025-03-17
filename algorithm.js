@@ -11861,6 +11861,39 @@ function deleteCenterNode(head) {
 // 267、链表求和
 
 // 268、三合一
+// 请用单个数组实现三个栈，并支持以下操作：
+// 	•	push(stackNum, value): 在编号 stackNum（0,1,2）对应的栈中压入 value。
+// 	•	pop(stackNum): 移除并返回 stackNum 号栈的顶部元素。
+// 	•	peek(stackNum): 返回 stackNum 号栈的顶部元素，但不弹出。
+// 	•	isEmpty(stackNum): 判断 stackNum 号栈是否为空。
+class TripleInOne {
+    constructor(stackSize) {
+        this.stackSize = stackSize;
+        this.data = new Array(stackSize * 3).fill(0);
+        this.top = [0, 0, 0]; // 记录每个栈的当前大小
+    }
+
+    push(stackNum, value) {
+        if (this.top[stackNum] < this.stackSize) {
+            this.data[stackNum * this.stackSize + this.top[stackNum]] = value;
+            this.top[stackNum]++;
+        }
+    }
+
+    pop(stackNum) {
+        if (this.top[stackNum] === 0) return -1;
+        return this.data[stackNum * this.stackSize + (--this.top[stackNum])];
+    }
+
+    peek(stackNum) {
+        if (this.top[stackNum] === 0) return -1;
+        return this.data[stackNum * this.stackSize + (this.top[stackNum] - 1)];
+    }
+
+    isEmpty(stackNum) {
+        return this.top[stackNum] === 0;
+    }
+}
 
 // 269、堆盘子
 
