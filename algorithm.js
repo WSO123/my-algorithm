@@ -11809,6 +11809,11 @@ function zeroMartix(martix) {
 }
 
 // 263、字符串轮转
+// 给定两个字符串 s1 和 s2，请编写代码检查 s2 是否为 s1 旋转（s1 经过多次轮转后得到），但要求只能使用 一个 isSubstring 判断子串。
+// 思路： 由于 s2 是 s1 的旋转版本，因此 s2 必定是 s1 + s1 的子串
+function isFlipedString(s1, s2) {
+    return s1.length === s2.length && (s1 + s1).includes(s2);
+};
 
 // 264、移除重复节点
 // 给定一个 已排序 的链表，删除所有含有重复数字的节点，只保留没有重复的数字，返回 修改后的链表
