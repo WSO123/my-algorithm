@@ -12036,6 +12036,35 @@ class AnimalShelter {
   } 
 
 // 272、节点间通路
+// 给定 有向图 和两个节点 start 和 target，请判断 从 start 到 target 是否存在一条路径。
+// 如果存在返回 true，否则返回 false。
+// 思路： 图的搜索
+findWhetherExistsPath(n, graph, start, target) {
+    let adjList = new Map();
+    // 构建图
+    for (let [u, v] of graph) {
+        if (!adjList.has(u)) adjList.set(u, []);
+        adjList.get(u).push(v);
+    }
+  
+    let visited = new Set();
+    
+    // 深度优先搜索图
+    function dfs(node) {
+        if (node === target) return true;
+        if (visited.has(node)) return false;
+        visited.add(node);
+        
+        if (adjList.has(node)) {
+            for (let neighbor of adjList.get(node)) {
+                if (dfs(neighbor)) return true;
+            }
+        }
+        return false;
+    }
+  
+    return dfs(start);
+  };
 
 // 273、最小高度树
 
