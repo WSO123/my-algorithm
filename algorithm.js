@@ -11896,6 +11896,53 @@ class TripleInOne {
 }
 
 // 269、堆盘子
+// 设计一个数据结构 StackOfPlates，它由多个栈 stacks[] 组成，并具有以下功能：
+// 	•	push(val)：在当前栈上 压入一个值，如果当前栈满了，就新建一个栈存放数据。
+// 	•	pop()：弹出最右侧栈的栈顶元素，如果该栈为空，就删除这个栈。
+// 	•	popAt(index)：弹出指定索引 index 的栈的栈顶元素，如果该栈为空，则删除。
+class StackOfPlates {
+    constructor(cap) {
+        this.cap = cap // 指定每个栈的大小
+        this.stacks = []
+    }
+
+    push(val) {
+        if(this.cap === 0) { // 栈大小为0，不能push
+            return 
+        }
+
+        // 如果当前没有栈，或最后一个栈到达上限，创建新栈
+        if(this.stacks.length === 0 || this.stacks[this.stacks.length - 1].length === this.cap) {
+            this.stacks.push([])
+        }
+
+        this.stacks[this.stacks.length - 1].push(val)
+    }
+
+    pop() {
+        if (this.stacks.length === 0) return -1
+
+        const val = this.stacks[this.stacks.length - 1].pop()
+
+        if( this.stacks[this.stacks.length - 1].length === 0) {
+            this.stacks.pop()
+        }
+
+        return val
+    }
+
+    popAt(index) {
+        if (index < 0 || index >= this.stacks.length) return -1
+
+        const val = this.stacks[index].pop()
+
+        if(this.stacks[index].length === 0) {
+            this.stacks.splice(index, 1)
+        }
+
+        return val
+    }
+}
 
 // 270、栈排序
 
