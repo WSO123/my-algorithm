@@ -11945,6 +11945,41 @@ class StackOfPlates {
 }
 
 // 270、栈排序
+// 请实现一个支持 push、pop 和 peek 的栈，并且 每次 pop 或 peek 时，元素都应该是排序后的最小值（即 栈顶元素始终是当前最小值）。
+// 你只能使用一个额外的栈 作为辅助存储，不允许使用其他数据结构（如数组或链表）。
+class SortedStack {
+    constructor() {
+        this.stack = [];  // 主栈，存储排序后的元素
+        this.help = [];   // 辅助栈，临时存储较大的元素
+    }
+  
+    push(val) {
+        // 把比 val 大的元素先移到辅助栈
+        while (this.stack.length && this.stack[this.stack.length - 1] < val) {
+            this.help.push(this.stack.pop());
+        }
+  
+        // 插入 val
+        this.stack.push(val);
+  
+        // 把辅助栈的元素放回主栈
+        while (this.help.length) {
+            this.stack.push(this.help.pop());
+        }
+    }
+  
+    pop() {
+        if (this.stack.length) this.stack.pop();
+    }
+  
+    peek() {
+        return this.stack.length ? this.stack[this.stack.length - 1] : -1;
+    }
+  
+    isEmpty() {
+        return this.stack.length === 0;
+    }
+  }
 
 // 271、动物收容所
 
