@@ -11982,6 +11982,58 @@ class SortedStack {
   }
 
 // 271、动物收容所
+// 设计一个收容所，支持以下操作：
+// 	•	enqueue(animal): 收养 一只动物，animal 可能是 "dog" 或 "cat"。
+// 	•	dequeueAny(): 收养最早进入收容所的动物（无论是猫还是狗）。
+// 	•	dequeueDog(): 收养最早进入收容所的狗。
+// 	•	dequeueCat(): 收养最早进入收容所的猫。
+// 思路：
+// 使用两个队列分别存储 “狗” 和 “猫”，并用一个全局时间戳 order 记录动物入队的顺序：
+// 	1.	dogQueue 存放所有的狗，格式为 {name: "dog", order: timestamp}。
+// 	2.	catQueue 存放所有的猫，格式为 {name: "cat", order: timestamp}。
+// 	3.	enqueue(animal)：
+// 	•	如果 animal === "dog"，则放入 dogQueue 并记录时间戳。
+// 	•	如果 animal === "cat"，则放入 catQueue 并记录时间戳。
+// 	4.	dequeueAny()：
+// 	•	比较 dogQueue[0] 和 catQueue[0] 的 order，弹出时间戳最小的那个（即最早收养的）。
+// 	5.	dequeueDog() / dequeueCat()：
+// 	•	直接弹出 dogQueue 或 catQueue 的队首元素
+class AnimalShelter {
+    constructor() {
+        this.dogQueue = [];  // 存狗的队列
+        this.catQueue = [];  // 存猫的队列
+        this.order = 0;      // 记录时间戳
+    }
+  
+    enqueue(animal) {
+        const entry = { name: animal, order: this.order++ };
+        if (animal === "dog") {
+            this.dogQueue.push(entry);
+        } else if (animal === "cat") {
+            this.catQueue.push(entry);
+        }
+    }
+  
+    
+    dequeueAny() {
+        if (!this.dogQueue.length && !this.catQueue.length) return null;
+        if (!this.dogQueue.length) return this.catQueue.shift().name;
+        if (!this.catQueue.length) return this.dogQueue.shift().name;
+  
+        // 任意出队，注意比较收养时间，弹出收养早的
+        return this.dogQueue[0].order < this.catQueue[0].order
+            ? this.dogQueue.shift().name
+            : this.catQueue.shift().name;
+    }
+  
+    dequeueDog() {
+        return this.dogQueue.length ? this.dogQueue.shift().name : null;
+    }
+  
+    dequeueCat() {
+        return this.catQueue.length ? this.catQueue.shift().name : null;
+    }
+  } 
 
 // 272、节点间通路
 
