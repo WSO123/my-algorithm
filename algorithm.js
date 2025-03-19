@@ -12069,6 +12069,36 @@ findWhetherExistsPath(n, graph, start, target) {
 // 273、最小高度树
 
 // 274、特定深度节点链表
+// 给定一棵二叉树，请设计一个算法，将同一深度的节点分别存储到单独的链表中。
+// 返回一个数组，其中 array[i] 表示深度 i 处的所有节点组成的链表（从左到右顺序）。
+// 思路：层序遍历
+function listOfDepth(root) {
+    if(!root) {
+      return []
+    }
+  
+    let res = []
+    let queue = [root]
+    while(queue.length) {
+      let size = queue.length
+      let dum = new ListNode(0)
+      let cur = dum
+      for(let i = 0; i < size; i++) {
+        let node = queue.shift()
+        cur.next = new ListNode(node.val)
+        cur = cur.next
+        if(node.left) {
+          queue.push(node.left)
+        }
+        if(node.right) {
+          queue.push(node.right)
+        }
+      }
+      res.push(dum.next)
+    }
+  
+    return res
+  }
 
 // 275、二叉搜索树序列 困难
 
