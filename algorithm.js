@@ -12103,6 +12103,37 @@ function listOfDepth(root) {
 // 275、二叉搜索树序列 困难
 
 // 276、检查子树
+// 给定两棵二叉树 T1 和 T2，请检查 T2 是否为 T1 的子树。
+// 思路：前序遍历
+// 要找到 T1 的某个子树与 T2 匹配，必须先检查当前节点是否是 T2 的根节点。
+// 然后递归检查左子树和右子树，如果 T2 是 T1 的一部分，就必须保证 T2 的根节点在 T1 的某个位置，所以从 T1 的根开始向下找
+// 1.	遍历 T1：遍历 T1 的所有子树，检查 T2 是否与某个子树完全匹配。
+// 2.	匹配子树：判断两棵树是否结构相同且值相等。
+// 采用递归 DFS 遍历 T1，每次判断当前子树是否和 T2 相同
+function checkSubTree(root1, root2) {
+    if (!root2) { // 空树是任何树的子树
+      return true
+    }
+    if (!root1) { // 空树不是有节点的树的父树
+      return false
+    }
+  
+    // 判断两棵树是否相等
+    const isSame = (node1, node2) => {
+      if (!node1 && !node2) {
+        return true
+      }
+  
+      if (!node1 || !node2 || node1.val !== node2.val) {
+        return false
+      }
+  
+      return isSame(node1.left, node2.left) && isSame(node1.right, node2.right)
+    }
+  
+    // 递归检查当前子树是否匹配，或者左右子树是否包含root2
+    return isSame(root1, root2) || checkSubTree(root1.left, root2) || checkSubTree(root1.right, root2)
+  }
 
 // 277、插入
 
