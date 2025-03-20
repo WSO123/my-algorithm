@@ -12168,7 +12168,28 @@ function printBin(num) {
   };
 
 // 279、翻转数位
+// 给定一个 32 位整数 num，你可以将其中的一个数位从 0 翻转为 1。请编写一个程序，找出你能够获得的最长的一串 1 的长度。
+// 思路：
+// 为了找到通过翻转一个 0 为 1 后的最长连续 1 的长度，我们需要遍历整数的每一位，记录连续 1 的长度，并在遇到 0 时考虑翻转
+function reverseBits(num) {
+    if(~num === 0) { // 如果num的所有位都是1，直接返回32
+        return 32
+    }
 
+    // maxLen（记录最大长度）、preLen（记录前一段连续 1 的长度）和 curLen（记录当前段连续 1 的长度）
+    let curLen = 0, preLen = 0, maxLen = 0
+    while (num !== 0) {
+        if((num & 1) === 1) { // 当前位是1
+            curLen++
+        } else { // 当前位是0
+            // 如果下一位是0，表示不能通过翻转连接起来，则preLen = 0，否则preLen = curLen
+            preLen = (num & 2) === 0 ? 0 : curLen 
+            curLen = 0
+        }
+        maxLen = Math.max(maxLen, preLen + curLen + 1)
+        num >>= 1
+    }
+}
 // 280、下一个数
 
 // 281、整数转换
