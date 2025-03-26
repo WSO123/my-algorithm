@@ -12191,8 +12191,46 @@ function reverseBits(num) {
     }
 }
 // 280、下一个数
+// 下一个数。给定一个正整数，找出与其二进制表达式中1的个数相同且大小最接近的那两个数（一个略大，一个略小）。
+// 思路：
+function findClosedNumbers(num) {
+    const countOnes = (n) => {
+        let count = 0
+        while(n) {
+            count += n & 1
+            n >>= 1
+        }
+    }
 
+    let curCount = countOnes(num)
+    let nextBigger = num + 1
+    let nextSmaller = num - 1
+
+    // 找比num大的数据
+    while(countOnes(nextBigger) !== curCount) {
+        nextBigger++
+    }
+
+    // 找比num小的数据
+    while(countOnes(nextSmaller)!== curCount) {
+        nextSmaller--
+    }
+    return [nextBigger, nextSmaller]
+}
 // 281、整数转换
+// 整数转换。编写一个函数，确定需要改变几个位才能将整数 A 转成整数 B。
+// 思路：异或操作（ ^ ）的特性是：对于两个二进制位，如果相同则结果为0，如果不同则结果为1。因此， A ^ B 的结果中，为1的位表示A和B在该位上不同，为0的位表示A和B在该位上相同。
+//    统计 A ^ B 结果中1的个数，就是A和B在二进制表示中不同的位数。这些不同的位就是需要改变的位数。
+function convertInteger(A, B) {
+    let xor = A ^ B
+    let count = 0
+    while(xor !== 0) {
+        count += xor & 1 // 统计1的个数
+        xor >>= 1 // 右移一位
+    }
+
+    return count
+}
 
 // 282、配对交换
 
