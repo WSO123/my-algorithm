@@ -12256,15 +12256,26 @@ function exchangeBits(num) {
 // 机器人每次只能 向右 或 向下 移动，并且某些网格可能是障碍（0 代表障碍，1 代表可以通行）。
 // 请找出一条路径，让机器人从起点走到终点，并返回路径的坐标列表（顺序从起点到终点）。如果没有可行路径，返回空列表 []。
 // 思路： dfs + 回溯
-function pathWithObstacles(obstacleGrid) {
-    const m = obstacleGrid.length
-    const n = obstacleGrid[0].length
+function pathWithObstacles(martix) {
+    const m = martix.length
+    const n = martix[0].length
     const res = []
+    if (m === 0 || n === 0) {
+        return [];
+    }
+    const visited = new Set();
     const dfs = (i, j) => {
-        if (i >= m || j >= n || obstacleGrid[i][j] === 1) return false
+        if(i >= m || j >= n || martix[i][j] === 0|| visited.has(`${i},${j}`)) {
+            return false
+        }
         res.push([i, j])
-        if (i === m - 1 && j === n - 1) return true
-        if (dfs(i + 1, j) || dfs(i, j + 1)) return true
+        visited.add(`${i},${j}`);
+        if(i === m - 1 && j === n - 1) {
+            return true
+        }
+        if(dfs(i + 1, j) || dfs(i, j + 1)) {
+            return true
+        }
         res.pop()
         return false
     }
