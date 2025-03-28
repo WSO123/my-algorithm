@@ -12283,6 +12283,47 @@ function pathWithObstacles(martix) {
     return res
 }
 // 286、魔术索引
+// 在 有序数组 nums 中，找出一个 魔术索引，即满足 nums[i] == i 的索引 i。
+// 	•	如果存在多个，返回任意一个。
+// 	•	如果不存在，返回 -1。
+// 思路： 二分查找
+// 只适合没有重复元素的数组，并且严格递增
+function findMagicIndex(nums) {
+    const n = nums.length
+    let left = 0
+    let right = n - 1
+    while(left <= right) {
+        const mid = (left + right) >> 1
+        if(nums[mid] === mid) {
+            return mid
+        } else if(nums[mid] > mid) {
+            right = mid - 1
+        } else {
+            left = mid + 1
+        }
+    }
+    return -1
+}
+// 适用于有重复元素的数组
+function findMagicIndex(nums) {
+    function binarySearch(left, right) {
+        if (left > right) return -1;
+
+        let mid = (left + right) >> 1;
+        
+        // 先搜索左半部分
+        let leftResult = binarySearch(left, mid - 1);
+        if (leftResult !== -1) return leftResult; // 先返回最小索引
+
+        // 判断当前 `mid`
+        if (nums[mid] === mid) return mid;
+
+        // 再搜索右半部分
+        return binarySearch(mid + 1, right);
+    }
+
+    return binarySearch(0, nums.length - 1);
+}
 
 // 287、幂集
 
