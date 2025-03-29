@@ -12358,6 +12358,24 @@ function multiply(A, B) {
         return half + half + A
     }
 }
+// 方法二： 位运算
+// 思路：直接利用 二进制展开，转换 B 的二进制位：
+// •	A × B = A × (2^x) + A × (2^y) + ...
+// •	通过位运算加速计算。
+function multiply(A, B) {
+    if(A < B) { // 保证A是较大的数, 交换A和B,减少运算次数
+        [A, B] = [B, A]
+    }
+    let res = 0
+    while(B) {
+        if(B & 1) { // 如果B的最后一位是1
+            res += A
+        }
+        A <<= 1 // A左移一位，相当于乘以2
+        B >>= 1 // B右移一位，相当于除以2
+    }
+    return res
+}
 
 // 289、递归乘法
 
