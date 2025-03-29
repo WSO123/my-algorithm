@@ -12326,7 +12326,21 @@ function findMagicIndex(nums) {
 }
 
 // 287、幂集
-
+// 给定一个 不包含重复元素 的数组 nums，返回其所有 子集（幂集）。
+// 思路：回溯法
+function subsets(nums) {
+    const res = []
+    const dfs = (start, path) => {
+        res.push([...path])
+        for (let i = start; i < nums.length; i++) {
+            path.push(nums[i])
+            dfs(i + 1, path)
+            path.pop() // 回溯
+        }
+    }
+    dfs(0, [])
+    return res
+}
 // 288、递归乘法
 
 // 289、递归乘法
