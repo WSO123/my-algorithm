@@ -12377,7 +12377,32 @@ function multiply(A, B) {
     return res
 }
 
-// 289、递归乘法
+// 289、汉诺塔问题
+// 在经典汉诺塔问题中，有 3 根柱子及 N 个不同大小的穿孔圆盘，盘子可以滑入任意一根柱子。一开始，所有盘子自上而下按升序依次套在第一根柱子上(即每一个盘子只能放在更大的盘子上面)。移动圆盘时受到以下限制:
+// (1) 每次只能移动一个盘子;
+// (2) 盘子只能从柱子顶端滑出移到下一根柱子;
+// (3) 盘子只能叠在比它大的盘子上。
+// 请编写程序，用栈将所有盘子从第一根柱子移到最后一根柱子。
+// 你需要原地修改栈。
+// 思路：递归
+//  定义三个栈，origin、temp、target，分别表示原始位置、中转位置、目标位置。
+// 	1.	递归移动 n-1 个盘子到中转位置 temp。
+// 	2.	将第 n 个盘子从原始位置移动到目标位置 target。
+// 	3.	递归移动 n-1 个盘子从中转位置 temp 移动到目标位置 target。
+function hanota(origin,temp,target) {
+    const move = (n, origin, temp, target) => {
+        if(n === 1) {
+            target.push(origin.pop())
+            return
+        }
+        move(n - 1, origin, target, temp) // 将n-1个盘子从origin移动到temp
+        target.push(origin.pop()) // 将第n个盘子从origin移动到target
+        move(n - 1, temp, origin, target) // 将n-1个盘子从temp移动到target
+    }
+    move(origin.length, origin, temp, target)
+    return target
+}
+
 
 // 290、无重复字符串的排列组合
 
