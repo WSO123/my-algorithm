@@ -12342,6 +12342,22 @@ function subsets(nums) {
     return res
 }
 // 288、递归乘法
+// 实现一个递归函数，计算两个非负整数 A 和 B 的乘积，不能使用 * 号。
+// 思路：
+// 	1.	递归计算 A × B，但让 B 总是较小值，这样递归次数减少。
+// 	2.	拆分计算：
+// 	•	A × B = A × (B / 2) + A × (B / 2)（如果 B 是偶数）
+// 	•	A × B = A × (B / 2) + A × (B / 2) + A（如果 B 是奇数）
+function multiply(A, B) {
+    if (B === 0) return 0
+    if(B === 1) return A
+    let half = multiply(A, B >> 1)
+    if(B % 2 === 0) {
+        return half + half
+    } else {
+        return half + half + A
+    }
+}
 
 // 289、递归乘法
 
