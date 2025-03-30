@@ -12580,6 +12580,51 @@ function search(nums, target) {
 }
 
 // 300、稀疏数组搜索
+// 稀疏数组搜索。有个排好序的字符串数组，其中散布着一些空字符串，编写一种方法，找出给定字符串的位置。
+// 思路：二分查找
+//  要跳过空字符串，我们可以在二分查找时，将中间元素向左或向右移动，直到找到非空字符串。
+function findString(words, s) {
+    let left = 0
+    let right = words.length - 1
+    while(left <= right) {
+        let mid = (left + right) >> 1
+
+        // 如果mid位置是空字符串,左右移动找到非空字符串
+        if(words[mid] === '') {
+            let l = mid - 1
+            let r = mid + 1
+            while(true) {
+                if(l < left && r > right) {
+                    return -1
+                }
+
+                if(l >= left && words[l] !== '') {
+                    mid = l
+                    break
+                }
+
+                if(r <= right && words[r] !== '') {
+                    mid = r
+                    break
+                }
+                l--
+                r++
+            }
+        }
+
+        if(words[mid] === s) {
+            return mid
+        }
+
+        if(words[mid] < s) {
+            left = mid + 1
+        } else {
+            right = mid - 1
+        }
+    }
+    return -1
+}
+
 
 // 301、排序矩阵查找
 
