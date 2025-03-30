@@ -12549,6 +12549,35 @@ function merge(A, m, B, n) {
 ///  与120题是同一题
 
 // 299、搜索旋转数组
+// 搜索旋转数组。给定一个排序后的数组，包含n个整数，但这个数组已被旋转过很多次了，次数不详。
+// 请编写代码找出数组中的某个元素，假设数组元素原先是按升序排列的。若有多个相同元素，返回索引值最小的一个
+// 思路：二分查找
+function search(nums, target) {
+    let left = 0
+    let right = nums.length - 1
+    while(left <= right) { 
+        let mid = (left + right) >> 1
+        if(nums[mid] === target) {
+            return mid
+        }
+
+        // 如果左半部分有序
+        if(nums[left] <= nums[mid]) {
+            if(nums[left] <= target && target < nums[mid]) {
+                right = mid - 1 // 目标在左侧
+            } else {
+                left = mid + 1 // 目标在右侧
+            }
+        } else { // 右半部分有序
+            if(nums[mid] < target && target <= nums[right]) {
+                left = mid + 1 // 目标在右侧
+            } else {
+                right = mid - 1 // 目标在左侧
+            }
+        }
+    }
+    return -1 // 如果没有找到目标元素
+}
 
 // 300、稀疏数组搜索
 
