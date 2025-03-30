@@ -12631,6 +12631,45 @@ function findString(words, s) {
 // 思路：从右上角开始查找 与236题是同一题
 
 // 302、数字流的秩
+// 假设你正在读取一串整数。每隔一段时间，你希望能找出数字 x 的秩(小于或等于 x 的值的个数)。请实现数据结构和算法来支持这些操作，也就是说：
+// 实现 track(int x) 方法，每读入一个数字都会调用该方法；
+// 实现 getRankOfNumber(int x) 方法，返回小于或等于 x 的值的个数。
+// 思路：排序数组 + 二分查找
+class StreamRank {
+    constructor() { 
+        this.arr = []
+    }
+
+    track(x) {
+        let left = 0
+        let right = this.arr.length - 1
+        while(left <= right) {
+            let mid = (left + right) >> 1
+            if(this.arr[mid] === x) {
+                this.arr.splice(mid, 0, x)
+                return
+            } else if(this.arr[mid] < x) {
+                left = mid + 1
+            } else {
+                right = mid - 1
+            }
+        }
+    }
+
+    getRankOfNumber(x) {
+        let left = 0
+        let right = this.arr.length - 1
+        while(left <= right) {
+            const mid = Math.floor((left + right) / 2);
+            if (this.nums[mid] <= x) {
+                left = mid + 1; // 向右移动，找更大的值
+            } else {
+                right = mid - 1; // 向左移动，找更小的值
+            }
+        }
+        return left;
+    }
+}
 
 // 303、峰与谷
 
