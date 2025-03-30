@@ -8197,6 +8197,7 @@ function permuteUnique(nums) {
 
         for (let i = 0; i < nums.length; i++) {
             // 如果已使用过，或和前一个元素相同且前一个元素未使用过，跳过
+            // 保证相同字符在同一层递归中只选第一个
             if (used[i] || i > 0 && nums[i] === nums[i - 1] && !used[i - 1]) {
                 continue
             }
@@ -12405,8 +12406,60 @@ function hanota(origin,temp,target) {
 
 
 // 290、无重复字符串的排列组合
+// 无重复字符串的排列组合。编写一种方法，计算某字符串的所有排列组合，字符串每个字符均不相同。
+// 思路：回溯法
+function permutation(S) {
+    const res = []
+    let arr = S.split('')
+    const used = new Array(arr.length).fill(false)
+    const dfs = (arr, path) => {
+        if(path.length === arr.length) {
+            res.push(path.join(''))
+            return
+        }
+        for(let i = 0; i < arr.length; i++) {
+            if(used[i]) {
+                continue
+            }
+            used[i] = true
+            path.push(arr[i])
+            dfs(arr, path)
+            path.pop() // 回溯
+            used[i] = false
+        }
+        dfs(arr, [])
+        return res
+    }
+}
 
 // 291、有重复字符串的排列组合
+// 有重复字符串的排列组合。编写一种方法，计算某字符串的所有排列组合
+// 思路：回溯法
+function permutation(S) {
+    const res = []
+    let arr = S.split('')
+    arr.sort()
+    const used = new Array(arr.length).fill(false)
+    const dfs = (arr, path) => {
+        if(path.length === arr.length) {
+            res.push(path.join(''))
+            return
+        }
+        for(let i = 0; i < arr.length; i++) {
+            // 保证相同字符在同一层递归中只选第一个
+            if(used[i] || (i > 0 && arr[i] === arr[i - 1] && !used[i - 1])) {
+                continue
+            }
+            used[i] = true
+            path.push(arr[i])
+            dfs(arr, path)
+            path.pop() // 回溯
+            used[i] = false
+        }
+    }
+    dfs(arr, [])
+    return res
+}
 
 // 292、颜色填充
 
