@@ -12462,6 +12462,30 @@ function permutation(S) {
 }
 
 // 292、颜色填充
+// 编写函数，实现许多图片编辑软件都支持的「颜色填充」功能。
+// 待填充的图像用二维数组 image 表示，元素为初始颜色值。初始坐标点的行坐标为 sr 列坐标为 sc。需要填充的新颜色为 newColor 。
+// 「周围区域」是指颜色相同且在上、下、左、右四个方向上存在相连情况的若干元素。
+// 请用新颜色填充初始坐标点的周围区域，并返回填充后的图像
+// 思路：深度优先搜索
+function floodFill(image, sr, sc, newColor) {
+    let oldColor = image[sr][sc]
+    if(oldColor === newColor) {
+        return image
+    }
+    const dfs = (r, c) => {
+        if(r < 0 || r >= image.length || c < 0 || c >= image[0].length || image[r][c] !== oldColor) {
+            return
+        }
+        image[r][c] = newColor
+        // 上下左右四个方向
+        dfs(r - 1, c)
+        dfs(r + 1, c)
+        dfs(r, c - 1)
+        dfs(r, c + 1)   
+    }
+    dfs(sr, sc)
+    return image
+}
 
 // 293、硬币
 
