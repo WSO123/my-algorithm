@@ -12488,7 +12488,22 @@ function floodFill(image, sr, sc, newColor) {
 }
 
 // 293、硬币
+// 硬币。给定数量不限的硬币，币值为25分、10分、5分和1分，编写代码计算n分有几种表示法。(结果可能会很大，你需要将结果模上1000000007)
+// 思路：动态规划
+//  假设f(i)表示金额为i的表示方法数，那么(i) = sum(f(i - coin))，其中coin为硬币的面值。
+//  与241题是同一题，但需要对结果取模
+function coinsChange(coins, amount) {
+    const mod = 1000000007
+    const fn = new Array(amount + 1).fill(0)
+    fn[0] = 1
 
+    for(let coin of coins) {
+        for(let i = coin; i <= amount; i++) {
+            fn[i] = (fn[i] + fn[i - coin]) % mod
+        }
+    }
+    return fn[amount]
+}
 // 294、八皇后
 
 // 295、堆箱子
