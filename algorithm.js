@@ -12672,8 +12672,24 @@ class StreamRank {
 }
 
 // 303、峰与谷
+// 在一个整数数组中，“峰”是大于或等于相邻整数的元素，相应地，“谷”是小于或等于相邻整数的元素。
+// 例如，在数组{5, 8, 4, 2, 3, 4, 6}中，{8, 6}是峰， {5, 2}是谷。现在给定一个整数数组，将该数组按峰与谷的交替顺序排序。
+
 
 // 304、交换数字
+// 编写一个函数，不用临时变量，直接交换numbers = [a, b]中a与b的值。
+function swap(nums) {
+    nums[0] = nums[0] ^ nums[1]
+    nums[1] = nums[0] ^ nums[1]
+    nums[0] = nums[0] ^ nums[1]
+    return nums
+}
+function swap(nums) {
+    nums[0] = nums[0] + nums[1]
+    nums[1] = nums[0] - nums[1]
+    nums[0] = nums[0] - nums[1]
+    return nums
+}
 
 // 305、单词频率
 
