@@ -12692,10 +12692,48 @@ function swap(nums) {
 }
 
 // 305、单词频率
+// 设计一个方法，找出任意指定单词在一本书中的出现频率。
+// 你的实现应该支持如下操作：
+// WordsFrequency(book)构造函数，参数为字符串数组构成的一本书
+// get(word)查询指定单词在书中出现的频率
+// 示例：
+// WordsFrequency wordsFrequency = new WordsFrequency({"i", "have", "an", "apple", "he", "have", "a", "pen"});
+// wordsFrequency.get("you"); //返回0，"you"没有出现过
+// wordsFrequency.get("have"); //返回2，"have"出现2次
+// wordsFrequency.get("an"); //返回1
+// wordsFrequency.get("apple"); //返回1
+// wordsFrequency.get("pen"); //返回1
+// 思路：哈希表
+class WordsFrequency {
+    constructor(book) {
+        this.map = new Map()
+        for(let word of book) {
+            if(this.map.has(word)) {
+                this.map.set(word, this.map.get(word) + 1)
+            }
+        }
+    }
 
-// 306、交点
+    get(word) {
+        return this.map.get(word) || 0
+    }
+}
+
+// 306、交点 难度：困难
+// 给定两条线段（表示为起点start = {X1, Y1}和终点end = {X2, Y2}），如果它们有交点，请计算其交点，没有交点则返回空值。
+// 要求浮点型误差不超过10^-6。若有多个交点（线段重叠）则返回 X 值最小的点，X 坐标相同则返回 Y 值最小的点
 
 // 307、井字游戏
+// 设计一个算法，判断玩家是否赢了井字游戏。输入是一个 N x N 的数组棋盘，由字符" "，"X"和"O"组成，其中字符" "代表一个空位。
+// 以下是井字游戏的规则：
+// 玩家轮流将字符放入空位（" "）中。
+// 第一个玩家总是放字符"O"，且第二个玩家总是放字符"X"。
+// "X"和"O"只允许放置在空位中，不允许对已放有字符的位置进行填充。
+// 当有N个相同（且非空）的字符填充任何行、列或对角线时，游戏结束，对应该字符的玩家获胜。
+// 当所有位置非空时，也算为游戏结束。
+// 如果游戏结束，玩家不允许再放置字符。
+// 如果游戏存在获胜者，就返回该游戏的获胜者使用的字符（"X"或"O"）；如果游戏以平局结束，则返回 "Draw"；如果仍会有行动（游戏未结束），则返回 "Pending"。
+
 
 // 308、阶乘尾数
 
