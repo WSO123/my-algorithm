@@ -12773,5 +12773,93 @@ class WordsFrequency {
 // 327、数对和
 
 // 328、LRU 缓存
+// 思路： 使用双向链表和哈希表
+//  哈希表用于O(1)时间复杂度的查找
+//  双向链表用于O(1)时间复杂度的插入和删除
+//  哈希表的key为节点的key，value为节点的引用
+//  双向链表的头节点为最近使用的节点，尾节点为最久未使用的节点
+//  每次get或put时，将节点移动到链表头部
+//  如果链表长度超过容量，删除链表尾部节点
+//  如果链表长度等于容量，删除链表尾部节点，并将新节点插入链表头部
+//  如果链表长度小于容量，直接将新节点插入链表头部
+class LRUCache {
+    constructor(capacity) {
+        this.capacity = capacity; // 缓存容量
+        this.cache = new Map(); // 哈希表用于O(1)时间复杂度的查找
+        this.head = new Node(0, 0); // 虚拟头节点
+        this.tail = new Node(0, 0); // 虚拟尾节点
+        this.head.next = this.tail; // 初始化双向链表
+        this.tail.prev = this.head;
+    }
+
+    // 获取缓存中的值
+    get(key) {
+        if (this.cache.has(key)) {
+            // 如果key存在，将节点移动到链表头部（最近使用）
+            const node = this.cache.get(key);
+            this.moveToHead(node);
+            return node.value;
+        }
+        return -1; // key不存在返回-1
+    }
+
+    // 放入缓存
+    put(key, value) {
+        if (this.cache.has(key)) {
+            // 如果key已存在，更新值并移动到头部
+            const node = this.cache.get(key);
+            node.value = value;
+            this.moveToHead(node);
+        } else {
+            // 创建新节点
+            const newNode = new Node(key, value);
+            this.cache.set(key, newNode);
+            this.addToHead(newNode);
+            
+            // 如果超出容量，删除最久未使用的节点（尾部节点）
+            if (this.cache.size > this.capacity) {
+                const tail = this.removeTail();
+                this.cache.delete(tail.key);
+            }
+        }
+    }
+
+    // 将节点添加到头部
+    addToHead(node) {
+        node.prev = this.head;
+        node.next = this.head.next;
+        this.head.next.prev = node;
+        this.head.next = node;
+    }
+
+    // 移除节点
+    removeNode(node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+    }
+
+    // 将节点移动到头部
+    moveToHead(node) {
+        this.removeNode(node);
+        this.addToHead(node);
+    }
+
+    // 移除尾部节点
+    removeTail() {
+        const res = this.tail.prev;
+        this.removeNode(res);
+        return res;
+    }
+}
+
+// 双向链表节点
+class Node {
+    constructor(key, value) {
+        this.key = key;
+        this.value = value;
+        this.prev = null;
+        this.next = null;
+    }
+}
 
 // 329、计算器
