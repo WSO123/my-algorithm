@@ -12771,6 +12771,40 @@ class WordsFrequency {
 // 326、兰顿蚂蚁
 
 // 327、数对和
+// 设计一个算法，找出数组中两数之和为指定值的所有整数对。一个数只能属于一个数对。
+// 思路：哈希表
+//  遍历数组，对于每个元素，判断target - num是否在Map中，如果在，就找到了一对数，将这对数加入到结果中，同时将这两个数字加入到Set中，避免重复。
+//  如果target - num不在Map中，就将当前数字加入到Map中。
+function findPairs(arr, target) {
+    const pairs = [];
+    const used = new Set(); // 用于记录已经使用过的数字
+    const numMap = new Map(); // 用于存储遍历过的数字
+
+    for (let i = 0; i < arr.length; i++) {
+        const num = arr[i];
+        // 如果当前数字已经被使用过，跳过
+        if (used.has(num)) continue;
+
+        const complement = target - num;
+        // 如果找到了配对的数字，并且这个数字还没有被使用过
+        if (numMap.has(complement) && !used.has(complement)) {
+            pairs.push([num, complement]);
+            used.add(num);
+            used.add(complement);
+        } else if (!numMap.has(num)) {
+            // 如果没有找到配对的数字，将当前数字加入到Map中
+            numMap.set(num, i);
+        }
+    }
+
+    return pairs;
+}
+
+// 测试用例
+const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const target = 10;
+console.log(findPairs(arr, target)); // 输出: [[1,9], [2,8], [3,7], [4,6]]
+// 
 
 // 328、LRU 缓存
 // 思路： 使用双向链表和哈希表
