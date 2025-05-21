@@ -12736,6 +12736,20 @@ class WordsFrequency {
 
 
 // 308、阶乘尾数
+// 设计一个算法，算出 n 阶乘有多少个尾随零
+// 思路：数学
+//  一个数的阶乘末尾有多少个0，取决于这个数的因子中2和5的个数，而2的个数远多于5的个数，所以只需要计算5的个数即可。
+//  一个数的因子中5的个数，可以通过不断除以5来计算
+function trailingZeroes(n) {
+    let count = 0
+    // 计算5的个数
+    // 5的个数 = n / 5 + n / 25 + n / 125 + ...
+    while(n >= 5) {
+        n = Math.floor(n / 5)
+        count += n
+    }
+    return count
+}
 
 // 309、最小差
 
@@ -12839,12 +12853,6 @@ function findPairs(arr, target) {
 
     return pairs;
 }
-
-// 测试用例
-const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-const target = 10;
-console.log(findPairs(arr, target)); // 输出: [[1,9], [2,8], [3,7], [4,6]]
-// 
 
 // 328、LRU 缓存
 // 思路： 使用双向链表和哈希表
