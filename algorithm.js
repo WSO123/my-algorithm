@@ -12752,6 +12752,27 @@ function trailingZeroes(n) {
 }
 
 // 309、最小差
+// 给定两个整数数组a和b，计算具有最小差绝对值的一对数值（每个数组中取一个值），并返回该对数值的差
+// 示例：
+// 输入：{1, 3, 15, 11, 2}, {23, 127, 235, 19, 8}
+// 输出：3，即数值对(11, 8)
+// 思路：排序 + 双指针
+function smallestDifference(a, b) {
+    // 排序
+    a.sort((a, b) => a - b)
+    b.sort((a, b) => a - b)
+    let i = 0, j = 0
+    let min = Infinity
+    // 双指针, 谁小谁移动
+    while(i < a.length && j < b.length) {
+        min = Math.min(min, Math.abs(a[i] - b[j]))
+        if(a[i] < b[j]) {
+            i++
+        } else {
+            j++
+        }
+    }
+}
 
 
 // 310、最大数值
