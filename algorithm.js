@@ -12767,6 +12767,46 @@ class WordsFrequency {
 // 324、T9键盘
 
 // 325、交换和
+// 给定两个整数数组，请交换一对数值（每个数组中取一个数值），使得两个数组所有元素的和相等。
+// 返回一个数组，第一个元素是第一个数组中要交换的元素，第二个元素是第二个数组中要交换的元素。若有多个答案，返回任意一个均可。若无满足条件的数值，返回空数组。
+// 输入：array1 = [4, 1, 2, 1, 1, 2], array2 = [3, 6, 3, 3]
+// 输出：[1, 3]
+// 思路：
+//  计算两个数组的和
+//  如果两个和的差值是奇数，则不可能通过交换一对数使得两个和相等
+//  计算需要的差值
+//  将array2的所有元素存入Set中，用于快速查找
+//  遍历array1中的每个元素，寻找合适的交换对
+function findSwapValues(array1, array2) {
+    // 计算两个数组的和
+    const sum1 = array1.reduce((acc, curr) => acc + curr, 0);
+    const sum2 = array2.reduce((acc, curr) => acc + curr, 0);
+    
+    // 如果两个和的差值是奇数，则不可能通过交换一对数使得两个和相等
+    if ((sum1 - sum2) % 2 !== 0) return [];
+    
+    // 计算需要的差值
+    const diff = (sum1 - sum2) / 2;
+    
+    // 将array2的所有元素存入Set中，用于快速查找
+    const set2 = new Set(array2);
+    
+    // 遍历array1中的每个元素，寻找合适的交换对
+    for (const num1 of array1) {
+        // 计算在array2中需要寻找的值
+        // 交换后两数组和相等，则sum1 - num1 + num2 = sum2 - num2 + num1
+        // 2 * num1 - 2 * num2 = sum1 - sum2
+        // 即 num1 - num2 = diff
+        const num2 = num1 - diff;
+        
+        if (set2.has(num2)) {
+            return [num1, num2];
+        }
+    }
+    
+    // 如果没有找到合适的交换对，返回空数组
+    return [];
+}
 
 // 326、兰顿蚂蚁
 
