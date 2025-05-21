@@ -12772,10 +12772,21 @@ function smallestDifference(a, b) {
             j++
         }
     }
+
+    return min
 }
 
 
 // 310、最大数值
+// 编写一个方法，找出两个数字a和b中最大的那一个。不得使用if-else或其他比较运算符。
+// 示例：
+// 输入： a = 1, b = 2
+// 输出： 2
+// 思路：数学
+//  两个数的最大值，可以通过 (a + b + abs(a - b)) / 2 来计算
+function maximum(a, b) {
+    return (a + b + Math.abs(a - b)) / 2
+}
 
 // 311、整数的英语表示
 
