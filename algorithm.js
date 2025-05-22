@@ -12827,6 +12827,40 @@ function maximum(a, b) {
 // 323、水域大小
 
 // 324、T9键盘
+// 在老式手机上，用户通过数字键盘输入，手机将提供与这些数字相匹配的单词列表。每个数字映射到0至4个字母。给定一个数字序列，实现一个算法来返回匹配单词的列表。你会得到一张含有有效单词的列表。
+// 思路：回溯算法
+function t9Words(digits, words) {
+    if (!digits || words.length === 0) return [];
+    const digitToChar = {
+        '2': ['a', 'b', 'c'],
+        '3': ['d', 'e', 'f'],
+        '4': ['g', 'h', 'i'],
+        '5': ['j', 'k', 'l'],
+        '6': ['m', 'n', 'o'],
+        '7': ['p', 'q', 'r', 's'],
+        '8': ['t', 'u', 'v'],
+        '9': ['w', 'x', 'y', 'z']
+    };
+
+    // dfs
+    function backtrack(index, path, res) {
+        if (index === digits.length) {
+            res.push(path.join(''));
+            return;
+        }
+        const chars = digitToChar[digits[index]];
+        if (!chars) return;
+        for (let c of chars) {
+            path.push(c);
+            backtrack(index + 1, path, res);
+            path.pop();
+        }
+    }
+    const possible = [];
+    backtrack(0, [], possible);
+    const wordSet = new Set(words);
+    return possible.filter(w => wordSet.has(w));
+}
 
 // 325、交换和
 // 给定两个整数数组，请交换一对数值（每个数组中取一个数值），使得两个数组所有元素的和相等。
