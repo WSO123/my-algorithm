@@ -3062,7 +3062,7 @@ function kthLargest(root, k) {
         inOrder(node.left)
     }
     inOrder(root)
-    return res
+    return res;
 }
 
 // 66、二叉树的深度
@@ -3148,7 +3148,7 @@ function findAppearOne(numbers) {
     for (let i = 1; i < numbers.length; i++) {
         res = res ^ numbers[i]
     }
-    return res
+    return res;
 }
 
 // 69、数组中数字出现的次数
@@ -3238,7 +3238,7 @@ function findNumsAppearOnce(numbers) {
         }
     }
 
-    return res
+    return res;
 }
 
 // 71、和为 s 的数字
@@ -3295,7 +3295,7 @@ function findListWithSum(s) {
             sum += p2
         }
     }
-    return res
+    return res;
 }
 
 // 73、翻转单词顺序
@@ -3425,7 +3425,7 @@ function maxValues(numbers, k) {
         res.push(queue.maxValue()) // 获取当前滑动窗口的最大值
     }
 
-    return res
+    return res;
 }
 
 // 76、n个骰子的点数
@@ -3469,7 +3469,7 @@ function printP(n) {
         res.push(getCount(n, i) / total)
     }
 
-    return res
+    return res;
 }
 // 思路2: 动态规划，上面是自顶向下的求解，现在实现自底向上的版本
 function printP(n) {
@@ -3507,7 +3507,7 @@ function printP(n) {
         res.push(memo[n][i] / total)
     }
 
-    return res
+    return res;
 }
 
 // 77、扑克牌中的顺子
@@ -3893,7 +3893,7 @@ function addBinary(a, b) {
     if (takeOver) {
         res = 1 + res
     }
-    return res
+    return res;
 }
 
 // 88、前 n 个数字二进制中 1 的个数
@@ -3914,7 +3914,7 @@ function getNumberOf1(n) {
     for (let i = 0; i <= n; i++) {
         res.push(getNumber1(i))
     }
-    return res
+    return res;
 }
 // 思路2：观察规律可以发现，对于数字 i，如果 i 是偶数，那么 i 的二进制表示中 1 的个数和 i / 2 的二进制表示中 1 的个数相同；
 //      如果 i 是奇数，那么 i 的二进制表示中 1 的个数比 i - 1 的二进制表示中 1 的个数多 1。
@@ -3927,7 +3927,7 @@ function getNumberOf1(n) {
             res.push(res[i - 1] + 1)
         }
     }
-    return res
+    return res;
 }
 
 // 89、只出现一次的数字，跟第70题是同一个
@@ -3968,7 +3968,7 @@ function maxProduct(words) {
             }
         }
     }
-    return res
+    return res;
 }
 // 思路2: 在思路1的基础上使用位运算来降低时间复杂度和内存占用
 //      使用二进制数来表示字符串中每个字母是否出现，如'abc'可以用00000000000000000000000111表示，'de'可以用00000000000000000001100000表示
@@ -3992,7 +3992,7 @@ function maxProduct(words) {
             }
         }
     }
-    return res
+    return res;
 }
 
 // 91、排序数组中的两个数字之和
@@ -4064,7 +4064,7 @@ function threeSum(numbers) {
             }
         }
     }
-    return res
+    return res;
 }
 
 // 93、和大于等于k的最短子数组
@@ -4307,7 +4307,7 @@ function subMatrixSum(matrix, row1, col1, row2, col2) {
     if (row1 > 0 && col1 > 0) {
         res += prefix[row1 - 1][col1 - 1]
     }
-    return res
+    return res;
 }
 
 // 101、字符串中的变位词
@@ -4461,7 +4461,7 @@ function findAnagrams(s1, s2) {
     }
 
 
-    return res
+    return res;
 }
 
 // 103、不含重复字符的最长子字符串
@@ -4482,7 +4482,7 @@ function longestSubstringWithoutDuplication(str) {
         let tmp = i - start
         res = Math.max(res, tmp)
     }
-    return res
+    return res;
 }
 // 思路2、第二种使用map的方法，滑动窗口
 function lengthOfLongestSubstring(s) {
@@ -4658,7 +4658,7 @@ function countSubstrings(s) {
         //以两个字符为中心
         res += expandAroundCenter(s, i, i + 1)
     }
-    return res
+    return res;
 }
 
 // 108、删除倒数第 k 个节点
@@ -5483,7 +5483,7 @@ function dailyTemperatures(temperatures) {
 
         stack.push(i) // 当前下标入栈
     }
-    return res
+    return res;
 }
 
 // 126、直方图最大矩形面积， 难度：困难
@@ -5720,7 +5720,7 @@ function largestValues(root) {
         }
         res.push(maxValue)
     }
-    return res
+    return res;
 }
 
 // 思路2: 使用两个队列实现，在层序遍历中，一个队列表示当前层的节点，一个表示下一层的节点，交替使用
@@ -5751,7 +5751,7 @@ function largestValues(root) {
         res.push(maxValue)
     }
 
-    return res
+    return res;
 }
 // 132、二叉树最底层最左边的值
 // 如何在一颗二叉树中找出最底层最左边节点的值？假设二叉树中最少有一个节点。
@@ -5849,7 +5849,7 @@ function rightSideView(root) {
         }
     }
 
-    return res
+    return res;
 }
 // 思路2:深度优先搜索,注意一点是先右后左
 function rightSideView(root) {
@@ -5874,7 +5874,7 @@ function rightSideView(root) {
     }
 
     dfs(root, 0)
-    return res
+    return res;
 }
 
 // 134、二叉树的中序遍历
@@ -5890,7 +5890,7 @@ function inOrder(root) {
     }
 
     core(root)
-    return res
+    return res;
 }
 // 方法2: 迭代
 function inOrder(root) {
@@ -5910,7 +5910,7 @@ function inOrder(root) {
         cur = cur.right // 到右子树
     }
 
-    return res
+    return res;
 }
 
 // 135、二叉树的前序遍历
@@ -5926,7 +5926,7 @@ function preOrder(root) {
     }
 
     core(root)
-    return res
+    return res;
 }
 // 方法2、迭代
 function preOrder(root) {
@@ -5940,7 +5940,7 @@ function preOrder(root) {
         if (node.right) stack.push(node.right); // 先压入右子树
         if (node.left) stack.push(node.left);   // 再压入左子树
     }
-    return res
+    return res;
 }
 
 // 136、二叉树的后序遍历
@@ -5956,7 +5956,7 @@ function postOrder(root) {
     }
 
     core(root)
-    return res
+    return res;
 }
 // 方法2、迭代
 function postOrder(root) {
@@ -6876,7 +6876,7 @@ function topK(nums, k) {
         }
     }
 
-    return res
+    return res;
 }
 
 // 150、和最小的k个数对
@@ -7079,7 +7079,7 @@ function kSmallestPairs(nums1, nums2, k) {
         }
     }
 
-    return res
+    return res;
 }
 
 // 151、实现前缀树
@@ -7513,7 +7513,7 @@ function findOnceNum(nums) {
     for (let i = 1; i < nums.length; i++) {
         res ^= nums[i]
     }
-    return res
+    return res;
 }
 // 思路2: 哈希
 function findOnceNum(nums) {
@@ -7673,7 +7673,7 @@ function merge(intervals) {
         i = j
     }
 
-    return res
+    return res;
 }
 
 // 164、计数排序，适用于数组长度为n，数值范围为k，k << 1的场景
@@ -8003,7 +8003,7 @@ function subSets(nums) {
     }
 
     dfs(nums, 0, [])
-    return res
+    return res;
 }
 
 // 171、包含k个元素的组合
@@ -8032,7 +8032,7 @@ function combine(n, k) {
 
     dfs(n, k, 1, [])
 
-    return res
+    return res;
 }
 
 // 172、允许重复选择元素的组合
@@ -8063,7 +8063,7 @@ function combinationSum(nums, k) {
     }
 
     dfs(nums, k, 0, [])
-    return res
+    return res;
 }
 
 // 173、点菜问题
@@ -8090,7 +8090,7 @@ function maxMenu(menu, n) {
     }
 
     dfs(menu, n, 0, [])
-    return res
+    return res;
 }
 // 限制点k道菜
 function maxMenu(menu, n, k) {
@@ -8146,7 +8146,7 @@ function combinationSum(nums, k) {
         }
     }
     dfs(nums, k, 0, [])
-    return res
+    return res;
 }
 
 // 175、没有重复元素集合的全排列
@@ -8177,7 +8177,7 @@ function presume(nums) {
     }
 
     dfs(nums, [])
-    return res
+    return res;
 }
 
 // 176、包含重复元素集合的全排列
@@ -8213,7 +8213,7 @@ function permuteUnique(nums) {
     }
 
     dfs(nums, [])
-    return res
+    return res;
 }
 
 // 177、生成匹配的括号
@@ -8245,7 +8245,7 @@ function generateParenthesis(n) {
         }
     }
     dfs(n, n, '')
-    return res
+    return res;
 }
 
 // 178、分割回文子字符串
@@ -8288,7 +8288,7 @@ function splitStr(s) {
     }
 
     dfs(s, 0, [])
-    return res
+    return res;
 }
 
 // 179、恢复ip地址
@@ -8335,7 +8335,7 @@ function restoreIpAddresses(s) {
     }
 
     dfs(s, 0, [])
-    return res
+    return res;
 }
 
 // 180、爬楼梯的最少成本
@@ -8908,7 +8908,7 @@ function distanceMatrix(M) {
         }
     }
 
-    return res
+    return res;
 }
 
 // 190、单词演变
@@ -8971,7 +8971,7 @@ const getNeighbers = (status) => {
         res.push(status.slice(0, i) + (digit + 9) % 10 + status.slice(i + 1))
     }
 
-    return res
+    return res;
 }
 function unLock(lockList, password) {
     const lockSet = new Set(lockList) // 存储死锁状态方便快速查找
@@ -9086,7 +9086,7 @@ function allPath(graph) {
     dfs(0, [0])
     // dfsInteral()
 
-    return res
+    return res;
 }
 
 // 193、计算除法
@@ -9168,7 +9168,7 @@ function calcDivision(equations, values, queries) {
         }
     }
 
-    return res
+    return res;
 }
 
 // 194、最长递增路径
@@ -9217,7 +9217,7 @@ function longestPath(matrix) {
         }
     }
 
-    return res
+    return res;
 }
 
 // 195、课程顺序
@@ -9679,7 +9679,7 @@ function findRedundantConnection(edges) {
             uf.union(u, v)
         }
     }
-    return res
+    return res;
 }
 
 // 202、最长连续序列
@@ -10572,7 +10572,7 @@ function spiralOrder(matrix) {
         d = (d + 1) % 4 // 循环方向
     }
 
-    return res
+    return res;
 }
 
 // 221、最长递增子序列
@@ -10819,7 +10819,7 @@ function pathSum(root, targetSum) {
     }
 
     dfs(root, targetSum, [])
-    return res
+    return res;
 }
 
 
@@ -11700,7 +11700,7 @@ function multiply(num1, num2) {
         }
     }
 
-    return res
+    return res;
 }
 
 // 258、判定字符是否唯一
@@ -12281,7 +12281,7 @@ function pathWithObstacles(martix) {
         return false
     }
     dfs(0, 0)
-    return res
+    return res;
 }
 // 286、魔术索引
 // 在 有序数组 nums 中，找出一个 魔术索引，即满足 nums[i] == i 的索引 i。
@@ -12340,7 +12340,7 @@ function subsets(nums) {
         }
     }
     dfs(0, [])
-    return res
+    return res;
 }
 // 288、递归乘法
 // 实现一个递归函数，计算两个非负整数 A 和 B 的乘积，不能使用 * 号。
@@ -12375,7 +12375,7 @@ function multiply(A, B) {
         A <<= 1 // A左移一位，相当于乘以2
         B >>= 1 // B右移一位，相当于除以2
     }
-    return res
+    return res;
 }
 
 // 289、汉诺塔问题
@@ -12458,7 +12458,7 @@ function permutation(S) {
         }
     }
     dfs(arr, [])
-    return res
+    return res;
 }
 
 // 292、颜色填充
@@ -12674,8 +12674,24 @@ class StreamRank {
 // 303、峰与谷
 // 在一个整数数组中，“峰”是大于或等于相邻整数的元素，相应地，“谷”是小于或等于相邻整数的元素。
 // 例如，在数组{5, 8, 4, 2, 3, 4, 6}中，{8, 6}是峰， {5, 2}是谷。现在给定一个整数数组，将该数组按峰与谷的交替顺序排序。
-
-
+// 遍历数组，每次判断当前位置是峰还是谷：
+// - 如果是奇数位（峰），但比前一个小，则交换
+// - 如果是偶数位（谷），但比前一个大，则交换
+// 这样保证了峰与谷交替出现。
+/**
+ * 峰与谷排序：将数组排序后，依次交换相邻元素，使得奇数位为峰，偶数位为谷。
+ * @param {number[]} nums 输入的整数数组
+ * @return {number[]} 排序后的数组
+ * 示例：输入[5,8,4,2,3,4,6]，输出如[5,8,2,6,3,4,4]，满足峰谷交替
+ */
+function wiggleSort(nums) {
+    for(let i = 1; i < nums.length; i++) {
+    // 奇数位为峰，偶数位为谷
+        if(i % 2 === 1 && nums[i] < nums[i - 1] || i % 2 === 0 && nums[i] > nums[i - 1]) {
+            [nums[i], nums[i - 1]] = [nums[i - 1], nums[i]]
+        }
+    }
+}
 // 304、交换数字
 // 编写一个函数，不用临时变量，直接交换numbers = [a, b]中a与b的值。
 function swap(nums) {
