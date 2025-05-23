@@ -12034,7 +12034,7 @@ class AnimalShelter {
     dequeueCat() {
         return this.catQueue.length ? this.catQueue.shift().name : null;
     }
-  } 
+  };
 
 // 272、节点间通路
 // 给定 有向图 和两个节点 start 和 target，请判断 从 start 到 target 是否存在一条路径。
@@ -12809,6 +12809,34 @@ function maximum(a, b) {
 // 312、运算
 
 // 313、生存人数
+// 给定 N 个人的出生年份和死亡年份，第 i 个人的出生年份为 birth[i]，死亡年份为 death[i]，实现一个方法以计算生存人数最多的年份。
+// 你可以假设所有人都出生于 1900 年至 2000 年（含 1900 和 2000 ）之间。如果一个人在某一年的任意时期处于生存状态，那么他应该被纳入那一年的统计中。例如，生于 1908 年、死于 1909 年的人应当被列入 1908 年和 1909 年的计数。
+// 如果有多个年份生存人数相同且均为最大值，输出其中最小的年份。
+// 输入：
+// birth = [1900, 1901, 1950]
+// death = [1948, 1951, 2000]
+// 输出： 1901
+function maxAliveYear(birth, death) {
+    // 使用数组来统计每年的人口变化
+    const years = new Array(2002).fill(0); // 1900~2001
+    // 遍历每个人的出生和死亡年份
+    for (let i = 0; i < birth.length; i++) {
+        // 出生年份时，人口增加
+        years[birth[i] - 1900]++;
+        // 死亡年份时，人口减少
+        // 注意：这里需要将死亡年份加1，因为死亡年份还算存活
+        years[death[i] - 1900 + 1]--;
+    }
+    let maxAlive = 0, maxYear = 1900, curr = 0;
+    for (let i = 0; i <= 2001 - 1900; i++) {
+        curr += years[i];
+        if (curr > maxAlive) {
+            maxAlive = curr;
+            maxYear = 1900 + i;
+        }
+    }
+    return maxYear;
+}
 
 // 314、跳水板
 
